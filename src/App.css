@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --dark-bg: #0a0e27;
+  --card-bg: #1a1f3a;
+  --border-glow: #00d9ff;
+  --accent-gold: #d4af37;
+  --accent-emerald: #00d084;
+  --danger: #ff4757;
+  --text-primary: #e8eef7;
+  --text-secondary: #a8b5d1;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+.game-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+.game-type-card {
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 217, 255, 0.1) 100%);
+  border: 2px solid var(--border-glow);
+  border-radius: 15px;
+  padding: 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.15);
+}
+
+.game-type-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 16px 48px rgba(0, 217, 255, 0.3);
+  border-color: var(--accent-gold);
+}
+
+.game-type-card .icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.game-type-card h2 {
+  color: var(--border-glow);
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.game-type-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.game-type-card .difficulty {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(212, 175, 55, 0.1);
+  border-left: 3px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.game-type-card.blind .difficulty {
+  background: rgba(255, 71, 87, 0.1);
+  border-left-color: var(--danger);
+  color: var(--danger);
+}
