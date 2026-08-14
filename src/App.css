@@ -1,100 +1,392 @@
+/* ============================================
+   CSS VARIABLES
+   ============================================ */
+:root {
+  --bg-dark: #0a0e27;
+  --bg-secondary: #1a1f3a;
+  --card-bg: #1a1f3a;
+  --border-glow: #00d9ff;
+  --accent-gold: #d4af37;
+  --accent-emerald: #00d084;
+  --danger: #ff4757;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b8cc;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  --dark-bg: #0a0e27;
-  --card-bg: #1a1f3a;
-  --border-glow: #00d9ff;
-  --accent-gold: #d4af37;
-  --accent-emerald: #00d084;
-  --danger: #ff4757;
-  --text-primary: #e8eef7;
-  --text-secondary: #a8b5d1;
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-secondary) 100%);
   color: var(--text-primary);
+  background-attachment: fixed;
   min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
-#root {
+.app {
   min-height: 100vh;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent),
-    linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent);
-  background-size: 50px 50px;
-  pointer-events: none;
+  position: relative;
   z-index: 1;
 }
-.game-type-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 3rem;
-  margin-top: 3rem;
-  padding: 2rem;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
 }
 
-.game-type-card {
-  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 217, 255, 0.1) 100%);
-  border: 2px solid var(--border-glow);
-  border-radius: 15px;
-  padding: 2.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.15);
+/* ============================================
+   DESKTOP STYLES (1024px+)
+   ============================================ */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+  }
+
+  .mode-grid,
+  .game-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  .gameContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .classGrid,
+  .drugsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .playingContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 }
 
-.game-type-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 16px 48px rgba(0, 217, 255, 0.3);
-  border-color: var(--accent-gold);
+/* ============================================
+   TABLET STYLES (768px - 1023px)
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .mode-grid,
+  .game-type-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .gameContent {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .classGrid,
+  .drugsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .playingContent {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  h1 {
+    font-size: 36px !important;
+  }
+
+  h2 {
+    font-size: 24px !important;
+  }
+
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  input, textarea {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 10px 12px;
+  }
 }
 
-.game-type-card .icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+/* ============================================
+   MOBILE STYLES (below 768px)
+   ============================================ */
+@media (max-width: 767px) {
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 15px;
+  }
+
+  /* Stack everything vertically */
+  .mode-grid,
+  .game-type-grid,
+  .gameContent,
+  .playingContent {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  .classGrid,
+  .drugsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Full width boxes */
+  .cluesBox,
+  .guessBox,
+  .conversationBox,
+  .inputBox {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 15px !important;
+  }
+
+  /* Responsive typography */
+  h1 {
+    font-size: 28px !important;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  h3 {
+    font-size: 16px !important;
+  }
+
+  p {
+    font-size: 14px !important;
+  }
+
+  /* Touch-friendly targets (min 44x44px) */
+  button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+  }
+
+  input,
+  textarea,
+  select {
+    min-height: 44px !important;
+    font-size: 16px !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+  }
+
+  /* Prevent iOS zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Responsive grid for options */
+  .optionsGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .multipleChoiceGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .yesNoButtonsContainer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Scrollable conversation */
+  .conversationLog {
+    max-height: 300px !important;
+    overflow-y: auto;
+  }
+
+  /* Make icons smaller on mobile */
+  .icon {
+    font-size: 48px !important;
+  }
+
+  /* Responsive subtitle */
+  .subtitle {
+    font-size: 14px !important;
+  }
+
+  /* Full-width sections */
+  .section {
+    width: 100%;
+  }
 }
 
-.game-type-card h2 {
-  color: var(--border-glow);
-  margin: 1rem 0;
-  font-size: 1.5rem;
+/* ============================================
+   SMALL PHONE STYLES (below 480px)
+   ============================================ */
+@media (max-width: 479px) {
+  .container {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 24px !important;
+  }
+
+  h2 {
+    font-size: 18px !important;
+  }
+
+  h3 {
+    font-size: 14px !important;
+  }
+
+  .icon {
+    font-size: 40px !important;
+  }
+
+  button {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .cluesBox,
+  .guessBox,
+  .conversationBox,
+  .inputBox {
+    padding: 12px !important;
+  }
+
+  /* Single column for everything */
+  .multipleChoiceGrid,
+  .optionsGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cluesList {
+    max-height: 250px;
+  }
 }
 
-.game-type-card p {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin: 1rem 0;
-  line-height: 1.5;
+/* ============================================
+   LANDSCAPE MODE (Tablets/Phones)
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 24px !important;
+  }
+
+  .conversationLog,
+  .cluesList {
+    max-height: 200px !important;
+  }
+
+  .gameContent,
+  .playingContainer {
+    gap: 10px !important;
+  }
+
+  button {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
 }
 
-.game-type-card .difficulty {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(212, 175, 55, 0.1);
-  border-left: 3px solid var(--accent-gold);
-  color: var(--accent-gold);
-  font-weight: bold;
-  font-size: 0.9rem;
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-.game-type-card.blind .difficulty {
-  background: rgba(255, 71, 87, 0.1);
-  border-left-color: var(--danger);
-  color: var(--danger);
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  .border-glow {
+    border-color: var(--text-primary) !important;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.hide-mobile {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Dynamic viewport height for mobile */
+@media (max-width: 767px) {
+  body, html, #root, .app {
+    height: 100vh;
+    height: 100dvh;
+  }
 }

@@ -7,7 +7,6 @@ const PracticeMode = ({ drugs, onBack }) => {
   const [questionsAsked, setQuestionsAsked] = useState(0);
   const [aiGuesses, setAiGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState(null);
-  const [userResponse, setUserResponse] = useState('');
   const [message, setMessage] = useState('');
   const [guessedCorrect, setGuessedCorrect] = useState(false);
 
@@ -58,27 +57,38 @@ const PracticeMode = ({ drugs, onBack }) => {
     }]);
   };
 
-  // Handle yes/no answer
-  const handleAnswer = () => {
-    if (!userResponse.trim()) {
-      setMessage('Please answer yes or no');
-      return;
-    }
-
-    const answer = userResponse.toLowerCase().trim();
-    if (!['yes', 'no', 'y', 'n'].includes(answer)) {
-      setMessage('Please answer with "yes" or "no"');
-      return;
-    }
-
-    // Add answer to conversation
-    const displayAnswer = answer === 'yes' || answer === 'y' ? 'Yes' : 'No';
+  // Handle YES answer
+  const handleYes = () => {
+    const displayAnswer = 'Yes';
     setConversation(prev => [...prev, {
       role: 'user',
       text: displayAnswer
     }]);
 
-    setUserResponse('');
+    setQuestionsAsked(questionsAsked + 1);
+    setMessage('');
+
+    // Every 3 questions, make a guess
+    if ((questionsAsked + 1) % 3 === 0 && aiGuesses.length < 5) {
+      setTimeout(() => {
+        makeAGuess();
+      }, 1000);
+    } else {
+      // Ask next question
+      setTimeout(() => {
+        askNextQuestion();
+      }, 500);
+    }
+  };
+
+  // Handle NO answer
+  const handleNo = () => {
+    const displayAnswer = 'No';
+    setConversation(prev => [...prev, {
+      role: 'user',
+      text: displayAnswer
+    }]);
+
     setQuestionsAsked(questionsAsked + 1);
     setMessage('');
 
@@ -150,7 +160,7 @@ const PracticeMode = ({ drugs, onBack }) => {
             <h3 style={styles.rulesTitle}>How it works:</h3>
             <ul style={styles.rulesList}>
               <li>Think of any drug from the database</li>
-              <li>Answer my yes/no questions honestly</li>
+              <li>Answer my yes/no questions with buttons</li>
               <li>After a few questions, I'll try to guess</li>
               <li>If I'm wrong, I'll ask more questions</li>
               <li>See if I can guess correctly!</li>
@@ -215,19 +225,21 @@ const PracticeMode = ({ drugs, onBack }) => {
                   </div>
                 )}
 
-                <input
-                  type="text"
-                  placeholder="Type: yes or no"
-                  value={userResponse}
-                  onChange={(e) => setUserResponse(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAnswer()}
-                  style={styles.input}
-                  autoFocus
-                />
-
-                <button style={styles.submitButton} onClick={handleAnswer}>
-                  ✓ Answer
-                </button>
+                {/* YES/NO BUTTONS */}
+                <div style={styles.yesNoButtonsContainer}>
+                  <button 
+                    style={styles.yesButton} 
+                    onClick={handleYes}
+                  >
+                    ✅ YES
+                  </button>
+                  <button 
+                    style={styles.noButton} 
+                    onClick={handleNo}
+                  >
+                    ❌ NO
+                  </button>
+                </div>
 
                 {message && <div style={styles.messageBox}>{message}</div>}
               </>
@@ -242,15 +254,15 @@ const PracticeMode = ({ drugs, onBack }) => {
                   <div style={styles.guessDrugClass}>{currentGuess.class}</div>
                 </div>
 
-                <div style={styles.yesNoButtons}>
+                <div style={styles.yesNoButtonsContainer}>
                   <button 
-                    style={{...styles.yesButton}} 
+                    style={styles.yesButton}
                     onClick={() => handleGuessResponse(true)}
                   >
                     ✅ YES! That's it!
                   </button>
                   <button 
-                    style={{...styles.noButton}} 
+                    style={styles.noButton}
                     onClick={() => handleGuessResponse(false)}
                   >
                     ❌ NO, keep guessing
@@ -288,7 +300,6 @@ const PracticeMode = ({ drugs, onBack }) => {
             setQuestionsAsked(0);
             setAiGuesses([]);
             setCurrentGuess(null);
-            setUserResponse('');
             setGuessedCorrect(false);
           }}>
             🔄 Play Again
@@ -453,29 +464,35 @@ const styles = {
     borderRadius: '4px',
     marginBottom: '4px'
   },
-  input: {
-    width: '100%',
-    padding: '12px',
-    marginBottom: '12px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.3)',
+  yesNoButtonsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginBottom: '20px'
+  },
+  yesButton: {
+    padding: '14px',
+    background: 'rgba(0, 208, 132, 0.15)',
+    border: '2px solid var(--accent-emerald)',
+    color: 'var(--accent-emerald)',
     borderRadius: '8px',
-    color: 'var(--text-primary)',
+    fontWeight: '700',
+    cursor: 'pointer',
     fontSize: '16px',
     fontFamily: 'inherit',
-    boxSizing: 'border-box'
+    minHeight: '44px'
   },
-  submitButton: {
-    width: '100%',
-    padding: '12px',
-    background: 'rgba(212, 175, 55, 0.15)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--accent-gold)',
+  noButton: {
+    padding: '14px',
+    background: 'rgba(255, 71, 87, 0.15)',
+    border: '2px solid var(--danger)',
+    color: 'var(--danger)',
     borderRadius: '8px',
-    fontWeight: '600',
+    fontWeight: '700',
     cursor: 'pointer',
-    fontSize: '14px',
-    fontFamily: 'inherit'
+    fontSize: '16px',
+    fontFamily: 'inherit',
+    minHeight: '44px'
   },
   guessCard: {
     padding: '20px',
@@ -500,33 +517,6 @@ const styles = {
     fontSize: '12px',
     color: 'var(--accent-emerald)',
     fontWeight: '600'
-  },
-  yesNoButtons: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px'
-  },
-  yesButton: {
-    padding: '12px',
-    background: 'rgba(0, 208, 132, 0.15)',
-    border: '2px solid var(--accent-emerald)',
-    color: 'var(--accent-emerald)',
-    borderRadius: '8px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontFamily: 'inherit'
-  },
-  noButton: {
-    padding: '12px',
-    background: 'rgba(255, 71, 87, 0.15)',
-    border: '2px solid var(--danger)',
-    color: 'var(--danger)',
-    borderRadius: '8px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontFamily: 'inherit'
   },
   messageBox: {
     marginTop: '12px',
