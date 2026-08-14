@@ -1,271 +1,187 @@
-import React, { useState, useEffect } from 'react';
-import { getAllClasses } from '../utils/gameLogic.js';
+import React, { useState } from 'react';
 
 const PracticeMode = ({ drugs, onBack }) => {
-  const [screen, setScreen] = useState('start'); // start, playing, guessed, result
+  const [screen, setScreen] = useState('start');
   const [conversation, setConversation] = useState([]);
   const [questionsAsked, setQuestionsAsked] = useState(0);
   const [aiGuesses, setAiGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState(null);
-  const [message, setMessage] = useState('');
-  const [guessedCorrect, setGuessedCorrect] = useState(false);
 
   const questions = [
     'Is it a cardiac drug?',
     'Is it an antibiotic?',
-    'Is it used for pain relief?',
+    'Is it for pain relief?',
     'Is it taken orally?',
     'Does it start with a vowel?',
     'Is it a controlled substance?',
-    'Is it used for diabetes?',
+    'Is it for diabetes?',
     'Does it affect blood pressure?',
     'Is it a hormone?',
-    'Is it used in emergency situations?',
+    'Is it for emergencies?',
     'Is it from the 20th century?',
-    'Does it have more than 10 letters in its English name?',
-    'Is it used for respiratory conditions?',
-    'Is it a vitamin or mineral?',
-    'Does it contain the letter "a" in its English name?'
+    'Has more than 10 letters?',
+    'Is it for respiratory?',
+    'Is it a vitamin?',
+    'Contains letter "a"?'
   ];
 
-  // Start the game
   const handleStart = () => {
-    setConversation([
-      {
-        role: 'ai',
-        text: '🔮 Think of a drug and keep it in your mind. I will ask you yes/no questions to try and guess it! Ready? Let\'s begin!'
-      }
-    ]);
+    setConversation([{
+      role: 'ai',
+      text: '🔮 Think of a drug. I will ask yes/no questions to guess it!'
+    }]);
     askNextQuestion();
     setScreen('playing');
   };
 
-  // Ask next question
   const askNextQuestion = () => {
     if (questionsAsked >= questions.length) {
       setConversation(prev => [...prev, {
         role: 'ai',
-        text: 'I\'ve run out of questions! 😅 Want to tell me what drug it was?'
+        text: 'I ran out of questions! What was it?'
       }]);
       return;
     }
-
     const question = questions[questionsAsked];
-    setConversation(prev => [...prev, {
-      role: 'ai',
-      text: question
-    }]);
+    setConversation(prev => [...prev, { role: 'ai', text: question }]);
   };
 
-  // Handle YES answer
-  const handleYes = () => {
-    const displayAnswer = 'Yes';
-    setConversation(prev => [...prev, {
-      role: 'user',
-      text: displayAnswer
-    }]);
-
+  const handleAnswer = (answer) => {
+    const text = answer === 'yes' ? 'Yes ✓' : 'No ✗';
+    setConversation(prev => [...prev, { role: 'user', text }]);
     setQuestionsAsked(questionsAsked + 1);
-    setMessage('');
 
-    // Every 3 questions, make a guess
     if ((questionsAsked + 1) % 3 === 0 && aiGuesses.length < 5) {
-      setTimeout(() => {
-        makeAGuess();
-      }, 1000);
+      setTimeout(() => makeAGuess(), 800);
     } else {
-      // Ask next question
-      setTimeout(() => {
-        askNextQuestion();
-      }, 500);
+      setTimeout(() => askNextQuestion(), 400);
     }
   };
 
-  // Handle NO answer
-  const handleNo = () => {
-    const displayAnswer = 'No';
-    setConversation(prev => [...prev, {
-      role: 'user',
-      text: displayAnswer
-    }]);
-
-    setQuestionsAsked(questionsAsked + 1);
-    setMessage('');
-
-    // Every 3 questions, make a guess
-    if ((questionsAsked + 1) % 3 === 0 && aiGuesses.length < 5) {
-      setTimeout(() => {
-        makeAGuess();
-      }, 1000);
-    } else {
-      // Ask next question
-      setTimeout(() => {
-        askNextQuestion();
-      }, 500);
-    }
-  };
-
-  // Make a guess
   const makeAGuess = () => {
-    const availableDrugs = drugs.filter(d => !aiGuesses.includes(d.names.en));
-    if (availableDrugs.length === 0) {
-      setConversation(prev => [...prev, {
-        role: 'ai',
-        text: 'I\'ve guessed all the drugs! 😅 I give up! What was it?'
-      }]);
+    const available = drugs.filter(d => !aiGuesses.includes(d.names.en));
+    if (available.length === 0) {
+      setConversation(prev => [...prev, { role: 'ai', text: 'I give up! What was it?' }]);
       return;
     }
-
-    const randomGuess = availableDrugs[Math.floor(Math.random() * availableDrugs.length)];
-    setCurrentGuess(randomGuess);
-    setAiGuesses([...aiGuesses, randomGuess.names.en]);
+    const guess = available[Math.floor(Math.random() * available.length)];
+    setCurrentGuess(guess);
+    setAiGuesses([...aiGuesses, guess.names.en]);
     setScreen('guessing');
   };
 
-  // Handle guess response
   const handleGuessResponse = (isCorrect) => {
     if (isCorrect) {
-      setGuessedCorrect(true);
       setConversation(prev => [...prev, {
         role: 'ai',
-        text: `🎉 YES! I knew it was ${currentGuess.names.en} (${currentGuess.names.fr})! I got it in ${questionsAsked} questions!`
+        text: `🎉 Got it! ${currentGuess.names.en} in ${questionsAsked} questions!`
       }]);
       setScreen('result');
     } else {
-      setConversation(prev => [...prev, {
-        role: 'ai',
-        text: 'Ah, not that one! Let me ask more questions...'
-      }]);
+      setConversation(prev => [...prev, { role: 'ai', text: 'Wrong! More questions...' }]);
       setScreen('playing');
-      setTimeout(() => {
-        askNextQuestion();
-      }, 500);
+      setTimeout(() => askNextQuestion(), 400);
     }
   };
 
-  // START SCREEN
   if (screen === 'start') {
     return (
       <div style={styles.container}>
         <button style={styles.backButton} onClick={onBack}>← Back</button>
-
         <div style={styles.startBox}>
           <div style={styles.icon}>🔮</div>
-          <h1 style={styles.title}>PRACTICE MODE - AKINATOR</h1>
-          <p style={styles.description}>
-            Think of a drug. I will ask you yes/no questions and try to guess what you're thinking!
-          </p>
-
-          <div style={styles.rulesBox}>
-            <h3 style={styles.rulesTitle}>How it works:</h3>
-            <ul style={styles.rulesList}>
-              <li>Think of any drug from the database</li>
-              <li>Answer my yes/no questions with buttons</li>
-              <li>After a few questions, I'll try to guess</li>
-              <li>If I'm wrong, I'll ask more questions</li>
-              <li>See if I can guess correctly!</li>
-            </ul>
-          </div>
-
-          <button style={styles.startButton} onClick={handleStart}>
-            🎮 START GAME
-          </button>
+          <h1 style={styles.title}>AKINATOR MODE</h1>
+          <p style={styles.desc}>Think of a drug. Answer yes/no questions!</p>
+          <button style={styles.startButton} onClick={handleStart}>🎮 START</button>
         </div>
       </div>
     );
   }
 
-  // PLAYING SCREEN
   if (screen === 'playing' || screen === 'guessing') {
     return (
-      <div style={styles.container}>
+      <div style={styles.playingContainer}>
         <button style={styles.backButton} onClick={onBack}>← Back</button>
 
-        <div style={styles.playingContent}>
+        <div style={styles.gameWrapper}>
           {/* LEFT - CONVERSATION */}
           <div style={styles.conversationBox}>
-            <h2 style={styles.conversationTitle}>💬 Questions</h2>
+            <h2 style={styles.heading}>💬 Questions</h2>
             <div style={styles.conversationLog}>
               {conversation.map((msg, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    ...styles.conversationMessage,
-                    backgroundColor: msg.role === 'ai' 
-                      ? 'rgba(0, 217, 255, 0.1)' 
-                      : 'rgba(212, 175, 55, 0.1)',
-                    borderColor: msg.role === 'ai'
-                      ? 'var(--border-glow)'
-                      : 'var(--accent-gold)'
-                  }}
-                >
-                  <span style={{ fontWeight: '700', marginRight: '10px' }}>
+                <div key={idx} style={{
+                  ...styles.message,
+                  background: msg.role === 'ai' ? 'rgba(0, 217, 255, 0.1)' : 'rgba(212, 175, 55, 0.1)',
+                  borderColor: msg.role === 'ai' ? 'var(--border-glow)' : 'var(--accent-gold)'
+                }}>
+                  <span style={{ fontWeight: '700', marginRight: '6px', fontSize: '14px' }}>
                     {msg.role === 'ai' ? '🤖' : '👤'}
                   </span>
-                  {msg.text}
+                  <span style={{ fontSize: '11px', lineHeight: '1.3' }}>{msg.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RIGHT - ANSWER/GUESS */}
-          <div style={styles.inputBox}>
+          {/* RIGHT - ANSWER */}
+          <div style={styles.answerBox}>
             {screen === 'playing' && (
               <>
-                <h2 style={styles.inputTitle}>Your Answer</h2>
-                <p style={styles.statsText}>Questions: <strong>{questionsAsked}</strong></p>
-                <p style={styles.statsText}>AI Guesses: <strong>{aiGuesses.length}</strong></p>
+                <h2 style={styles.heading}>Answer</h2>
+                <div style={styles.statsContainer}>
+                  <div style={styles.statItem}>Q: <strong>{questionsAsked}</strong></div>
+                  <div style={styles.statItem}>Guesses: <strong>{aiGuesses.length}</strong></div>
+                </div>
 
                 {aiGuesses.length > 0 && (
                   <div style={styles.guessesBox}>
-                    <p style={styles.guessesTitle}>🎯 AI's Guesses:</p>
-                    {aiGuesses.map((guess, idx) => (
-                      <div key={idx} style={styles.guessTag}>{guess}</div>
-                    ))}
+                    <p style={styles.guessesTxt}>🎯 AI Guesses:</p>
+                    <div style={styles.guessesList}>
+                      {aiGuesses.map((g, i) => (
+                        <div key={i} style={styles.guessTag}>{g}</div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                {/* YES/NO BUTTONS */}
-                <div style={styles.yesNoButtonsContainer}>
+                <div style={styles.buttonContainer}>
                   <button 
-                    style={styles.yesButton} 
-                    onClick={handleYes}
+                    style={styles.yesBtn} 
+                    onClick={() => handleAnswer('yes')}
                   >
                     ✅ YES
                   </button>
                   <button 
-                    style={styles.noButton} 
-                    onClick={handleNo}
+                    style={styles.noBtn} 
+                    onClick={() => handleAnswer('no')}
                   >
                     ❌ NO
                   </button>
                 </div>
-
-                {message && <div style={styles.messageBox}>{message}</div>}
               </>
             )}
 
             {screen === 'guessing' && currentGuess && (
               <>
-                <h2 style={styles.inputTitle}>Is it...?</h2>
+                <h2 style={styles.heading}>Is it...?</h2>
                 <div style={styles.guessCard}>
-                  <div style={styles.guessDrugName}>{currentGuess.names.en}</div>
-                  <div style={styles.guessDrugNameFr}>{currentGuess.names.fr}</div>
-                  <div style={styles.guessDrugClass}>{currentGuess.class}</div>
+                  <div style={styles.gName}>{currentGuess.names.en}</div>
+                  <div style={styles.gNameFr}>{currentGuess.names.fr}</div>
+                  <div style={styles.gClass}>{currentGuess.class}</div>
                 </div>
 
-                <div style={styles.yesNoButtonsContainer}>
+                <div style={styles.buttonContainer}>
                   <button 
-                    style={styles.yesButton}
+                    style={styles.yesBtn}
                     onClick={() => handleGuessResponse(true)}
                   >
-                    ✅ YES! That's it!
+                    ✅ YES!
                   </button>
                   <button 
-                    style={styles.noButton}
+                    style={styles.noBtn}
                     onClick={() => handleGuessResponse(false)}
                   >
-                    ❌ NO, keep guessing
+                    ❌ NO
                   </button>
                 </div>
               </>
@@ -276,38 +192,32 @@ const PracticeMode = ({ drugs, onBack }) => {
     );
   }
 
-  // RESULT SCREEN
   if (screen === 'result') {
     return (
       <div style={styles.container}>
         <div style={styles.resultBox}>
           <div style={styles.resultIcon}>🎉</div>
-          <h1 style={styles.resultTitle}>I GOT IT!</h1>
+          <h1 style={styles.resultTitle}>GOT IT!</h1>
           <p style={styles.resultText}>
-            I guessed {currentGuess.names.en} in {questionsAsked} questions!
+            {currentGuess.names.en}<br/>
+            in {questionsAsked} questions
           </p>
-          
           <div style={styles.resultDetails}>
-            <p><strong>Drug:</strong> {currentGuess.names.en} ({currentGuess.names.fr})</p>
-            <p><strong>Class:</strong> {currentGuess.class}</p>
-            <p><strong>Questions Asked:</strong> {questionsAsked}</p>
-            <p><strong>Guesses Made:</strong> {aiGuesses.length}</p>
+            <p><strong>{currentGuess.class}</strong></p>
           </div>
-
-          <button style={styles.playAgainButton} onClick={() => {
-            setScreen('start');
-            setConversation([]);
-            setQuestionsAsked(0);
-            setAiGuesses([]);
-            setCurrentGuess(null);
-            setGuessedCorrect(false);
-          }}>
+          <button 
+            style={styles.playAgainBtn} 
+            onClick={() => {
+              setScreen('start');
+              setConversation([]);
+              setQuestionsAsked(0);
+              setAiGuesses([]);
+              setCurrentGuess(null);
+            }}
+          >
             🔄 Play Again
           </button>
-
-          <button style={styles.homeButton} onClick={onBack}>
-            🏠 Back to Menu
-          </button>
+          <button style={styles.homeBtn} onClick={onBack}>🏠 Back</button>
         </div>
       </div>
     );
@@ -317,274 +227,274 @@ const PracticeMode = ({ drugs, onBack }) => {
 const styles = {
   container: {
     minHeight: '100vh',
-    padding: '30px',
+    padding: '15px',
     position: 'relative',
-    zIndex: 10
+    zIndex: 10,
+    overflow: 'hidden'
+  },
+  playingContainer: {
+    minHeight: '100vh',
+    padding: '15px',
+    position: 'relative',
+    zIndex: 10,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden'
   },
   backButton: {
-    padding: '10px 20px',
+    padding: '8px 16px',
     background: 'rgba(0, 217, 255, 0.1)',
     border: '1px solid var(--border-glow)',
     color: 'var(--text-primary)',
     borderRadius: '4px',
     cursor: 'pointer',
-    marginBottom: '20px',
+    marginBottom: '12px',
     fontFamily: 'inherit',
-    fontSize: '14px'
+    fontSize: '12px',
+    alignSelf: 'flex-start'
   },
   startBox: {
-    maxWidth: '600px',
+    maxWidth: '500px',
     margin: '0 auto',
     textAlign: 'center',
-    padding: '40px',
+    padding: '30px',
     background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
     border: '2px solid var(--accent-gold)',
-    borderRadius: '16px',
-    boxShadow: '0 0 40px rgba(212, 175, 55, 0.2)'
+    borderRadius: '12px'
   },
   icon: {
-    fontSize: '80px',
-    marginBottom: '20px'
+    fontSize: '60px',
+    marginBottom: '15px'
   },
   title: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: '44px',
+    fontSize: '32px',
     fontWeight: '700',
     color: 'var(--accent-gold)',
-    margin: '0 0 20px 0'
-  },
-  description: {
-    fontSize: '16px',
-    color: 'var(--text-secondary)',
-    marginBottom: '30px',
-    lineHeight: '1.6'
-  },
-  rulesBox: {
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
-    borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '30px',
-    textAlign: 'left'
-  },
-  rulesTitle: {
-    fontSize: '14px',
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
     margin: '0 0 10px 0'
   },
-  rulesList: {
+  desc: {
     fontSize: '13px',
     color: 'var(--text-secondary)',
-    margin: 0,
-    paddingLeft: '20px',
-    lineHeight: '1.8'
+    marginBottom: '20px'
   },
   startButton: {
-    padding: '14px 40px',
+    padding: '12px 30px',
     background: 'rgba(212, 175, 55, 0.15)',
     border: '2px solid var(--accent-gold)',
     color: 'var(--accent-gold)',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: '700',
-    fontSize: '16px',
+    fontSize: '14px',
     cursor: 'pointer',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
+    width: '100%'
   },
-  playingContent: {
+  gameWrapper: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    gap: '30px',
+    gap: '12px',
+    flex: 1,
+    minHeight: 0,
     maxWidth: '1200px',
-    margin: '0 auto'
+    margin: '0 auto',
+    width: '100%'
   },
   conversationBox: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
     border: '1px solid var(--border-glow)',
-    borderRadius: '12px',
-    padding: '30px',
-    height: 'fit-content',
-    maxHeight: '600px'
+    borderRadius: '10px',
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0
   },
-  conversationTitle: {
+  heading: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: '20px',
+    fontSize: '16px',
     color: 'var(--accent-gold)',
-    margin: '0 0 20px 0'
+    margin: '0 0 10px 0',
+    flexShrink: 0
   },
   conversationLog: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px',
-    maxHeight: '500px',
-    overflowY: 'auto'
+    gap: '6px',
+    overflowY: 'auto',
+    flex: 1,
+    minHeight: 0
   },
-  conversationMessage: {
-    padding: '12px',
-    borderRadius: '8px',
+  message: {
+    padding: '8px',
+    borderRadius: '6px',
     border: '1px solid',
-    fontSize: '13px',
-    lineHeight: '1.4'
+    fontSize: '11px',
+    lineHeight: '1.3',
+    display: 'flex',
+    gap: '4px',
+    flexShrink: 0
   },
-  inputBox: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+  answerBox: {
+    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
     border: '2px solid var(--accent-gold)',
-    borderRadius: '12px',
-    padding: '30px',
-    height: 'fit-content'
-  },
-  inputTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '20px',
-    color: 'var(--accent-gold)',
-    margin: '0 0 20px 0'
-  },
-  statsText: {
-    fontSize: '13px',
-    color: 'var(--text-secondary)',
-    margin: '5px 0'
-  },
-  guessesBox: {
+    borderRadius: '10px',
     padding: '12px',
-    background: 'rgba(212, 175, 55, 0.05)',
-    borderRadius: '8px',
-    marginBottom: '20px'
-  },
-  guessesTitle: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0 0 8px 0',
-    fontWeight: '600'
-  },
-  guessTag: {
-    fontSize: '12px',
-    padding: '6px 10px',
-    background: 'rgba(212, 175, 55, 0.2)',
-    color: 'var(--accent-gold)',
-    borderRadius: '4px',
-    marginBottom: '4px'
-  },
-  yesNoButtonsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    marginBottom: '20px'
+    minHeight: 0
   },
-  yesButton: {
-    padding: '14px',
+  statsContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '8px',
+    marginBottom: '10px',
+    flexShrink: 0
+  },
+  statItem: {
+    fontSize: '11px',
+    color: 'var(--text-secondary)',
+    padding: '6px',
+    background: 'rgba(0, 217, 255, 0.05)',
+    borderRadius: '4px',
+    textAlign: 'center'
+  },
+  guessesBox: {
+    padding: '8px',
+    background: 'rgba(212, 175, 55, 0.05)',
+    borderRadius: '6px',
+    marginBottom: '10px',
+    flexShrink: 0,
+    maxHeight: '120px',
+    overflowY: 'auto'
+  },
+  guessesTxt: {
+    fontSize: '10px',
+    color: 'var(--text-secondary)',
+    margin: '0 0 4px 0',
+    fontWeight: '600'
+  },
+  guessesList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '3px'
+  },
+  guessTag: {
+    fontSize: '10px',
+    padding: '3px 6px',
+    background: 'rgba(212, 175, 55, 0.2)',
+    color: 'var(--accent-gold)',
+    borderRadius: '3px'
+  },
+  guessCard: {
+    padding: '12px',
+    background: 'rgba(0, 217, 255, 0.05)',
+    border: '1px solid var(--border-glow)',
+    borderRadius: '6px',
+    marginBottom: '10px',
+    textAlign: 'center',
+    flexShrink: 0
+  },
+  gName: {
+    fontSize: '14px',
+    fontWeight: '700',
+    color: 'var(--accent-gold)',
+    marginBottom: '2px'
+  },
+  gNameFr: {
+    fontSize: '10px',
+    color: 'var(--text-secondary)',
+    marginBottom: '4px'
+  },
+  gClass: {
+    fontSize: '10px',
+    color: 'var(--accent-emerald)',
+    fontWeight: '600'
+  },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    flexShrink: 0
+  },
+  yesBtn: {
+    padding: '12px',
     background: 'rgba(0, 208, 132, 0.15)',
     border: '2px solid var(--accent-emerald)',
     color: 'var(--accent-emerald)',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: '700',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '13px',
     fontFamily: 'inherit',
     minHeight: '44px'
   },
-  noButton: {
-    padding: '14px',
+  noBtn: {
+    padding: '12px',
     background: 'rgba(255, 71, 87, 0.15)',
     border: '2px solid var(--danger)',
     color: 'var(--danger)',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: '700',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '13px',
     fontFamily: 'inherit',
     minHeight: '44px'
   },
-  guessCard: {
-    padding: '20px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '2px solid var(--border-glow)',
-    borderRadius: '12px',
-    marginBottom: '20px',
-    textAlign: 'center'
-  },
-  guessDrugName: {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    marginBottom: '5px'
-  },
-  guessDrugNameFr: {
-    fontSize: '14px',
-    color: 'var(--text-secondary)',
-    marginBottom: '10px'
-  },
-  guessDrugClass: {
-    fontSize: '12px',
-    color: 'var(--accent-emerald)',
-    fontWeight: '600'
-  },
-  messageBox: {
-    marginTop: '12px',
-    padding: '12px',
-    background: 'rgba(255, 71, 87, 0.1)',
-    border: '1px solid var(--danger)',
-    borderRadius: '8px',
-    color: 'var(--danger)',
-    fontSize: '12px'
-  },
   resultBox: {
-    maxWidth: '500px',
+    maxWidth: '400px',
     margin: '0 auto',
     textAlign: 'center',
-    padding: '50px 30px',
+    padding: '40px 20px',
     background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
     border: '2px solid var(--accent-gold)',
-    borderRadius: '16px',
-    boxShadow: '0 0 40px rgba(212, 175, 55, 0.3)'
+    borderRadius: '12px'
   },
   resultIcon: {
-    fontSize: '80px',
-    marginBottom: '20px'
+    fontSize: '60px',
+    marginBottom: '15px'
   },
   resultTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: '44px',
+    fontSize: '32px',
     fontWeight: '700',
     color: 'var(--accent-gold)',
-    margin: '0 0 15px 0'
+    margin: '0 0 10px 0'
   },
   resultText: {
-    fontSize: '16px',
+    fontSize: '13px',
     color: 'var(--text-secondary)',
-    marginBottom: '30px'
+    marginBottom: '15px',
+    lineHeight: '1.5'
   },
   resultDetails: {
+    padding: '10px',
     background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
-    borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '30px',
-    fontSize: '13px',
-    textAlign: 'left'
+    borderRadius: '6px',
+    marginBottom: '15px'
   },
-  playAgainButton: {
+  playAgainBtn: {
     width: '100%',
     padding: '12px',
-    marginBottom: '10px',
+    marginBottom: '8px',
     background: 'rgba(212, 175, 55, 0.15)',
     border: '2px solid var(--accent-gold)',
     color: 'var(--accent-gold)',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: '700',
     cursor: 'pointer',
-    fontSize: '14px',
+    fontSize: '13px',
     fontFamily: 'inherit'
   },
-  homeButton: {
+  homeBtn: {
     width: '100%',
     padding: '12px',
     background: 'rgba(0, 217, 255, 0.1)',
-    border: '2px solid var(--border-glow)',
+    border: '1px solid var(--border-glow)',
     color: 'var(--border-glow)',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: '700',
     cursor: 'pointer',
-    fontSize: '14px',
+    fontSize: '13px',
     fontFamily: 'inherit'
   }
 };
