@@ -1,16 +1,39 @@
 const CACHE_NAME = 'detective-lab-v1';
-const URLS_TO_CACHE = [
+const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/src/main.jsx',
+  '/src/App.css'
 ];
 
 // Install event
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(URLS_TO_CACHE))
-      .then(() => self.skipWaiting())
+      .then(cache => {
+        console.log('Cache opened');
+        return cache.addAll(urlsToCache);
+      })
+      .catch(err => console.log('Cache error:', err))
+  );
+  self.skipWaiting();
+});
+
+// Fetch event
+self.addEventListener('fetch', event => {
+  // Don't cache API requests
+  if (event.request.url.includes('/api') || event.request.url.includes('firebase') || event.request.url.includes('anthropic')) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
+      })
+      .catch(() => {
+        return caches.match('/index.html');
+      })
   );
 });
 
@@ -25,35 +48,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim())
-  );
-});
-
-// Fetch event - Network first, fallback to cache
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') {
-    return;
-  }
-
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Clone the response
-        const responseClone = response.clone();
-
-        // Cache successful responses
-        if (response.status === 200 && response.type !== 'error') {
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-        }
-
-        return response;
-      })
-      .catch(() => {
-        // Fallback to cache if network fails
-        return caches.match(event.request)
-          .then(response => response || new Response('Offline', { status: 503 }));
-      })
+    })
   );
 });
