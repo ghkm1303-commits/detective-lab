@@ -1,17 +1,96 @@
 /* ============================================
-   CSS VARIABLES
+   DETECTIVE LAB - PROFESSIONAL PHARMACY PALETTE
+   WITH DAY/NIGHT MODE
    ============================================ */
+
 :root {
-  --bg-dark: #0a0e27;
-  --bg-secondary: #1a1f3a;
-  --card-bg: #1a1f3a;
-  --border-glow: #00d9ff;
-  --accent-gold: #d4af37;
-  --accent-emerald: #00d084;
-  --danger: #ff4757;
-  --text-primary: #ffffff;
-  --text-secondary: #b0b8cc;
+  /* DARK MODE (Default) */
+  --mode: 'dark';
+  
+  /* Primary Pharmacy Colors - Dark */
+  --bg-obsidian: #0B0D0D;
+  --bg-dark: #0F1117;
+  --bg-card: #1A1F2E;
+  --bg-hover: #252C3A;
+  
+  --text-paper: #F2EFE6;
+  --text-primary: #F2EFE6;
+  --text-secondary: #C9C4B8;
+  --text-muted: #8B8680;
+  
+  /* Accent Colors */
+  --accent-gold: #B89A5A;
+  --accent-gold-light: #D4AE69;
+  --accent-gold-dark: #9D8049;
+  
+  --accent-teal: #167C80;
+  --accent-teal-light: #1E9CA0;
+  --accent-teal-dark: #0F5A5E;
+  
+  --accent-emerald: #2F7D5B;
+  --accent-emerald-light: #3D9B73;
+  --accent-emerald-dark: #1F4A38;
+  
+  --accent-blue: #3F628C;
+  --accent-blue-light: #5278A8;
+  --accent-blue-dark: #2A4460;
+  
+  --ink-blue: #1D2A3A;
+  
+  /* Semantic Colors */
+  --success: #2F7D5B;
+  --warning: #B89A5A;
+  --error: #E63946;
+  --info: #167C80;
+  
+  /* Borders & Dividers */
+  --border-gold: rgba(184, 154, 90, 0.2);
+  --border-teal: rgba(22, 124, 128, 0.2);
+  --border-emerald: rgba(47, 125, 91, 0.2);
 }
+
+/* LIGHT MODE */
+html[data-theme="light"] {
+  /* Light Mode Background */
+  --bg-obsidian: #FFFFFF;
+  --bg-dark: #F8F7F4;
+  --bg-card: #F2EFE6;
+  --bg-hover: #E8E5DC;
+  
+  /* Light Mode Text */
+  --text-paper: #1D2A3A;
+  --text-primary: #1D2A3A;
+  --text-secondary: #3F4A56;
+  --text-muted: #8B8680;
+  
+  /* Accent Colors Stay Same */
+  --accent-gold: #9D8049;
+  --accent-gold-light: #B89A5A;
+  --accent-gold-dark: #7A6337;
+  
+  --accent-teal: #0F5A5E;
+  --accent-teal-light: #167C80;
+  --accent-teal-dark: #084A4D;
+  
+  --accent-emerald: #1F4A38;
+  --accent-emerald-light: #2F7D5B;
+  --accent-emerald-dark: #0F2A1F;
+  
+  --accent-blue: #2A4460;
+  --accent-blue-light: #3F628C;
+  --accent-blue-dark: #1A3040;
+  
+  --ink-blue: #1D2A3A;
+  
+  /* Borders */
+  --border-gold: rgba(157, 128, 73, 0.15);
+  --border-teal: rgba(15, 90, 94, 0.15);
+  --border-emerald: rgba(31, 74, 56, 0.15);
+}
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
 
 * {
   margin: 0;
@@ -22,371 +101,475 @@
 html, body, #root {
   width: 100%;
   height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 body {
-  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-secondary) 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--bg-obsidian) 0%, var(--bg-dark) 100%);
   color: var(--text-primary);
-  background-attachment: fixed;
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
+  line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-.app {
-  min-height: 100vh;
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: 48px;
+  color: var(--accent-gold);
+  text-shadow: 0 4px 12px rgba(184, 154, 90, 0.2);
+}
+
+h2 {
+  font-size: 28px;
+  color: var(--accent-gold-light);
+}
+
+h3 {
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+button {
+  font-family: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(184, 154, 90, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Primary Button - Gold */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%);
+  color: var(--bg-obsidian);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
+}
+
+/* Secondary Button - Teal */
+.btn-secondary {
+  background: rgba(22, 124, 128, 0.1);
+  color: var(--accent-teal-light);
+  border: 2px solid var(--accent-teal);
+}
+
+.btn-secondary:hover {
+  background: rgba(22, 124, 128, 0.2);
+  border-color: var(--accent-teal-light);
+}
+
+/* Tertiary Button - Emerald */
+.btn-tertiary {
+  background: rgba(47, 125, 91, 0.1);
+  color: var(--accent-emerald-light);
+  border: 2px solid var(--accent-emerald);
+}
+
+.btn-tertiary:hover {
+  background: rgba(47, 125, 91, 0.2);
+  border-color: var(--accent-emerald-light);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: rgba(230, 57, 70, 0.1);
+  color: #FF6B7A;
+  border: 2px solid #E63946;
+}
+
+.btn-danger:hover {
+  background: rgba(230, 57, 70, 0.2);
+}
+
+/* ============================================
+   CARDS & CONTAINERS
+   ============================================ */
+
+.card {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--accent-gold);
+  box-shadow: 0 8px 24px rgba(184, 154, 90, 0.15);
+  transform: translateY(-4px);
+}
+
+.card-elevated {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   HEADERS
+   ============================================ */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, var(--bg-dark) 0%, rgba(22, 124, 128, 0.05) 100%);
+  border-bottom: 2px solid var(--border-teal);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ============================================
+   INPUTS & FORMS
+   ============================================ */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background: rgba(22, 124, 128, 0.05);
+  border: 2px solid var(--border-teal);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.3s ease;
   width: 100%;
-  position: relative;
-  z-index: 1;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px;
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-teal-light);
+  background: rgba(22, 124, 128, 0.1);
+  box-shadow: 0 0 0 3px rgba(22, 124, 128, 0.1);
 }
 
-/* ============================================
-   DESKTOP STYLES (1024px+)
-   ============================================ */
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px;
-  }
-
-  .mode-grid,
-  .game-type-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-  }
-
-  .gameContent {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .classGrid,
-  .drugsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .playingContent {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+input::placeholder {
+  color: var(--text-muted);
 }
 
 /* ============================================
-   TABLET STYLES (768px - 1023px)
+   BADGES & PILLS
    ============================================ */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 20px;
-  }
 
-  .mode-grid,
-  .game-type-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
 
-  .gameContent {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+.badge-gold {
+  background: rgba(184, 154, 90, 0.2);
+  color: var(--accent-gold-light);
+  border: 1px solid var(--accent-gold);
+}
 
-  .classGrid,
-  .drugsGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
+.badge-teal {
+  background: rgba(22, 124, 128, 0.2);
+  color: var(--accent-teal-light);
+  border: 1px solid var(--accent-teal);
+}
 
-  .playingContent {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+.badge-emerald {
+  background: rgba(47, 125, 91, 0.2);
+  color: var(--accent-emerald-light);
+  border: 1px solid var(--accent-emerald);
+}
 
+.badge-blue {
+  background: rgba(63, 98, 140, 0.2);
+  color: #7BA3D0;
+  border: 1px solid var(--accent-blue);
+}
+
+/* ============================================
+   GRIDS & LAYOUTS
+   ============================================ */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(184, 154, 90, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(184, 154, 90, 0.4);
+  }
+}
+
+.animate-slide {
+  animation: slideIn 0.3s ease;
+}
+
+.animate-fade {
+  animation: fadeIn 0.5s ease;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+
+.theme-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(22, 124, 128, 0.1);
+  padding: 4px;
+  border-radius: 20px;
+  border: 1px solid var(--border-teal);
+}
+
+.theme-toggle button {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.theme-toggle button.active {
+  background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-teal-light) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(22, 124, 128, 0.3);
+}
+
+/* ============================================
+   USER BUTTON (USERNAME)
+   ============================================ */
+
+.user-button {
+  padding: 8px 16px !important;
+  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%) !important;
+  color: var(--bg-obsidian) !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.user-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(184, 154, 90, 0.3) !important;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
   h1 {
-    font-size: 36px !important;
+    font-size: 36px;
   }
 
   h2 {
-    font-size: 24px !important;
+    font-size: 22px;
   }
 
-  button {
-    min-height: 44px;
-    min-width: 44px;
-    padding: 12px 16px;
+  .app-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
   }
 
-  input, textarea {
-    min-height: 44px;
-    font-size: 16px;
-    padding: 10px 12px;
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
   }
 }
 
-/* ============================================
-   MOBILE STYLES (below 768px)
-   ============================================ */
-@media (max-width: 767px) {
-  .container {
-    max-width: 100%;
-    margin: 0 auto;
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .card {
     padding: 15px;
   }
 
-  /* Stack everything vertically */
-  .mode-grid,
-  .game-type-grid,
-  .gameContent,
-  .playingContent {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 15px !important;
-  }
-
-  .classGrid,
-  .drugsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  /* Full width boxes */
-  .cluesBox,
-  .guessBox,
-  .conversationBox,
-  .inputBox {
-    width: 100% !important;
-    max-width: none !important;
-    padding: 15px !important;
-  }
-
-  /* Responsive typography */
-  h1 {
-    font-size: 28px !important;
-    line-height: 1.2;
-  }
-
-  h2 {
-    font-size: 20px !important;
-  }
-
-  h3 {
-    font-size: 16px !important;
-  }
-
-  p {
-    font-size: 14px !important;
-  }
-
-  /* Touch-friendly targets (min 44x44px) */
   button {
-    min-height: 44px !important;
-    min-width: 44px !important;
-    padding: 12px 16px !important;
-    font-size: 14px !important;
-    width: 100% !important;
-  }
-
-  input,
-  textarea,
-  select {
-    min-height: 44px !important;
-    font-size: 16px !important;
-    padding: 10px 12px !important;
-    width: 100% !important;
-  }
-
-  /* Prevent iOS zoom on input focus */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="search"],
-  textarea {
-    font-size: 16px;
-  }
-
-  /* Responsive grid for options */
-  .optionsGrid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .multipleChoiceGrid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .yesNoButtonsContainer {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  /* Scrollable conversation */
-  .conversationLog {
-    max-height: 300px !important;
-    overflow-y: auto;
-  }
-
-  /* Make icons smaller on mobile */
-  .icon {
-    font-size: 48px !important;
-  }
-
-  /* Responsive subtitle */
-  .subtitle {
-    font-size: 14px !important;
-  }
-
-  /* Full-width sections */
-  .section {
-    width: 100%;
-  }
-}
-
-/* ============================================
-   SMALL PHONE STYLES (below 480px)
-   ============================================ */
-@media (max-width: 479px) {
-  .container {
-    padding: 12px;
-  }
-
-  h1 {
-    font-size: 24px !important;
-  }
-
-  h2 {
-    font-size: 18px !important;
-  }
-
-  h3 {
-    font-size: 14px !important;
-  }
-
-  .icon {
-    font-size: 40px !important;
-  }
-
-  button {
-    padding: 10px 12px !important;
-    font-size: 13px !important;
-  }
-
-  .cluesBox,
-  .guessBox,
-  .conversationBox,
-  .inputBox {
-    padding: 12px !important;
-  }
-
-  /* Single column for everything */
-  .multipleChoiceGrid,
-  .optionsGrid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .cluesList {
-    max-height: 250px;
-  }
-}
-
-/* ============================================
-   LANDSCAPE MODE (Tablets/Phones)
-   ============================================ */
-@media (max-height: 500px) and (orientation: landscape) {
-  .container {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 24px !important;
-  }
-
-  .conversationLog,
-  .cluesList {
-    max-height: 200px !important;
-  }
-
-  .gameContent,
-  .playingContainer {
-    gap: 10px !important;
-  }
-
-  button {
-    padding: 8px 12px !important;
-    font-size: 12px !important;
-  }
-}
-
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: more) {
-  .border-glow {
-    border-color: var(--text-primary) !important;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 }
 
 /* ============================================
    UTILITY CLASSES
    ============================================ */
-.hide-mobile {
-  display: none !important;
+
+.text-center {
+  text-align: center;
 }
 
-@media (min-width: 768px) {
-  .hide-desktop {
-    display: none !important;
-  }
+.text-gold {
+  color: var(--accent-gold);
 }
 
-/* Safe area support for notched devices */
-@supports (padding: max(0px)) {
-  body {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-    padding-top: max(12px, env(safe-area-inset-top));
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-  }
+.text-teal {
+  color: var(--accent-teal);
 }
 
-/* Dynamic viewport height for mobile */
-@media (max-width: 767px) {
-  body, html, #root, .app {
-    height: 100vh;
-    height: 100dvh;
-  }
+.text-emerald {
+  color: var(--accent-emerald);
 }
+
+.text-blue {
+  color: var(--accent-blue);
+}
+
+.bg-gold {
+  background: rgba(184, 154, 90, 0.1);
+}
+
+.bg-teal {
+  background: rgba(22, 124, 128, 0.1);
+}
+
+.bg-emerald {
+  background: rgba(47, 125, 91, 0.1);
+}
+
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 12px; }
+.gap-3 { gap: 16px; }
+.gap-4 { gap: 20px; }
+
+.p-1 { padding: 8px; }
+.p-2 { padding: 12px; }
+.p-3 { padding: 16px; }
+.p-4 { padding: 20px; }
+
+.m-1 { margin: 8px; }
+.m-2 { margin: 12px; }
+.m-3 { margin: 16px; }
+.m-4 { margin: 20px; }
+
+.rounded-sm { border-radius: 4px; }
+.rounded-md { border-radius: 8px; }
+.rounded-lg { border-radius: 12px; }
+.rounded-full { border-radius: 9999px; }

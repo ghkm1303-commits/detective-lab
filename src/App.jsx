@@ -13,13 +13,16 @@ import PracticeMode from './components/PracticeMode';
 import DrugDirectory from './components/DrugDirectory';
 import DrugManagement from './components/DrugManagement';
 import ResultScreen from './components/ResultScreen';
+import ThemeToggle from './components/ThemeToggle';
 import drugsData from './data/drugs.json';
 import './App.css';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState('en');
+  const [theme, setTheme] = useState('dark');
   const [screen, setScreen] = useState('subjectSelector');
   const [drugs, setDrugs] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
@@ -27,9 +30,28 @@ export default function App() {
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState('pharmacology');
 
+  // Load theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('detective-lab-theme') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  // Update theme in DOM and localStorage
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('detective-lab-theme', newTheme);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+        // Get username from displayName or extract from email
+        const name = currentUser.displayName || currentUser.email.split('@')[0];
+        setUserName(name);
+      }
       setLoading(false);
     });
 
@@ -73,8 +95,11 @@ export default function App() {
     return (
       <Dashboard
         user={user}
+        userName={userName}
         onLogout={() => setUser(null)}
         onContinue={() => setScreen('subjectSelector')}
+        theme={theme}
+        onThemeChange={handleThemeChange}
       />
     );
   }
@@ -93,7 +118,10 @@ export default function App() {
         onBack={() => setScreen('dashboard')}
         currentLang={currentLang}
         onLanguageChange={setCurrentLang}
-        userEmail={user.email}
+        userName={userName}
+        onStats={() => setScreen('stats')}
+        theme={theme}
+        onThemeChange={handleThemeChange}
       />
     );
   }
@@ -102,8 +130,11 @@ export default function App() {
     return (
       <StatsPanel
         user={user}
+        userName={userName}
         onBack={() => setScreen('modeSelector')}
         onLogout={() => setUser(null)}
+        theme={theme}
+        onThemeChange={handleThemeChange}
       />
     );
   }
@@ -152,16 +183,16 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* No global header - each component manages its own */}
-
       {screen === 'modeSelector' && (
         <ModeSelector 
           onSelectMode={handleModeSelect} 
           onBack={() => setScreen('subjectSelector')}
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'gameTypeSelector' && (
@@ -170,8 +201,10 @@ export default function App() {
           onBack={handleBackToMode} 
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'classSelector' && (
@@ -180,8 +213,10 @@ export default function App() {
           onBack={handleBackToGame} 
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'mainGame' && (
@@ -192,6 +227,7 @@ export default function App() {
           onGameEnd={handleGameEnd} 
           onBack={handleBackToMode} 
           currentLang={currentLang} 
+          theme={theme}
         />
       )}
       {screen === 'practiceMode' && (
@@ -199,8 +235,10 @@ export default function App() {
           onBack={handleBackToMode} 
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'drugDirectory' && (
@@ -209,8 +247,10 @@ export default function App() {
           onBack={handleBackToMode} 
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'drugManagement' && (
@@ -220,8 +260,10 @@ export default function App() {
           onBack={handleBackToMode} 
           currentLang={currentLang} 
           onLanguageChange={setCurrentLang}
-          userEmail={user.email}
+          userName={userName}
           onStats={() => setScreen('stats')}
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
       {screen === 'result' && (
@@ -231,13 +273,17 @@ export default function App() {
           onPlayAgain={handleBackToGame} 
           onBackToMode={handleBackToMode} 
           currentLang={currentLang} 
+          theme={theme}
         />
       )}
       {screen === 'stats' && (
         <StatsPanel 
           user={user} 
+          userName={userName}
           onBack={() => setScreen('modeSelector')} 
           onLogout={() => setUser(null)} 
+          theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
     </div>

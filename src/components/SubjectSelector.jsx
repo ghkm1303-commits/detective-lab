@@ -1,109 +1,94 @@
 import React from 'react';
+import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 
-const SubjectSelector = ({ onSelectSubject, onLogout, currentLang, onLanguageChange, onBack }) => {
+const SubjectSelector = ({ onSelectSubject, onLogout, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const subjects = [
     {
       id: 'pharmacology',
       icon: '💊',
-      enName: 'Pharmacology',
-      frName: 'Pharmacologie',
-      enDesc: 'Study drugs and medications',
-      frDesc: 'Étudier les médicaments',
-      available: true
+      enTitle: 'Pharmacology',
+      frTitle: 'Pharmacologie',
+      available: true,
+      enDesc: 'Drug classification and mechanisms',
+      frDesc: 'Classification et mécanismes des médicaments'
     },
     {
       id: 'pharmacognosy',
       icon: '🌿',
-      enName: 'Pharmacognosy',
-      frName: 'Pharmacognosie',
-      enDesc: 'Explore medicinal plants',
-      frDesc: 'Explorez les plantes médicinales',
-      available: false
+      enTitle: 'Pharmacognosy',
+      frTitle: 'Pharmacognosie',
+      available: false,
+      enDesc: 'Natural compounds and plants',
+      frDesc: 'Composés naturels et plantes'
     },
     {
       id: 'parasitology',
       icon: '🦠',
-      enName: 'Parasitology',
-      frName: 'Parasitologie',
-      enDesc: 'Learn about parasites and diseases',
-      frDesc: 'Apprenez les parasites et maladies',
-      available: false
+      enTitle: 'Parasitology',
+      frTitle: 'Parasitologie',
+      available: false,
+      enDesc: 'Parasitic infections',
+      frDesc: 'Infections parasitaires'
     },
     {
       id: 'biochemistry',
       icon: '⚗️',
-      enName: 'Biochemistry',
-      frName: 'Biochimie',
-      enDesc: 'Understand metabolic processes',
-      frDesc: 'Comprenez les processus métaboliques',
-      available: false
-    },
-    {
-      id: 'immunology',
-      icon: '🛡️',
-      enName: 'Immunology',
-      frName: 'Immunologie',
-      enDesc: 'Study immune system',
-      frDesc: 'Étudier le système immunitaire',
-      available: false
-    },
-    {
-      id: 'physiopathology',
-      icon: '🔬',
-      enName: 'Physiopathology',
-      frName: 'Physiopathologie',
-      enDesc: 'Learn disease mechanisms',
-      frDesc: 'Apprenez les mécanismes de maladie',
-      available: false
+      enTitle: 'Biochemistry',
+      frTitle: 'Biochimie',
+      available: false,
+      enDesc: 'Metabolic pathways',
+      frDesc: 'Voies métaboliques'
     }
   ];
 
   return (
     <div style={styles.container}>
-      <div style={styles.content}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>🔬 Detective Lab</h1>
-          <h2 style={styles.subtitle}>
-            {currentLang === 'en' ? 'Select Your Subject' : 'Sélectionnez Votre Matière'}
-          </h2>
-          <p style={styles.description}>
-            {currentLang === 'en' ? 'Choose your pharmacy specialty' : 'Choisissez votre spécialité pharmaceutique'}
-          </p>
+      {/* HEADER WITH BACK, LANGUAGE, THEME, USERNAME */}
+      <div style={styles.header}>
+        <button style={styles.backButton} onClick={onBack}>
+          ← {currentLang === 'en' ? 'Back' : 'Retour'}
+        </button>
+        <div style={styles.rightGroup}>
+          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+          <button onClick={onStats} className="user-button">
+            👤 {userName}
+          </button>
         </div>
+      </div>
+
+      <div style={styles.content}>
+        <h1 style={styles.title}>🔬 Detective Lab</h1>
+        <h2 style={styles.subtitle}>
+          {currentLang === 'en' ? 'Select Subject' : 'Sélectionnez le Sujet'}
+        </h2>
 
         <div style={styles.subjectsGrid}>
           {subjects.map(subject => (
-            <div
+            <button
               key={subject.id}
               style={{
                 ...styles.subjectCard,
-                opacity: subject.available ? 1 : 0.6,
-                cursor: subject.available ? 'pointer' : 'not-allowed'
+                opacity: !subject.available ? 0.5 : 1,
+                cursor: !subject.available ? 'not-allowed' : 'pointer'
               }}
-              onClick={() => {
-                if (subject.available) {
-                  onSelectSubject(subject.id);
-                }
-              }}
+              onClick={() => subject.available && onSelectSubject(subject.id)}
+              disabled={!subject.available}
             >
               <div style={styles.subjectIcon}>{subject.icon}</div>
               <h3 style={styles.subjectName}>
-                {currentLang === 'en' ? subject.enName : subject.frName}
+                {currentLang === 'en' ? subject.enTitle : subject.frTitle}
               </h3>
+              {!subject.available && (
+                <div style={styles.comingSoon}>
+                  {currentLang === 'en' ? 'Coming Soon' : 'Bientôt Disponible'}
+                </div>
+              )}
               <p style={styles.subjectDesc}>
                 {currentLang === 'en' ? subject.enDesc : subject.frDesc}
               </p>
-              
-              {!subject.available && (
-                <div style={styles.comingSoonBadge}>
-                  {currentLang === 'en' ? '🚀 Coming Soon' : '🚀 Bientôt'}
-                </div>
-              )}
-              
-              {subject.available && (
-                <div style={styles.subjectArrow}>→</div>
-              )}
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -118,46 +103,63 @@ const styles = {
     position: 'relative',
     zIndex: 10
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '30px',
+    paddingBottom: '15px',
+    borderBottom: '1px solid var(--border-teal)'
+  },
+  backButton: {
+    padding: '8px 16px',
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '2px solid var(--accent-gold)',
+    color: 'var(--text-primary)',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: '600'
+  },
+  rightGroup: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center'
+  },
   content: {
     maxWidth: '1000px',
-    margin: '0 auto'
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '50px'
+    margin: '0 auto',
+    textAlign: 'center'
   },
   title: {
     fontFamily: "'Playfair Display', serif",
     fontSize: '48px',
     fontWeight: '700',
     color: 'var(--accent-gold)',
-    margin: '0 0 15px 0'
+    margin: '0 0 10px 0'
   },
   subtitle: {
     fontFamily: "'Playfair Display', serif",
     fontSize: '28px',
     fontWeight: '600',
     color: 'var(--text-primary)',
-    margin: '0 0 10px 0'
-  },
-  description: {
-    fontSize: '14px',
-    color: 'var(--text-secondary)',
-    margin: '0'
+    margin: '0 0 40px 0'
   },
   subjectsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '20px'
   },
   subjectCard: {
-    padding: '25px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+    padding: '30px 20px',
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid var(--accent-gold)',
     borderRadius: '10px',
-    textAlign: 'center',
-    transition: 'all 0.3s ease',
+    cursor: 'pointer',
     fontFamily: 'inherit',
+    transition: 'all 0.3s ease',
+    textAlign: 'center',
     position: 'relative'
   },
   subjectIcon: {
@@ -171,30 +173,21 @@ const styles = {
     color: 'var(--accent-gold)',
     margin: '0 0 10px 0'
   },
+  comingSoon: {
+    display: 'inline-block',
+    background: 'var(--accent-teal)',
+    color: 'white',
+    padding: '4px 12px',
+    borderRadius: '20px',
+    fontSize: '10px',
+    fontWeight: '700',
+    marginBottom: '10px'
+  },
   subjectDesc: {
     fontSize: '12px',
     color: 'var(--text-secondary)',
     lineHeight: '1.4',
     margin: '0'
-  },
-  subjectArrow: {
-    position: 'absolute',
-    top: '15px',
-    right: '15px',
-    fontSize: '20px',
-    color: 'var(--accent-gold)'
-  },
-  comingSoonBadge: {
-    position: 'absolute',
-    top: '15px',
-    right: '15px',
-    fontSize: '11px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    background: 'rgba(212, 175, 55, 0.2)',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    whiteSpace: 'nowrap'
   }
 };
 

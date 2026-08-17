@@ -1,209 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 
-const DrugDirectory = ({ drugs, onBack, subject, currentLang, onLanguageChange }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDrug, setSelectedDrug] = useState(null);
-  const [expandedDetails, setExpandedDetails] = useState(false);
+const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showMore, setShowMore] = useState({});
 
   const categories = [
-    { id: 'cardiovascular', name: currentLang === 'en' ? 'Cardiovascular' : 'Cardiaque' },
-    { id: 'nervous', name: currentLang === 'en' ? 'Nervous System' : 'Système Nerveux' },
-    { id: 'endocrine', name: currentLang === 'en' ? 'Endocrine' : 'Endocrinien' },
-    { id: 'respiratory', name: currentLang === 'en' ? 'Respiratory' : 'Respiratoire' },
-    { id: 'digestive', name: currentLang === 'en' ? 'Digestive' : 'Digestif' },
-    { id: 'immune', name: currentLang === 'en' ? 'Immune System' : 'Système Immunitaire' }
+    { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire' },
+    { id: 'nervous', enName: 'Nervous System', frName: 'Système Nerveux' },
+    { id: 'endocrine', enName: 'Endocrine', frName: 'Endocrinien' },
+    { id: 'respiratory', enName: 'Respiratory', frName: 'Respiratoire' },
+    { id: 'digestive', enName: 'Digestive', frName: 'Digestif' },
+    { id: 'immune', enName: 'Immune', frName: 'Immunitaire' },
+    { id: 'musculoskeletal', enName: 'Musculoskeletal', frName: 'Musculo-Squelettique' },
+    { id: 'renal', enName: 'Renal', frName: 'Rénal' }
   ];
 
-  const filteredDrugs = drugs.filter(d => {
-    const matchesSearch = d.names.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         d.names.fr.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || d.class === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  if (selectedDrug) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <button style={styles.backButton} onClick={() => {
-            setSelectedDrug(null);
-            setExpandedDetails(false);
-          }}>← {currentLang === 'en' ? 'Back' : 'Retour'}</button>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
-        </div>
-
-        <div style={styles.detailBox}>
-          <h1 style={styles.drugName}>{selectedDrug.names.en}</h1>
-          <p style={styles.drugNameFr}>{selectedDrug.names.fr}</p>
-
-          <div style={styles.basicInfoGrid}>
-            <div style={styles.infoItem}>
-              <span style={styles.label}>{currentLang === 'en' ? 'CLASS:' : 'CLASSE:'}</span>
-              <span style={styles.value}>{selectedDrug.class}</span>
-            </div>
-            <div style={styles.infoItem}>
-              <span style={styles.label}>{currentLang === 'en' ? 'THERAPEUTIC:' : 'THÉRAPEUTIQUE:'}</span>
-              <span style={styles.value}>{selectedDrug.therapeuticClass}</span>
-            </div>
-            <div style={styles.infoItem}>
-              <span style={styles.label}>{currentLang === 'en' ? 'ROUTE:' : 'VOIE:'}</span>
-              <span style={styles.value}>{selectedDrug.route}</span>
-            </div>
-            <div style={styles.infoItem}>
-              <span style={styles.label}>{currentLang === 'en' ? 'MECHANISM:' : 'MÉCANISME:'}</span>
-              <span style={styles.value}>{selectedDrug.mechanism}</span>
-            </div>
-          </div>
-
-          {expandedDetails && (
-            <>
-              {selectedDrug.indications && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>📋 {currentLang === 'en' ? 'INDICATIONS' : 'INDICATIONS'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.indications}</p>
-                </div>
-              )}
-
-              {selectedDrug.effects && selectedDrug.effects.length > 0 && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>✅ {currentLang === 'en' ? 'EFFECTS' : 'EFFETS'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.effects.join(', ')}</p>
-                </div>
-              )}
-
-              {selectedDrug.sideEffects && selectedDrug.sideEffects.length > 0 && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>⚠️ {currentLang === 'en' ? 'SIDE EFFECTS' : 'EFFETS SECONDAIRES'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.sideEffects.join(', ')}</p>
-                </div>
-              )}
-
-              {selectedDrug.contraindications && selectedDrug.contraindications.length > 0 && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>🚫 {currentLang === 'en' ? 'CONTRAINDICATIONS' : 'CONTRE-INDICATIONS'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.contraindications.join(', ')}</p>
-                </div>
-              )}
-
-              {selectedDrug.dosing && selectedDrug.dosing.standard && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>💊 {currentLang === 'en' ? 'DOSING' : 'POSOLOGIE'}</h3>
-                  <p style={styles.sectionContent}>
-                    <strong>{currentLang === 'en' ? 'Standard:' : 'Standard:'}</strong> {selectedDrug.dosing.standard}<br/>
-                    <strong>{currentLang === 'en' ? 'Max:' : 'Max:'}</strong> {selectedDrug.dosing.maxDose}<br/>
-                    <strong>{currentLang === 'en' ? 'Frequency:' : 'Fréquence:'}</strong> {selectedDrug.dosing.frequency}
-                  </p>
-                </div>
-              )}
-
-              {selectedDrug.metabolism && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>🧬 {currentLang === 'en' ? 'METABOLISM' : 'MÉTABOLISME'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.metabolism}</p>
-                </div>
-              )}
-
-              {selectedDrug.elimination && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>🚽 {currentLang === 'en' ? 'ELIMINATION' : 'ÉLIMINATION'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.elimination}</p>
-                </div>
-              )}
-
-              {selectedDrug.halfLife && (
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>⏱️ {currentLang === 'en' ? 'HALF-LIFE' : 'DEMI-VIE'}</h3>
-                  <p style={styles.sectionContent}>{selectedDrug.halfLife}</p>
-                </div>
-              )}
-            </>
-          )}
-
-          <div style={styles.buttonGroup}>
-            <button 
-              style={styles.seeMoreButton}
-              onClick={() => setExpandedDetails(!expandedDetails)}
-            >
-              {expandedDetails ? '▲ ' + (currentLang === 'en' ? 'See Less' : 'Voir Moins') : '▼ ' + (currentLang === 'en' ? 'See More' : 'Voir Plus')}
-            </button>
-            <button 
-              style={styles.closeButton}
-              onClick={() => {
-                setSelectedDrug(null);
-                setExpandedDetails(false);
-              }}
-            >
-              {currentLang === 'en' ? 'Close' : 'Fermer'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredDrugs = selectedCategory
+    ? drugs.filter(drug => drug.class === selectedCategory)
+    : drugs;
 
   return (
     <div style={styles.container}>
+      {/* HEADER */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>← {currentLang === 'en' ? 'Back' : 'Retour'}</button>
-        <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
-      </div>
-
-      <h1 style={styles.pageTitle}>📖 {currentLang === 'en' ? 'Drug Dictionary' : 'Dictionnaire des Médicaments'}</h1>
-
-      <div style={styles.filterSection}>
-        <input
-          type="text"
-          placeholder={currentLang === 'en' ? 'Search drugs...' : 'Rechercher des médicaments...'}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={styles.searchInput}
-        />
-        
-        <div style={styles.categoryFilter}>
-          <button
-            onClick={() => setSelectedCategory(null)}
-            style={{
-              ...styles.filterBtn,
-              background: !selectedCategory ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 217, 255, 0.05)'
-            }}
-          >
-            {currentLang === 'en' ? 'All' : 'Tous'}
+        <button style={styles.backButton} onClick={onBack}>
+          ← {currentLang === 'en' ? 'Back' : 'Retour'}
+        </button>
+        <div style={styles.rightGroup}>
+          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+          <button onClick={onStats} className="user-button">
+            👤 {userName}
           </button>
-          {categories.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              style={{
-                ...styles.filterBtn,
-                background: selectedCategory === cat.id ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 217, 255, 0.05)'
-              }}
-            >
-              {cat.name}
-            </button>
-          ))}
         </div>
       </div>
 
-      <div style={styles.drugsList}>
-        {filteredDrugs.length > 0 ? (
-          filteredDrugs.map(drug => (
-            <button
-              key={drug.id}
-              style={styles.drugCard}
-              onClick={() => {
-                setSelectedDrug(drug);
-                setExpandedDetails(false);
-              }}
-            >
-              <div style={styles.cardName}>{drug.names.en}</div>
-              <div style={styles.cardClass}>{drug.class}</div>
-            </button>
-          ))
-        ) : (
-          <div style={styles.noResults}>{currentLang === 'en' ? 'No drugs found' : 'Aucun médicament trouvé'}</div>
-        )}
+      <div style={styles.content}>
+        <h1 style={styles.title}>
+          {currentLang === 'en' ? '📖 Drug Dictionary' : '📖 Dictionnaire des Médicaments'}
+        </h1>
+
+        {/* Category Filter */}
+        <div style={styles.categoryFilter}>
+          <button
+            style={{
+              ...styles.filterButton,
+              background: !selectedCategory ? 'var(--accent-gold)' : 'transparent',
+              color: !selectedCategory ? 'var(--bg-obsidian)' : 'var(--accent-gold)'
+            }}
+            onClick={() => setSelectedCategory(null)}
+          >
+            {currentLang === 'en' ? 'All Drugs' : 'Tous les Médicaments'} ({drugs.length})
+          </button>
+          {categories.map(cat => {
+            const count = drugs.filter(d => d.class === cat.id).length;
+            return (
+              <button
+                key={cat.id}
+                style={{
+                  ...styles.filterButton,
+                  background: selectedCategory === cat.id ? 'var(--accent-teal)' : 'transparent',
+                  color: selectedCategory === cat.id ? 'white' : 'var(--accent-teal)'
+                }}
+                onClick={() => setSelectedCategory(cat.id)}
+              >
+                {currentLang === 'en' ? cat.enName : cat.frName} ({count})
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Drugs List */}
+        <div style={styles.drugsList}>
+          {filteredDrugs.map(drug => (
+            <div key={drug.id} style={styles.drugCard}>
+              <div style={styles.drugHeader}>
+                <h3 style={styles.drugName}>{drug.names.en}</h3>
+                <span style={styles.drugId}>ID: {drug.id}</span>
+              </div>
+              <p style={styles.drugClass}>{drug.therapeuticClass}</p>
+              <p style={styles.drugIndication}>
+                <strong>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</strong> {drug.indications}
+              </p>
+
+              {showMore[drug.id] && (
+                <>
+                  <p><strong>{currentLang === 'en' ? 'Mechanism:' : 'Mécanisme:'}</strong> {drug.mechanism}</p>
+                  <p><strong>{currentLang === 'en' ? 'Side Effects:' : 'Effets Secondaires:'}</strong> {drug.sideEffects.join(', ')}</p>
+                  <p><strong>{currentLang === 'en' ? 'Dosing:' : 'Posologie:'}</strong> {drug.dosing.standard}</p>
+                </>
+              )}
+
+              <button
+                style={styles.moreButton}
+                onClick={() => setShowMore({ ...showMore, [drug.id]: !showMore[drug.id] })}
+              >
+                {showMore[drug.id] ? (currentLang === 'en' ? 'Show Less' : 'Voir Moins') : (currentLang === 'en' ? 'See More' : 'Voir Plus')}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -220,188 +118,102 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(0, 217, 255, 0.1)'
+    borderBottom: '1px solid var(--border-teal)'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(0, 217, 255, 0.1)',
-    border: '1px solid var(--border-glow)',
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '2px solid var(--accent-gold)',
     color: 'var(--text-primary)',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px'
-  },
-  pageTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '28px',
-    color: 'var(--accent-gold)',
-    textAlign: 'center',
-    margin: '0 0 15px 0'
-  },
-  filterSection: {
-    maxWidth: '900px',
-    margin: '0 auto 20px'
-  },
-  searchInput: {
-    width: '100%',
-    maxWidth: '600px',
-    display: 'block',
-    margin: '0 auto 15px',
-    padding: '10px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.3)',
     borderRadius: '6px',
-    color: 'var(--text-primary)',
-    fontSize: '13px',
-    fontFamily: 'inherit',
-    boxSizing: 'border-box'
-  },
-  categoryFilter: {
-    display: 'flex',
-    gap: '8px',
-    flexWrap: 'wrap',
-    justifyContent: 'center'
-  },
-  filterBtn: {
-    padding: '6px 12px',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
-    borderRadius: '20px',
     cursor: 'pointer',
-    fontSize: '11px',
     fontFamily: 'inherit',
-    fontWeight: '600',
-    color: 'var(--text-primary)',
-    transition: 'all 0.2s ease'
+    fontSize: '12px',
+    fontWeight: '600'
   },
-  drugsList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+  rightGroup: {
+    display: 'flex',
     gap: '10px',
+    alignItems: 'center'
+  },
+  content: {
     maxWidth: '1000px',
     margin: '0 auto'
   },
-  drugCard: {
-    padding: '12px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+  title: {
+    textAlign: 'center',
+    marginBottom: '30px'
+  },
+  categoryFilter: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginBottom: '30px',
+    justifyContent: 'center'
+  },
+  filterButton: {
+    padding: '8px 16px',
     border: '2px solid var(--accent-gold)',
-    borderRadius: '8px',
+    borderRadius: '20px',
     cursor: 'pointer',
-    textAlign: 'center',
     fontFamily: 'inherit',
-    transition: 'all 0.2s ease'
+    fontSize: '12px',
+    fontWeight: '600',
+    transition: 'all 0.3s ease'
   },
-  cardName: {
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    fontSize: '13px',
-    marginBottom: '4px'
+  drugsList: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '20px'
   },
-  cardClass: {
-    fontSize: '10px',
-    color: 'var(--text-secondary)'
-  },
-  noResults: {
-    gridColumn: '1 / -1',
-    textAlign: 'center',
-    color: 'var(--text-secondary)',
-    fontSize: '14px',
-    padding: '40px'
-  },
-  detailBox: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
+  drugCard: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid var(--border-gold)',
     borderRadius: '10px',
-    padding: '15px',
-    maxHeight: '85vh',
-    overflowY: 'auto'
+    padding: '20px',
+    transition: 'all 0.3s ease'
+  },
+  drugHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'start',
+    marginBottom: '10px'
   },
   drugName: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '24px',
     color: 'var(--accent-gold)',
-    margin: '0 0 3px 0'
+    fontSize: '16px',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
   },
-  drugNameFr: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0 0 12px 0'
-  },
-  basicInfoGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '8px',
-    marginBottom: '15px'
-  },
-  infoItem: {
-    padding: '8px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    borderRadius: '6px',
-    fontSize: '10px'
-  },
-  label: {
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
-    display: 'block'
-  },
-  value: {
-    color: 'var(--text-primary)',
-    fontSize: '11px',
-    marginTop: '2px',
-    display: 'block',
-    lineHeight: '1.3'
-  },
-  section: {
-    marginBottom: '12px'
-  },
-  sectionTitle: {
-    fontSize: '11px',
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
-    margin: '0 0 6px 0'
-  },
-  sectionContent: {
+  drugId: {
     fontSize: '10px',
-    color: 'var(--text-secondary)',
-    margin: 0,
-    lineHeight: '1.4',
-    padding: '8px',
-    background: 'rgba(0, 217, 255, 0.03)',
+    color: 'var(--text-muted)',
+    background: 'rgba(22, 124, 128, 0.1)',
+    padding: '2px 8px',
     borderRadius: '4px'
   },
-  buttonGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    marginTop: '15px'
-  },
-  seeMoreButton: {
-    width: '100%',
-    padding: '10px',
-    background: 'rgba(0, 208, 132, 0.15)',
-    border: '2px solid var(--accent-emerald)',
-    color: 'var(--accent-emerald)',
-    borderRadius: '6px',
-    fontWeight: '700',
-    cursor: 'pointer',
+  drugClass: {
+    color: 'var(--accent-teal)',
     fontSize: '12px',
-    fontFamily: 'inherit'
+    margin: '5px 0'
   },
-  closeButton: {
-    width: '100%',
-    padding: '10px',
-    background: 'rgba(212, 175, 55, 0.15)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--accent-gold)',
-    borderRadius: '6px',
-    fontWeight: '700',
-    cursor: 'pointer',
+  drugIndication: {
     fontSize: '12px',
-    fontFamily: 'inherit'
+    color: 'var(--text-secondary)',
+    margin: '10px 0'
+  },
+  moreButton: {
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '1px solid var(--accent-teal)',
+    color: 'var(--accent-teal)',
+    padding: '6px 12px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '11px',
+    fontWeight: '600',
+    marginTop: '10px'
   }
 };
 

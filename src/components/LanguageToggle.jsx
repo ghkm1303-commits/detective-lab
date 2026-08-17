@@ -4,22 +4,24 @@ const LanguageToggle = ({ currentLang, onLanguageChange }) => {
   return (
     <div style={styles.container}>
       <button
-        onClick={() => onLanguageChange('en')}
         style={{
           ...styles.button,
-          background: currentLang === 'en' ? 'rgba(0, 217, 255, 0.2)' : 'rgba(0, 217, 255, 0.05)',
-          borderColor: currentLang === 'en' ? 'var(--accent-gold)' : 'rgba(0, 217, 255, 0.2)'
+          background: currentLang === 'en' ? 'var(--accent-gold)' : 'transparent',
+          color: currentLang === 'en' ? 'var(--bg-obsidian)' : 'var(--accent-gold)',
+          border: currentLang === 'en' ? 'none' : '2px solid var(--accent-gold)'
         }}
+        onClick={() => onLanguageChange('en')}
       >
         🇬🇧 EN
       </button>
       <button
-        onClick={() => onLanguageChange('fr')}
         style={{
           ...styles.button,
-          background: currentLang === 'fr' ? 'rgba(0, 217, 255, 0.2)' : 'rgba(0, 217, 255, 0.05)',
-          borderColor: currentLang === 'fr' ? 'var(--accent-gold)' : 'rgba(0, 217, 255, 0.2)'
+          background: currentLang === 'fr' ? 'var(--accent-teal)' : 'transparent',
+          color: currentLang === 'fr' ? 'var(--bg-obsidian)' : 'var(--accent-teal)',
+          border: currentLang === 'fr' ? 'none' : '2px solid var(--accent-teal)'
         }}
+        onClick={() => onLanguageChange('fr')}
       >
         🇫🇷 FR
       </button>
@@ -30,18 +32,17 @@ const LanguageToggle = ({ currentLang, onLanguageChange }) => {
 const styles = {
   container: {
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
+    alignItems: 'center'
   },
   button: {
-    padding: '6px 12px',
-    border: '1px solid',
-    borderRadius: '4px',
+    padding: '8px 14px',
+    borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '11px',
     fontFamily: 'inherit',
-    fontWeight: '600',
-    color: 'var(--text-primary)',
-    transition: 'all 0.2s ease'
+    fontSize: '12px',
+    fontWeight: '700',
+    transition: 'all 0.3s ease'
   }
 };
 

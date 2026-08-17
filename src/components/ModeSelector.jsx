@@ -1,7 +1,8 @@
 import React from 'react';
 import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 
-const ModeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userEmail, onStats }) => {
+const ModeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const modes = [
     {
       id: 'mainGame',
@@ -39,28 +40,19 @@ const ModeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, use
 
   return (
     <div style={styles.container}>
-      {/* HEADER WITH BACK, LANGUAGE TOGGLE, STATS, EMAIL */}
+      {/* HEADER WITH BACK, LANGUAGE TOGGLE, THEME TOGGLE, USERNAME */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
           <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button
             onClick={onStats}
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(0, 217, 255, 0.1)',
-              border: '1px solid rgba(0, 217, 255, 0.3)',
-              color: 'var(--text-primary)',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontFamily: 'inherit',
-              fontWeight: '600'
-            }}
+            className="user-button"
           >
-            👤 {userEmail}
+            👤 {userName}
           </button>
         </div>
       </div>
@@ -115,11 +107,11 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(0, 217, 255, 0.1)'
+    borderBottom: '1px solid var(--border-teal)'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(0, 217, 255, 0.1)',
+    background: 'rgba(22, 124, 128, 0.1)',
     border: '2px solid var(--accent-gold)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
@@ -159,7 +151,7 @@ const styles = {
   },
   modeCard: {
     padding: '30px 20px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid var(--accent-gold)',
     borderRadius: '10px',
     cursor: 'pointer',

@@ -1,7 +1,8 @@
 import React from 'react';
 import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 
-const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userEmail, onStats }) => {
+const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const modes = [
     {
       id: 'blind',
@@ -34,21 +35,9 @@ const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange,
         </button>
         <div style={styles.rightGroup}>
           <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
-          <button
-            onClick={onStats}
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(0, 217, 255, 0.1)',
-              border: '1px solid rgba(0, 217, 255, 0.3)',
-              color: 'var(--text-primary)',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontFamily: 'inherit',
-              fontWeight: '600'
-            }}
-          >
-            👤 {userEmail}
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+          <button onClick={onStats} className="user-button">
+            👤 {userName}
           </button>
         </div>
       </div>
@@ -82,17 +71,6 @@ const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange,
             </button>
           ))}
         </div>
-
-        <div style={styles.tips}>
-          <h3 style={styles.tipsTitle}>
-            {currentLang === 'en' ? '💡 Pro Tips' : '💡 Conseils Pro'}
-          </h3>
-          <ul style={styles.tipsList}>
-            <li>{currentLang === 'en' ? 'Ask for clues to narrow down possibilities' : 'Demandez des indices pour réduire les possibilités'}</li>
-            <li>{currentLang === 'en' ? 'Pay attention to drug mechanisms and effects' : 'Faites attention aux mécanismes et effets des médicaments'}</li>
-            <li>{currentLang === 'en' ? 'Use the Drug Dictionary to study between games' : 'Utilisez le Dictionnaire des Médicaments pour étudier'}</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
@@ -111,11 +89,11 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(0, 217, 255, 0.1)'
+    borderBottom: '1px solid var(--border-teal)'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(0, 217, 255, 0.1)',
+    background: 'rgba(22, 124, 128, 0.1)',
     border: '2px solid var(--accent-gold)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
@@ -155,7 +133,7 @@ const styles = {
   },
   modeCard: {
     padding: '25px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid var(--accent-gold)',
     borderRadius: '10px',
     cursor: 'pointer',
@@ -179,7 +157,7 @@ const styles = {
     display: 'inline-block',
     fontSize: '11px',
     fontWeight: '700',
-    color: 'var(--bg-primary)',
+    color: 'var(--bg-obsidian)',
     background: 'var(--accent-gold)',
     padding: '4px 12px',
     borderRadius: '20px',
@@ -197,26 +175,6 @@ const styles = {
     right: '15px',
     fontSize: '24px',
     color: 'var(--accent-gold)'
-  },
-  tips: {
-    background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.1) 0%, rgba(0, 217, 255, 0.1) 100%)',
-    border: '2px solid var(--accent-emerald)',
-    borderRadius: '10px',
-    padding: '20px',
-    maxWidth: '600px',
-    margin: '0 auto'
-  },
-  tipsTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '16px',
-    color: 'var(--accent-emerald)',
-    margin: '0 0 12px 0'
-  },
-  tipsList: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0',
-    paddingLeft: '20px'
   }
 };
 
