@@ -23,7 +23,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
 
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
@@ -42,7 +41,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
           {currentLang === 'en' ? '📖 Drug Dictionary' : '📖 Dictionnaire des Médicaments'}
         </h1>
 
-        {/* Category Filter */}
         <div style={styles.categoryFilter}>
           <button
             style={{
@@ -72,7 +70,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
           })}
         </div>
 
-        {/* Drugs List */}
         <div style={styles.drugsList}>
           {filteredDrugs.map(drug => (
             <div key={drug.id} style={styles.drugCard}>
@@ -96,7 +93,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
         </div>
       </div>
 
-      {/* MODAL - DETAILED DRUG VIEW */}
       {selectedDrug && (
         <div style={styles.modalOverlay} onClick={() => setSelectedDrug(null)}>
           <div style={styles.modal} onClick={e => e.stopPropagation()}>
@@ -115,7 +111,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
 
             <div style={styles.modalDivider}></div>
 
-            {/* TOP SECTION - Basic Info */}
             <div style={styles.modalGrid}>
               <div style={styles.modalSection}>
                 <h4 style={styles.modalLabel}>
@@ -146,7 +141,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </div>
             </div>
 
-            {/* EFFECTS */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
                 ✨ {currentLang === 'en' ? 'EFFECTS:' : 'EFFETS:'}
@@ -158,7 +152,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </p>
             </div>
 
-            {/* INDICATIONS */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#20C997'}}>
                 📋 {currentLang === 'en' ? 'INDICATIONS:' : 'INDICATIONS:'}
@@ -166,7 +159,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               <p style={styles.modalText}>{selectedDrug.indications}</p>
             </div>
 
-            {/* SIDE EFFECTS */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#E63946'}}>
                 ⚠️ {currentLang === 'en' ? 'SIDE EFFECTS:' : 'EFFETS SECONDAIRES:'}
@@ -176,7 +168,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </p>
             </div>
 
-            {/* CONTRAINDICATIONS */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#FF6B7A'}}>
                 🚫 {currentLang === 'en' ? 'CONTRAINDICATIONS:' : 'CONTRE-INDICATIONS:'}
@@ -186,7 +177,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </p>
             </div>
 
-            {/* DOSING */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#E8BA24'}}>
                 💊 {currentLang === 'en' ? 'DOSING:' : 'POSOLOGIE:'}
@@ -198,7 +188,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </p>
             </div>
 
-            {/* METABOLISM */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#667BC6'}}>
                 🧬 {currentLang === 'en' ? 'METABOLISM:' : 'MÉTABOLISME:'}
@@ -206,7 +195,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               <p style={styles.modalText}>{selectedDrug.metabolism}</p>
             </div>
 
-            {/* ELIMINATION */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
                 💧 {currentLang === 'en' ? 'ELIMINATION:' : 'ÉLIMINATION:'}
@@ -214,7 +202,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               <p style={styles.modalText}>{selectedDrug.elimination}</p>
             </div>
 
-            {/* HALF-LIFE */}
             <div style={styles.modalSection}>
               <h4 style={{...styles.modalLabel, color: '#D5622B'}}>
                 ⏱️ {currentLang === 'en' ? 'HALF-LIFE:' : 'DEMI-VIE:'}
@@ -222,7 +209,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               <p style={styles.modalText}>{selectedDrug.halfLife}</p>
             </div>
 
-            {/* BRAND NAMES */}
             {selectedDrug.brandNames && selectedDrug.brandNames.length > 0 && (
               <div style={styles.modalSection}>
                 <h4 style={{...styles.modalLabel, color: 'var(--accent-gold)'}}>
@@ -232,7 +218,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </div>
             )}
 
-            {/* CLINICAL PEARLS */}
             {selectedDrug.clinicalPearls && (
               <div style={styles.modalSection}>
                 <h4 style={{...styles.modalLabel, color: 'var(--accent-teal)'}}>
@@ -268,12 +253,14 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   backButton: {
     padding: '8px 16px',
     background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid var(--accent-gold)',
+    border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -284,7 +271,8 @@ const styles = {
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
     maxWidth: '1000px',
@@ -369,7 +357,6 @@ const styles = {
     width: '100%'
   },
 
-  /* MODAL STYLES */
   modalOverlay: {
     position: 'fixed',
     top: 0,

@@ -5,7 +5,12 @@ import ThemeToggle from './ThemeToggle';
 const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const [formData, setFormData] = useState({
     name: '',
-    category: 'cardiovascular'
+    category: 'cardiovascular',
+    therapeuticClass: '',
+    indications: '',
+    route: 'Oral',
+    sideEffects: '',
+    dosing: ''
   });
 
   const categories = [
@@ -28,25 +33,33 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
       id: Math.max(...drugs.map(d => d.id), 1000) + 1,
       names: { en: formData.name, fr: formData.name },
       class: formData.category,
-      therapeuticClass: formData.name,
-      category: formData.name,
+      therapeuticClass: formData.therapeuticClass || formData.name,
+      category: formData.category,
       effects: [],
-      indications: currentLang === 'en' ? 'Custom drug' : 'Médicament personnalisé',
-      route: 'Oral',
+      indications: formData.indications || (currentLang === 'en' ? 'Custom drug' : 'Médicament personnalisé'),
+      route: formData.route,
       mechanism: currentLang === 'en' ? 'To be filled' : 'À remplir',
-      sideEffects: [],
+      sideEffects: formData.sideEffects ? formData.sideEffects.split(',').map(s => s.trim()) : [],
       contraindications: [],
       metabolism: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
       elimination: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
       halfLife: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
-      dosing: { standard: '', maxDose: '', frequency: '' },
+      dosing: { standard: formData.dosing, maxDose: '', frequency: '' },
       brandNames: [],
       clinicalPearls: ''
     };
 
     const updated = [...drugs, newDrug];
     onDrugsUpdate(updated);
-    setFormData({ name: '', category: 'cardiovascular' });
+    setFormData({
+      name: '',
+      category: 'cardiovascular',
+      therapeuticClass: '',
+      indications: '',
+      route: 'Oral',
+      sideEffects: '',
+      dosing: ''
+    });
   };
 
   const handleDeleteDrug = (id) => {
@@ -56,7 +69,6 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
 
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
@@ -80,7 +92,7 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
 
             <div style={styles.formSection}>
               <label style={styles.label}>
-                {currentLang === 'en' ? 'Drug Name' : 'Nom du Médicament'}
+                {currentLang === 'en' ? 'Drug Name *' : 'Nom du Médicament *'}
               </label>
               <input
                 type="text"
@@ -105,6 +117,60 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
                 ))}
               </select>
 
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Therapeutic Class' : 'Classe Thérapeutique'}
+              </label>
+              <input
+                type="text"
+                value={formData.therapeuticClass}
+                onChange={(e) => setFormData({ ...formData, therapeuticClass: e.target.value })}
+                placeholder={currentLang === 'en' ? 'e.g., Beta Blocker' : 'ex., Bêta-bloquant'}
+                style={styles.input}
+              />
+
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Indications' : 'Indications'}
+              </label>
+              <textarea
+                value={formData.indications}
+                onChange={(e) => setFormData({ ...formData, indications: e.target.value })}
+                placeholder={currentLang === 'en' ? 'Main uses...' : 'Utilisations principales...'}
+                style={{...styles.input, minHeight: '60px'}}
+              />
+
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Route' : 'Voie'}
+              </label>
+              <input
+                type="text"
+                value={formData.route}
+                onChange={(e) => setFormData({ ...formData, route: e.target.value })}
+                placeholder={currentLang === 'en' ? 'e.g., Oral' : 'ex., Orale'}
+                style={styles.input}
+              />
+
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Side Effects (comma-separated)' : 'Effets secondaires (séparés par des virgules)'}
+              </label>
+              <input
+                type="text"
+                value={formData.sideEffects}
+                onChange={(e) => setFormData({ ...formData, sideEffects: e.target.value })}
+                placeholder={currentLang === 'en' ? 'e.g., Nausea, Dizziness' : 'ex., Nausée, Vertiges'}
+                style={styles.input}
+              />
+
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Dosing' : 'Posologie'}
+              </label>
+              <input
+                type="text"
+                value={formData.dosing}
+                onChange={(e) => setFormData({ ...formData, dosing: e.target.value })}
+                placeholder={currentLang === 'en' ? 'e.g., 10mg twice daily' : 'ex., 10mg deux fois par jour'}
+                style={styles.input}
+              />
+
               <button style={styles.addButton} onClick={handleAddDrug}>
                 ✓ {currentLang === 'en' ? 'Add Drug' : 'Ajouter le Médicament'}
               </button>
@@ -125,7 +191,7 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
                   <div key={drug.id} style={styles.drugItem}>
                     <div>
                       <p style={styles.drugItemName}>{drug.names.en}</p>
-                      <p style={styles.drugItemClass}>{drug.class}</p>
+                      <p style={styles.drugItemClass}>{drug.therapeuticClass || drug.class}</p>
                     </div>
                     <button
                       style={styles.deleteButton}
@@ -157,7 +223,9 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(22, 124, 128, 0.2)'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   backButton: {
     padding: '8px 16px',
@@ -173,7 +241,8 @@ const styles = {
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
     maxWidth: '1000px',

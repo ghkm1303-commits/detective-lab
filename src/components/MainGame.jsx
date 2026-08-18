@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { pickRandomDrug, getClues, checkGuess } from '../utils/gameLogic';
+import { pickRandomDrug, checkGuess } from '../utils/gameLogic';
 
 const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLang, theme }) => {
   const [hiddenDrug, setHiddenDrug] = useState(null);
-  const [clues, setClues] = useState([]);
+  const [allClues, setAllClues] = useState([]);
+  const [revealedCluesCount, setRevealedCluesCount] = useState(1);
   const [guess, setGuess] = useState('');
   const [result, setResult] = useState(null);
-  const [cluesUsed, setCluesUsed] = useState(0);
+  const [wrongGuesses, setWrongGuesses] = useState(0);
 
   useEffect(() => {
     const filteredDrugs = selectedClass
@@ -16,7 +17,19 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
     if (filteredDrugs.length > 0) {
       const drug = pickRandomDrug(filteredDrugs);
       setHiddenDrug(drug);
-      setClues(getClues(drug, gameMode));
+      // Create 8 simple clues
+      const clues = [
+        drug.effects && drug.effects[0] ? `Effect: ${drug.effects[0]}` : `Class: ${drug.therapeuticClass}`,
+        `Route: ${drug.route}`,
+        `Indication: ${drug.indications.substring(0, 50)}...`,
+        `Side effect: ${drug.sideEffects[0] || 'None listed'}`,
+        `Metabolism: ${drug.metabolism}`,
+        `Elimination: ${drug.elimination}`,
+        `Half-life: ${drug.halfLife}`,
+        `Contraindication: ${drug.contraindications[0] || 'None listed'}`
+      ];
+      setAllClues(clues);
+      setRevealedCluesCount(1);
     }
   }, [drugs, selectedClass, gameMode]);
 
@@ -26,7 +39,7 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
     const isCorrect = checkGuess(guess, hiddenDrug);
 
     if (isCorrect) {
-      const score = Math.max(100, 1000 - (cluesUsed * 100));
+      const score = Math.max(100, 1000 - (revealedCluesCount * 100));
       const xpEarned = Math.max(score - 300, 0);
       
       setResult({
@@ -34,7 +47,7 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
         drugName: hiddenDrug.names.en,
         score,
         xpEarned,
-        cluesUsed
+        cluesUsed: revealedCluesCount
       });
 
       onGameEnd({
@@ -42,21 +55,75 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
         drugName: hiddenDrug.names.en,
         score,
         xpEarned,
-        cluesUsed
+        cluesUsed: revealedCluesCount
       });
     } else {
-      setResult({ correct: false, message: currentLang === 'en' ? 'Wrong guess! Try again.' : 'Mauvaise réponse! Essayez à nouveau.' });
+      setWrongGuesses(wrongGuesses + 1);
       setGuess('');
     }
+  };
+
+  const handleRevealClue = () => {
+    if (revealedCluesCount < allClues.length) {
+      setRevealedCluesCount(revealedCluesCount + 1);
+    }
+  };
+
+  const handleGiveUp = () => {
+    setResult({
+      correct: false,
+      drugName: hiddenDrug.names.en,
+      message: currentLang === 'en' ? 'You gave up!' : 'Vous avez abandonné!'
+    });
+
+    onGameEnd({
+      correct: false,
+      drugName: hiddenDrug.names.en,
+      score: 0,
+      xpEarned: 0,
+      cluesUsed: revealedCluesCount
+    });
   };
 
   if (!hiddenDrug) {
     return <div style={styles.loading}>{currentLang === 'en' ? 'Loading game...' : 'Chargement du jeu...'}</div>;
   }
 
+  if (result) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <button style={styles.backButton} onClick={onBack}>
+            ← {currentLang === 'en' ? 'Back' : 'Retour'}
+          </button>
+        </div>
+
+        <div style={styles.content}>
+          <div style={styles.resultCard}>
+            <h2 style={styles.resultTitle}>
+              {result.correct ? '🎉 Correct!' : '❌ Game Over'}
+            </h2>
+            <p style={styles.resultDrug}>{result.drugName}</p>
+            {result.correct && (
+              <div style={styles.scoreBreakdown}>
+                <p><strong>{currentLang === 'en' ? 'Score:' : 'Score:'}</strong> {result.score} pts</p>
+                <p><strong>{currentLang === 'en' ? 'XP Earned:' : 'XP Gagné:'}</strong> {result.xpEarned}</p>
+                <p><strong>{currentLang === 'en' ? 'Clues Used:' : 'Indices Utilisés:'}</strong> {result.cluesUsed}/8</p>
+              </div>
+            )}
+            <button style={styles.continueButton} onClick={onBack}>
+              {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const revealedClues = allClues.slice(0, revealedCluesCount);
+
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
@@ -68,59 +135,55 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
       </div>
 
       <div style={styles.content}>
+        {/* GUESS SECTION - TOP */}
+        <div style={styles.guessSection}>
+          <h3 style={styles.guessTitle}>
+            {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
+          </h3>
+          <input
+            type="text"
+            value={guess}
+            onChange={(e) => setGuess(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
+            placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
+            style={styles.guessInput}
+          />
+          <button style={styles.submitButton} onClick={handleGuess}>
+            ✓ {currentLang === 'en' ? 'Submit' : 'Soumettre'}
+          </button>
+
+          {wrongGuesses > 0 && (
+            <p style={styles.errorMessage}>
+              {currentLang === 'en' ? `Wrong! (${wrongGuesses} incorrect)` : `Mauvaise réponse! (${wrongGuesses})`}
+            </p>
+          )}
+        </div>
+
         {/* CLUES SECTION */}
         <div style={styles.cluesSection}>
           <h3 style={styles.cluesTitle}>
-            {currentLang === 'en' ? 'Available Clues' : 'Indices Disponibles'} ({cluesUsed}/8)
+            {currentLang === 'en' ? 'Available Clues' : 'Indices Disponibles'} ({revealedCluesCount}/8)
           </h3>
           <div style={styles.cluesGrid}>
-            {clues.map((clue, idx) => (
+            {revealedClues.map((clue, idx) => (
               <div key={idx} style={styles.clueCard}>
                 <p style={styles.clueNumber}>{idx + 1}</p>
                 <p style={styles.clueText}>{clue}</p>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* GUESS SECTION */}
-        {!result || !result.correct ? (
-          <div style={styles.guessSection}>
-            <h3 style={styles.guessTitle}>
-              {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
-            </h3>
-            <input
-              type="text"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-              placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
-              style={styles.guessInput}
-            />
-            <button style={styles.submitButton} onClick={handleGuess}>
-              ✓ {currentLang === 'en' ? 'Submit' : 'Soumettre'}
-            </button>
-
-            {result && !result.correct && (
-              <p style={styles.errorMessage}>{result.message}</p>
-            )}
-          </div>
-        ) : (
-          <div style={styles.resultSection}>
-            <div style={styles.resultCard}>
-              <h2 style={styles.resultTitle}>🎉 {currentLang === 'en' ? 'Correct!' : 'Correct!'}</h2>
-              <p style={styles.resultDrug}>{result.drugName}</p>
-              <div style={styles.scoreBreakdown}>
-                <p><strong>{currentLang === 'en' ? 'Score:' : 'Score:'}</strong> {result.score} pts</p>
-                <p><strong>{currentLang === 'en' ? 'XP Earned:' : 'XP Gagné:'}</strong> {result.xpEarned}</p>
-                <p><strong>{currentLang === 'en' ? 'Clues Used:' : 'Indices Utilisés:'}</strong> {result.cluesUsed}/8</p>
-              </div>
-              <button style={styles.continueButton} onClick={onBack}>
-                {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
+          <div style={styles.clueButtonsSection}>
+            {revealedCluesCount < allClues.length && (
+              <button style={styles.revealButton} onClick={handleRevealClue}>
+                💡 {currentLang === 'en' ? 'Reveal Next Clue' : 'Révéler le Prochain Indice'}
               </button>
-            </div>
+            )}
+            <button style={styles.giveUpButton} onClick={handleGiveUp}>
+              🚪 {currentLang === 'en' ? 'Give Up' : 'Abandonner'}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -147,7 +210,9 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(22, 124, 128, 0.2)'
+    borderBottom: '1px solid rgba(22, 124, 128, 0.2)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   backButton: {
     padding: '8px 16px',
@@ -179,43 +244,12 @@ const styles = {
     maxWidth: '900px',
     margin: '0 auto'
   },
-  cluesSection: {
-    marginBottom: '30px'
-  },
-  cluesTitle: {
-    color: '#B89A5A',
-    fontSize: '18px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  cluesGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '15px'
-  },
-  clueCard: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(22, 124, 128, 0.2)',
-    borderRadius: '8px',
-    padding: '15px',
-    borderLeft: '3px solid #167C80'
-  },
-  clueNumber: {
-    color: '#B89A5A',
-    fontSize: '14px',
-    fontWeight: '700',
-    margin: '0 0 8px 0'
-  },
-  clueText: {
-    color: 'var(--text-secondary)',
-    fontSize: '13px',
-    margin: '0'
-  },
   guessSection: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid #B89A5A',
     borderRadius: '10px',
-    padding: '25px'
+    padding: '25px',
+    marginBottom: '30px'
   },
   guessTitle: {
     color: '#B89A5A',
@@ -251,11 +285,69 @@ const styles = {
     fontSize: '13px',
     marginTop: '10px'
   },
-  resultSection: {
+  cluesSection: {
+    marginBottom: '30px'
+  },
+  cluesTitle: {
+    color: '#B89A5A',
+    fontSize: '18px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  cluesGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '15px',
+    marginBottom: '20px'
+  },
+  clueCard: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid rgba(22, 124, 128, 0.2)',
+    borderRadius: '8px',
+    padding: '15px',
+    borderLeft: '3px solid #167C80'
+  },
+  clueNumber: {
+    color: '#B89A5A',
+    fontSize: '14px',
+    fontWeight: '700',
+    margin: '0 0 8px 0'
+  },
+  clueText: {
+    color: 'var(--text-secondary)',
+    fontSize: '13px',
+    margin: '0'
+  },
+  clueButtonsSection: {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '300px'
+    gap: '15px',
+    flexWrap: 'wrap'
+  },
+  revealButton: {
+    flex: 1,
+    minWidth: '150px',
+    padding: '12px',
+    background: 'linear-gradient(135deg, #167C80, #2F7D5B)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '13px',
+    fontWeight: '700'
+  },
+  giveUpButton: {
+    flex: 1,
+    minWidth: '150px',
+    padding: '12px',
+    background: 'rgba(230, 57, 70, 0.1)',
+    border: '2px solid #E63946',
+    color: '#FF6B7A',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '13px',
+    fontWeight: '700'
   },
   resultCard: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
@@ -263,7 +355,8 @@ const styles = {
     borderRadius: '10px',
     padding: '30px',
     textAlign: 'center',
-    maxWidth: '500px'
+    maxWidth: '500px',
+    margin: '50px auto'
   },
   resultTitle: {
     color: '#2F7D5B',

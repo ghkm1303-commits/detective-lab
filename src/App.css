@@ -4,10 +4,6 @@
    ============================================ */
 
 :root {
-  /* DARK MODE (Default) */
-  --mode: 'dark';
-  
-  /* Primary Pharmacy Colors - Dark */
   --bg-obsidian: #0B0D0D;
   --bg-dark: #0F1117;
   --bg-card: #1A1F2E;
@@ -18,7 +14,6 @@
   --text-secondary: #C9C4B8;
   --text-muted: #8B8680;
   
-  /* Accent Colors */
   --accent-gold: #B89A5A;
   --accent-gold-light: #D4AE69;
   --accent-gold-dark: #9D8049;
@@ -37,71 +32,52 @@
   
   --ink-blue: #1D2A3A;
   
-  /* Semantic Colors */
   --success: #2F7D5B;
   --warning: #B89A5A;
   --error: #E63946;
   --info: #167C80;
   
-  /* Borders & Dividers */
   --border-gold: rgba(184, 154, 90, 0.2);
   --border-teal: rgba(22, 124, 128, 0.2);
   --border-emerald: rgba(47, 125, 91, 0.2);
 }
 
-/* LIGHT MODE */
 html[data-theme="light"] {
-  /* Light Mode Background */
   --bg-obsidian: #FFFFFF;
   --bg-dark: #F8F7F4;
   --bg-card: #F2EFE6;
   --bg-hover: #E8E5DC;
   
-  /* Light Mode Text */
-  --text-paper: #1D2A3A;
-  --text-primary: #1D2A3A;
-  --text-secondary: #3F4A56;
-  --text-muted: #8B8680;
+  --text-paper: #0D0D0D;
+  --text-primary: #0D0D0D;
+  --text-secondary: #2F2F2F;
+  --text-muted: #5A5A5A;
   
-  /* Accent Colors Stay Same */
-  --accent-gold: #9D8049;
-  --accent-gold-light: #B89A5A;
-  --accent-gold-dark: #7A6337;
+  --accent-gold: #7A6337;
+  --accent-gold-light: #9D8049;
+  --accent-gold-dark: #5A4A28;
   
-  --accent-teal: #0F5A5E;
-  --accent-teal-light: #167C80;
-  --accent-teal-dark: #084A4D;
+  --accent-teal: #0A3E42;
+  --accent-teal-light: #0F5A5E;
+  --accent-teal-dark: #062C30;
   
-  --accent-emerald: #1F4A38;
+  --accent-emerald: #1A3A2E;
   --accent-emerald-light: #2F7D5B;
   --accent-emerald-dark: #0F2A1F;
   
-  --accent-blue: #2A4460;
-  --accent-blue-light: #3F628C;
-  --accent-blue-dark: #1A3040;
+  --accent-blue: #1A2A40;
+  --accent-blue-light: #2A4460;
+  --accent-blue-dark: #0F1820;
   
-  --ink-blue: #1D2A3A;
+  --ink-blue: #0D1A2A;
   
-  /* Borders */
-  --border-gold: rgba(157, 128, 73, 0.15);
-  --border-teal: rgba(15, 90, 94, 0.15);
-  --border-emerald: rgba(31, 74, 56, 0.15);
+  --border-gold: rgba(122, 99, 55, 0.3);
+  --border-teal: rgba(10, 62, 66, 0.3);
+  --border-emerald: rgba(26, 58, 46, 0.3);
 }
 
-/* ============================================
-   GLOBAL STYLES
-   ============================================ */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  width: 100%;
-  height: 100%;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -111,40 +87,16 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
-
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', 'Georgia', serif;
   font-weight: 700;
   letter-spacing: -0.5px;
 }
 
-h1 {
-  font-size: 48px;
-  color: var(--accent-gold);
-  text-shadow: 0 4px 12px rgba(184, 154, 90, 0.2);
-}
-
-h2 {
-  font-size: 28px;
-  color: var(--accent-gold-light);
-}
-
-h3 {
-  font-size: 18px;
-  color: var(--text-primary);
-}
-
-p {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-/* ============================================
-   BUTTONS
-   ============================================ */
+h1 { font-size: 48px; color: var(--accent-gold); text-shadow: 0 4px 12px rgba(184, 154, 90, 0.2); }
+h2 { font-size: 28px; color: var(--accent-gold-light); }
+h3 { font-size: 18px; color: var(--text-primary); }
+p { color: var(--text-secondary); font-size: 14px; }
 
 button {
   font-family: inherit;
@@ -157,86 +109,24 @@ button {
   font-size: 13px;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(184, 154, 90, 0.2);
-}
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(184, 154, 90, 0.2); }
+button:active { transform: translateY(0); }
 
-button:active {
-  transform: translateY(0);
-}
+.btn-primary { background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%); color: var(--bg-obsidian); border: none; }
+.btn-primary:hover { background: linear-gradient(135deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%); }
 
-/* Primary Button - Gold */
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%);
-  color: var(--bg-obsidian);
-  border: none;
-}
+.btn-secondary { background: rgba(22, 124, 128, 0.1); color: var(--accent-teal-light); border: 2px solid var(--accent-teal); }
+.btn-secondary:hover { background: rgba(22, 124, 128, 0.2); border-color: var(--accent-teal-light); }
 
-.btn-primary:hover {
-  background: linear-gradient(135deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
-}
+.btn-tertiary { background: rgba(47, 125, 91, 0.1); color: var(--accent-emerald-light); border: 2px solid var(--accent-emerald); }
+.btn-tertiary:hover { background: rgba(47, 125, 91, 0.2); border-color: var(--accent-emerald-light); }
 
-/* Secondary Button - Teal */
-.btn-secondary {
-  background: rgba(22, 124, 128, 0.1);
-  color: var(--accent-teal-light);
-  border: 2px solid var(--accent-teal);
-}
+.btn-danger { background: rgba(230, 57, 70, 0.1); color: #FF6B7A; border: 2px solid #E63946; }
+.btn-danger:hover { background: rgba(230, 57, 70, 0.2); }
 
-.btn-secondary:hover {
-  background: rgba(22, 124, 128, 0.2);
-  border-color: var(--accent-teal-light);
-}
-
-/* Tertiary Button - Emerald */
-.btn-tertiary {
-  background: rgba(47, 125, 91, 0.1);
-  color: var(--accent-emerald-light);
-  border: 2px solid var(--accent-emerald);
-}
-
-.btn-tertiary:hover {
-  background: rgba(47, 125, 91, 0.2);
-  border-color: var(--accent-emerald-light);
-}
-
-/* Danger Button */
-.btn-danger {
-  background: rgba(230, 57, 70, 0.1);
-  color: #FF6B7A;
-  border: 2px solid #E63946;
-}
-
-.btn-danger:hover {
-  background: rgba(230, 57, 70, 0.2);
-}
-
-/* ============================================
-   CARDS & CONTAINERS
-   ============================================ */
-
-.card {
-  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
-  border: 1px solid var(--border-gold);
-  border-radius: 10px;
-  padding: 20px;
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  border-color: var(--accent-gold);
-  box-shadow: 0 8px 24px rgba(184, 154, 90, 0.15);
-  transform: translateY(-4px);
-}
-
-.card-elevated {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-}
-
-/* ============================================
-   HEADERS
-   ============================================ */
+.card { background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%); border: 1px solid var(--border-gold); border-radius: 10px; padding: 20px; transition: all 0.3s ease; }
+.card:hover { border-color: var(--accent-gold); box-shadow: 0 8px 24px rgba(184, 154, 90, 0.15); transform: translateY(-4px); }
+.card-elevated { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3); }
 
 .app-header {
   display: flex;
@@ -247,31 +137,14 @@ button:active {
   border-bottom: 2px solid var(--border-teal);
   margin-bottom: 20px;
   transition: all 0.3s ease;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.header-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--accent-gold);
-  margin: 0;
-}
+.header-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--accent-gold); margin: 0; }
+.header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* ============================================
-   INPUTS & FORMS
-   ============================================ */
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea,
-select {
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
   background: rgba(22, 124, 128, 0.05);
   border: 2px solid var(--border-teal);
   color: var(--text-primary);
@@ -283,138 +156,34 @@ select {
   width: 100%;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent-teal-light);
   background: rgba(22, 124, 128, 0.1);
   box-shadow: 0 0 0 3px rgba(22, 124, 128, 0.1);
 }
 
-input::placeholder {
-  color: var(--text-muted);
-}
+input::placeholder { color: var(--text-muted); }
 
-/* ============================================
-   BADGES & PILLS
-   ============================================ */
+.badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-gold { background: rgba(184, 154, 90, 0.2); color: var(--accent-gold-light); border: 1px solid var(--accent-gold); }
+.badge-teal { background: rgba(22, 124, 128, 0.2); color: var(--accent-teal-light); border: 1px solid var(--accent-teal); }
+.badge-emerald { background: rgba(47, 125, 91, 0.2); color: var(--accent-emerald-light); border: 1px solid var(--accent-emerald); }
+.badge-blue { background: rgba(63, 98, 140, 0.2); color: #7BA3D0; border: 1px solid var(--accent-blue); }
 
-.badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-}
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
 
-.badge-gold {
-  background: rgba(184, 154, 90, 0.2);
-  color: var(--accent-gold-light);
-  border: 1px solid var(--accent-gold);
-}
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 10px rgba(184, 154, 90, 0.2); } 50% { box-shadow: 0 0 20px rgba(184, 154, 90, 0.4); } }
 
-.badge-teal {
-  background: rgba(22, 124, 128, 0.2);
-  color: var(--accent-teal-light);
-  border: 1px solid var(--accent-teal);
-}
-
-.badge-emerald {
-  background: rgba(47, 125, 91, 0.2);
-  color: var(--accent-emerald-light);
-  border: 1px solid var(--accent-emerald);
-}
-
-.badge-blue {
-  background: rgba(63, 98, 140, 0.2);
-  color: #7BA3D0;
-  border: 1px solid var(--accent-blue);
-}
-
-/* ============================================
-   GRIDS & LAYOUTS
-   ============================================ */
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.grid-4 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(184, 154, 90, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(184, 154, 90, 0.4);
-  }
-}
-
-.animate-slide {
-  animation: slideIn 0.3s ease;
-}
-
-.animate-fade {
-  animation: fadeIn 0.5s ease;
-}
-
-.animate-pulse {
-  animation: pulse 2s infinite;
-}
-
-.animate-glow {
-  animation: glow 2s infinite;
-}
-
-/* ============================================
-   THEME TOGGLE
-   ============================================ */
+.animate-slide { animation: slideIn 0.3s ease; }
+.animate-fade { animation: fadeIn 0.5s ease; }
+.animate-pulse { animation: pulse 2s infinite; }
+.animate-glow { animation: glow 2s infinite; }
 
 .theme-toggle {
   display: flex;
@@ -443,10 +212,6 @@ input::placeholder {
   box-shadow: 0 4px 12px rgba(22, 124, 128, 0.3);
 }
 
-/* ============================================
-   USER BUTTON (USERNAME)
-   ============================================ */
-
 .user-button {
   padding: 8px 16px !important;
   background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%) !important;
@@ -461,114 +226,79 @@ input::placeholder {
   transition: all 0.3s ease !important;
 }
 
-.user-button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(184, 154, 90, 0.3) !important;
-}
-
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
+.user-button:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 16px rgba(184, 154, 90, 0.3) !important; }
 
 @media (max-width: 768px) {
-  h1 {
-    font-size: 36px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
+  h1 { font-size: 36px; }
+  h2 { font-size: 22px; }
+  
   .app-header {
     flex-direction: column;
-    gap: 12px;
     align-items: flex-start;
+    padding: 12px 15px;
   }
-
+  
   .header-actions {
     width: 100%;
     justify-content: flex-end;
   }
-
-  .grid-2, .grid-3, .grid-4 {
-    grid-template-columns: 1fr;
+  
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  
+  .user-button {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    gap: 5px;
+  }
+  
+  .theme-toggle {
+    padding: 3px;
+  }
+  
+  .theme-toggle button {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
-  body {
-    font-size: 12px;
+  body { font-size: 12px; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 18px; }
+  
+  .card { padding: 15px; }
+  button { padding: 8px 12px; font-size: 12px; }
+  
+  .header-actions {
+    gap: 8px;
   }
-
-  h1 {
-    font-size: 28px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-
-  button {
-    padding: 8px 12px;
-    font-size: 12px;
+  
+  .app-header {
+    padding: 10px;
+    gap: 8px;
   }
 }
 
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-.text-center {
-  text-align: center;
-}
-
-.text-gold {
-  color: var(--accent-gold);
-}
-
-.text-teal {
-  color: var(--accent-teal);
-}
-
-.text-emerald {
-  color: var(--accent-emerald);
-}
-
-.text-blue {
-  color: var(--accent-blue);
-}
-
-.bg-gold {
-  background: rgba(184, 154, 90, 0.1);
-}
-
-.bg-teal {
-  background: rgba(22, 124, 128, 0.1);
-}
-
-.bg-emerald {
-  background: rgba(47, 125, 91, 0.1);
-}
-
+.text-center { text-align: center; }
+.text-gold { color: var(--accent-gold); }
+.text-teal { color: var(--accent-teal); }
+.text-emerald { color: var(--accent-emerald); }
+.text-blue { color: var(--accent-blue); }
+.bg-gold { background: rgba(184, 154, 90, 0.1); }
+.bg-teal { background: rgba(22, 124, 128, 0.1); }
+.bg-emerald { background: rgba(47, 125, 91, 0.1); }
 .gap-1 { gap: 8px; }
 .gap-2 { gap: 12px; }
 .gap-3 { gap: 16px; }
 .gap-4 { gap: 20px; }
-
 .p-1 { padding: 8px; }
 .p-2 { padding: 12px; }
 .p-3 { padding: 16px; }
 .p-4 { padding: 20px; }
-
 .m-1 { margin: 8px; }
 .m-2 { margin: 12px; }
 .m-3 { margin: 16px; }
 .m-4 { margin: 20px; }
-
 .rounded-sm { border-radius: 4px; }
 .rounded-md { border-radius: 8px; }
 .rounded-lg { border-radius: 12px; }
