@@ -1,216 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
-import { auth, db } from '../firebase-config';
+import { auth } from '../firebase-config';
+import ThemeToggle from './ThemeToggle';
 
-const StatsPanel = ({ user, onBack, onLogout }) => {
-  const [stats, setStats] = useState({
-    totalGamesPlayed: 0,
-    totalXP: 0,
-    gameHistory: [],
-    modeStats: {}
+const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange }) => {
+  const [stats, setStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`stats_${user.uid}`);
+      return saved ? JSON.parse(saved) : {
+        totalGamesPlayed: 0,
+        totalXP: 0,
+        gameHistory: [],
+        modeStats: {}
+      };
+    } catch {
+      return { totalGamesPlayed: 0, totalXP: 0, gameHistory: [], modeStats: {} };
+    }
   });
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    loadStats();
-    loadUserData();
-  }, [user.uid]);
-
-  const loadStats = () => {
-    try {
-      const savedStats = localStorage.getItem(`stats_${user.uid}`);
-      if (savedStats) {
-        setStats(JSON.parse(savedStats));
-      }
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
-
-  const loadUserData = async () => {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        setUserData(userDoc.data());
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
       onLogout();
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error('Logout error:', error);
     }
   };
 
-  const getModeEmoji = (mode) => {
-    const emojis = {
-      'blind': '🔍',
-      'known': '📚',
-      'practice': '🧠'
-    };
-    return emojis[mode] || '🎮';
-  };
-
-  const getModeLabel = (mode) => {
-    const labels = {
-      'blind': 'Blind Investigation',
-      'known': 'Focused Investigation',
-      'practice': 'Practice Mode'
-    };
-    return labels[mode] || mode;
-  };
-
-  const getLevel = () => {
-    return Math.floor(stats.totalGamesPlayed / 5) + 1;
-  };
-
-  const getProgress = () => {
-    const gamesInCurrentLevel = stats.totalGamesPlayed % 5;
-    return (gamesInCurrentLevel / 5) * 100;
-  };
+  const userLevel = Math.floor(stats.totalXP / 100) + 1;
+  const nextLevelXP = (userLevel * 100) - (stats.totalXP % 100);
 
   return (
     <div style={styles.container}>
+      {/* HEADER */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>← Back</button>
-        <button style={styles.logoutButton} onClick={handleLogout}>🚪 Logout</button>
-      </div>
-
-      <h1 style={styles.title}>📊 Your Profile & Progress</h1>
-
-      {/* PERSONAL INFO SECTION */}
-      <div style={styles.profileCard}>
-        <div style={styles.profileHeader}>
-          <div style={styles.profileAvatar}>
-            {userData?.name ? userData.name.charAt(0).toUpperCase() : '👤'}
-          </div>
-          <div style={styles.profileInfo}>
-            <h2 style={styles.profileName}>{userData?.name || 'User'}</h2>
-            <p style={styles.profileEmail}>{user.email}</p>
-            <p style={styles.profileMember}>
-              Member since {userData?.createdAt 
-                ? new Date(userData.createdAt).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  }) 
-                : 'Recently'}
-            </p>
-          </div>
-        </div>
-
-        <div style={styles.profileStats}>
-          <div style={styles.profileStatItem}>
-            <div style={styles.profileStatLabel}>Account Status</div>
-            <div style={styles.profileStatValue}>{userData?.subscriptionStatus || 'Active'}</div>
-          </div>
+        <button style={styles.backButton} onClick={onBack}>
+          ← Back
+        </button>
+        <div style={styles.rightGroup}>
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+          <button style={styles.logoutButton} onClick={handleLogout}>
+            🚪 Logout
+          </button>
         </div>
       </div>
 
-      {/* LEVEL & XP PROGRESS */}
-      <div style={styles.levelSection}>
-        <div style={styles.levelCard}>
-          <div style={styles.levelNumber}>Level {getLevel()}</div>
-          <div style={styles.progressContainer}>
-            <div style={styles.progressBar}>
-              <div style={{
-                ...styles.progressFill,
-                width: `${getProgress()}%`
-              }}></div>
+      <div style={styles.content}>
+        <h1 style={styles.pageTitle}>📊 Your Profile & Progress</h1>
+
+        {/* TOP SECTION - User Card + Level */}
+        <div style={styles.topGrid}>
+          {/* User Card */}
+          <div style={styles.card}>
+            <div style={styles.userAvatarSection}>
+              <div style={styles.userAvatar}>
+                👤
+              </div>
+              <div>
+                <h2 style={styles.userName}>{userName}</h2>
+                <p style={styles.userEmail}>{user.email}</p>
+              </div>
             </div>
-            <p style={styles.progressText}>
-              {stats.totalGamesPlayed % 5} / 5 games to next level
-            </p>
+            <div style={styles.statusBadge}>Active</div>
+          </div>
+
+          {/* Level Card */}
+          <div style={styles.card}>
+            <h3 style={styles.levelTitle}>Level {userLevel}</h3>
+            <div style={styles.progressBar}>
+              <div 
+                style={{
+                  ...styles.progressFill,
+                  width: `${((stats.totalXP % 100) / 100) * 100}%`
+                }}
+              ></div>
+            </div>
+            <p style={styles.progressText}>{stats.totalXP % 100} / 100 XP to next level</p>
           </div>
         </div>
-      </div>
 
-      {/* STATS SUMMARY */}
-      <div style={styles.summaryGrid}>
-        <div style={styles.statCard}>
-          <div style={styles.statValue}>{stats.totalXP}</div>
-          <div style={styles.statLabel}>Total XP</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={styles.statValue}>{stats.totalGamesPlayed}</div>
-          <div style={styles.statLabel}>Games Played</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={styles.statValue}>
-            {stats.totalGamesPlayed > 0 
-              ? Math.round((stats.gameHistory.filter(g => g.score > 500).length / stats.totalGamesPlayed) * 100)
-              : 0}%
+        {/* STATS SECTION */}
+        <div style={styles.statsGrid}>
+          <div style={styles.statCard}>
+            <h4 style={styles.statLabel}>Games Played</h4>
+            <p style={styles.statValue}>{stats.totalGamesPlayed}</p>
           </div>
-          <div style={styles.statLabel}>Win Rate</div>
-        </div>
-      </div>
-
-      {/* MODE BREAKDOWN */}
-      {Object.keys(stats.modeStats).length > 0 && (
-        <div style={styles.modeSection}>
-          <h2 style={styles.sectionTitle}>📈 Performance by Mode</h2>
-          <div style={styles.modeGrid}>
-            {Object.entries(stats.modeStats).map(([mode, data]) => (
-              <div key={mode} style={styles.modeCard}>
-                <div style={styles.modeIcon}>{getModeEmoji(mode)}</div>
-                <h3 style={styles.modeName}>{getModeLabel(mode)}</h3>
-                <div style={styles.modeInfo}>
-                  <p style={styles.modeData}>
-                    Games: <span style={styles.modeValue}>{data.played}</span>
-                  </p>
-                  <p style={styles.modeData}>
-                    Avg Score: <span style={styles.modeValue}>{Math.round(data.totalScore / data.played)}</span>
-                  </p>
-                  <p style={styles.modeData}>
-                    Total XP: <span style={styles.modeValue}>{data.totalXP}</span>
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div style={styles.statCard}>
+            <h4 style={styles.statLabel}>Total XP</h4>
+            <p style={styles.statValue}>{stats.totalXP}</p>
+          </div>
+          <div style={styles.statCard}>
+            <h4 style={styles.statLabel}>Member Since</h4>
+            <p style={styles.statValue}>{new Date(user.metadata.creationTime).toLocaleDateString()}</p>
+          </div>
+          <div style={styles.statCard}>
+            <h4 style={styles.statLabel}>Account Status</h4>
+            <p style={styles.statValue}>Premium</p>
           </div>
         </div>
-      )}
 
-      {/* GAME HISTORY */}
-      {stats.gameHistory.length > 0 && (
-        <div style={styles.historySection}>
-          <h2 style={styles.sectionTitle}>🎮 Recent Games</h2>
-          <div style={styles.historyList}>
-            {stats.gameHistory.slice().reverse().slice(0, 10).map((game, idx) => (
-              <div key={idx} style={styles.historyItem}>
-                <div style={styles.historyLeft}>
-                  <div style={styles.historyIcon}>{getModeEmoji(game.mode)}</div>
-                  <div style={styles.historyInfo}>
-                    <h4 style={styles.historyMode}>{getModeLabel(game.mode)}</h4>
-                    <p style={styles.historyDrug}>Answered: <strong>{game.drugName}</strong></p>
-                    <p style={styles.historyTime}>
-                      {new Date(game.timestamp).toLocaleDateString()} {new Date(game.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </p>
+        {/* MODE STATS */}
+        <div style={styles.card}>
+          <h3 style={styles.sectionTitle}>📈 Mode Statistics</h3>
+          <div style={styles.modeStatsGrid}>
+            <div style={styles.modeStatCard}>
+              <p style={styles.modeLabel}>🔍 Blind Mode</p>
+              <p style={styles.modeStat}>{stats.modeStats['blind']?.played || 0} games</p>
+              <p style={styles.modeXP}>{stats.modeStats['blind']?.totalXP || 0} XP</p>
+            </div>
+            <div style={styles.modeStatCard}>
+              <p style={styles.modeLabel}>📚 Focused Mode</p>
+              <p style={styles.modeStat}>{stats.modeStats['known']?.played || 0} games</p>
+              <p style={styles.modeXP}>{stats.modeStats['known']?.totalXP || 0} XP</p>
+            </div>
+          </div>
+        </div>
+
+        {/* GAME HISTORY */}
+        {stats.gameHistory.length > 0 && (
+          <div style={styles.card}>
+            <h3 style={styles.sectionTitle}>🎮 Recent Games</h3>
+            <div style={styles.historyList}>
+              {stats.gameHistory.slice(-5).reverse().map((game, idx) => (
+                <div key={idx} style={styles.historyItem}>
+                  <div>
+                    <p style={styles.drugName}>{game.drugName}</p>
+                    <p style={styles.gameMode}>{game.mode === 'blind' ? '🔍 Blind' : '📚 Focused'} • {game.cluesUsed} clues</p>
                   </div>
+                  <p style={styles.gameScore}>{game.score} pts</p>
                 </div>
-                <div style={styles.historyRight}>
-                  <div style={styles.historyScore}>{game.score}</div>
-                  <p style={styles.historyXP}>+{game.xpEarned} XP</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {stats.gameHistory.length === 0 && (
-        <div style={styles.emptyState}>
-          <p style={styles.emptyIcon}>🎯</p>
-          <p style={styles.emptyText}>No games played yet!</p>
-          <p style={styles.emptySubtext}>Start playing to see your stats here</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
@@ -225,229 +148,185 @@ const styles = {
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '15px',
-    gap: '10px'
+    alignItems: 'center',
+    marginBottom: '30px',
+    paddingBottom: '15px',
+    borderBottom: '1px solid rgba(22, 124, 128, 0.2)'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(0, 217, 255, 0.1)',
-    border: '1px solid var(--border-glow)',
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px'
-  },
-  logoutButton: {
-    padding: '8px 16px',
-    background: 'rgba(255, 71, 87, 0.1)',
-    border: '1px solid rgba(255, 71, 87, 0.3)',
-    color: 'var(--danger)',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
     fontFamily: 'inherit',
     fontSize: '12px',
     fontWeight: '600'
   },
-  title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '28px',
-    color: 'var(--accent-gold)',
-    textAlign: 'center',
-    margin: '0 0 30px 0'
+  rightGroup: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center'
   },
-  profileCard: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
+  logoutButton: {
+    padding: '8px 16px',
+    background: 'rgba(230, 57, 70, 0.1)',
+    border: '2px solid #E63946',
+    color: '#FF6B7A',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: '600'
+  },
+  content: {
+    maxWidth: '1000px',
+    margin: '0 auto'
+  },
+  pageTitle: {
+    textAlign: 'center',
+    marginBottom: '30px',
+    color: '#B89A5A',
+    fontSize: '32px',
+    fontFamily: "'Playfair Display', serif"
+  },
+  topGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '20px',
+    marginBottom: '30px'
+  },
+  card: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid rgba(184, 154, 90, 0.2)',
     borderRadius: '10px',
     padding: '20px',
-    marginBottom: '30px',
-    maxWidth: '900px',
-    margin: '0 auto 30px'
+    transition: 'all 0.3s ease'
   },
-  profileHeader: {
+  userAvatarSection: {
     display: 'flex',
-    gap: '20px',
-    marginBottom: '20px',
-    paddingBottom: '20px',
-    borderBottom: '1px solid rgba(0, 217, 255, 0.1)'
+    gap: '15px',
+    alignItems: 'center',
+    marginBottom: '15px'
   },
-  profileAvatar: {
-    width: '80px',
-    height: '80px',
+  userAvatar: {
+    width: '60px',
+    height: '60px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-emerald) 100%)',
+    background: 'linear-gradient(135deg, rgba(184, 154, 90, 0.3), rgba(22, 124, 128, 0.3))',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '32px',
-    fontWeight: '700',
-    color: 'var(--bg-primary)',
-    flexShrink: 0
+    border: '2px solid #B89A5A'
   },
-  profileInfo: {
-    flex: 1
+  userName: {
+    color: '#B89A5A',
+    fontSize: '18px',
+    margin: '0 0 5px 0',
+    fontFamily: "'Playfair Display', serif"
   },
-  profileName: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '24px',
-    color: 'var(--accent-gold)',
-    margin: '0 0 5px 0'
-  },
-  profileEmail: {
+  userEmail: {
+    color: 'var(--text-secondary)',
     fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0 0 8px 0'
+    margin: '0'
   },
-  profileMember: {
+  statusBadge: {
+    display: 'inline-block',
+    background: 'rgba(47, 125, 91, 0.2)',
+    color: '#2F7D5B',
+    padding: '6px 12px',
+    borderRadius: '20px',
     fontSize: '11px',
-    color: 'var(--text-secondary)',
-    margin: '0',
-    fontStyle: 'italic'
-  },
-  profileStats: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '15px'
-  },
-  profileStatItem: {
-    background: 'rgba(0, 217, 255, 0.05)',
-    padding: '12px',
-    borderRadius: '6px',
-    border: '1px solid rgba(0, 217, 255, 0.1)'
-  },
-  profileStatLabel: {
-    fontSize: '10px',
-    color: 'var(--text-secondary)',
-    fontWeight: '600',
-    marginBottom: '4px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  profileStatValue: {
-    fontSize: '13px',
-    color: 'var(--accent-gold)',
     fontWeight: '700'
   },
-  levelSection: {
-    maxWidth: '900px',
-    margin: '0 auto 30px',
-    display: 'flex',
-    justifyContent: 'center'
-  },
-  levelCard: {
-    background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.15) 0%, rgba(0, 217, 255, 0.15) 100%)',
-    border: '2px solid var(--accent-emerald)',
-    borderRadius: '10px',
-    padding: '20px',
-    width: '100%',
-    maxWidth: '400px'
-  },
-  levelNumber: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '28px',
-    fontWeight: '700',
-    color: 'var(--accent-emerald)',
-    marginBottom: '15px',
-    textAlign: 'center'
-  },
-  progressContainer: {
-    width: '100%'
+  levelTitle: {
+    color: '#B89A5A',
+    fontSize: '24px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
   },
   progressBar: {
     width: '100%',
     height: '8px',
-    background: 'rgba(0, 217, 255, 0.1)',
+    background: 'rgba(22, 124, 128, 0.1)',
     borderRadius: '10px',
     overflow: 'hidden',
-    marginBottom: '8px'
+    marginBottom: '10px'
   },
   progressFill: {
     height: '100%',
-    background: 'linear-gradient(90deg, var(--accent-emerald) 0%, var(--accent-gold) 100%)',
+    background: 'linear-gradient(90deg, #167C80, #2F7D5B)',
+    borderRadius: '10px',
     transition: 'width 0.3s ease'
   },
   progressText: {
-    fontSize: '11px',
-    color: 'var(--text-secondary)',
-    textAlign: 'center',
-    margin: '0'
-  },
-  summaryGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '15px',
-    marginBottom: '40px',
-    maxWidth: '900px',
-    margin: '0 auto 40px'
-  },
-  statCard: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
-    borderRadius: '10px',
-    padding: '20px',
-    textAlign: 'center'
-  },
-  statValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '32px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    marginBottom: '8px'
-  },
-  statLabel: {
     fontSize: '12px',
     color: 'var(--text-secondary)',
-    fontWeight: '600'
+    margin: '0'
   },
-  modeSection: {
-    maxWidth: '900px',
-    margin: '0 auto 40px'
-  },
-  sectionTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '20px',
-    color: 'var(--accent-gold)',
-    margin: '0 0 20px 0'
-  },
-  modeGrid: {
+  statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '15px'
+    gap: '15px',
+    marginBottom: '30px'
   },
-  modeCard: {
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '2px solid rgba(0, 217, 255, 0.2)',
+  statCard: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid rgba(22, 124, 128, 0.2)',
     borderRadius: '8px',
     padding: '15px',
     textAlign: 'center'
   },
-  modeIcon: {
-    fontSize: '32px',
-    marginBottom: '10px'
-  },
-  modeName: {
-    fontSize: '14px',
-    fontWeight: '700',
-    color: 'var(--text-primary)',
-    margin: '0 0 12px 0'
-  },
-  modeInfo: {
-    fontSize: '12px'
-  },
-  modeData: {
+  statLabel: {
     color: 'var(--text-secondary)',
-    margin: '6px 0',
-    display: 'flex',
-    justifyContent: 'space-between'
+    fontSize: '11px',
+    fontWeight: '700',
+    margin: '0 0 10px 0',
+    textTransform: 'uppercase'
   },
-  modeValue: {
-    color: 'var(--accent-gold)',
-    fontWeight: '700'
+  statValue: {
+    color: '#B89A5A',
+    fontSize: '24px',
+    fontWeight: '700',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
   },
-  historySection: {
-    maxWidth: '900px',
-    margin: '0 auto'
+  sectionTitle: {
+    color: '#B89A5A',
+    fontSize: '18px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  modeStatsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '15px'
+  },
+  modeStatCard: {
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '1px solid rgba(22, 124, 128, 0.2)',
+    borderRadius: '8px',
+    padding: '15px',
+    textAlign: 'center'
+  },
+  modeLabel: {
+    fontSize: '12px',
+    fontWeight: '700',
+    margin: '0 0 8px 0',
+    color: 'var(--text-primary)'
+  },
+  modeStat: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#167C80',
+    margin: '0 0 5px 0'
+  },
+  modeXP: {
+    fontSize: '11px',
+    color: 'var(--text-secondary)',
+    margin: '0'
   },
   historyList: {
     display: 'flex',
@@ -455,76 +334,29 @@ const styles = {
     gap: '10px'
   },
   historyItem: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
-    borderRadius: '8px',
-    padding: '15px',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: '12px',
+    background: 'rgba(22, 124, 128, 0.05)',
+    borderRadius: '6px',
+    borderLeft: '3px solid #167C80'
   },
-  historyLeft: {
-    display: 'flex',
-    gap: '15px',
-    flex: 1
-  },
-  historyIcon: {
-    fontSize: '28px'
-  },
-  historyInfo: {
-    flex: 1
-  },
-  historyMode: {
+  drugName: {
+    color: '#B89A5A',
     fontSize: '13px',
     fontWeight: '700',
-    color: 'var(--accent-gold)',
-    margin: '0 0 4px 0'
+    margin: '0 0 5px 0'
   },
-  historyDrug: {
+  gameMode: {
     fontSize: '11px',
-    color: 'var(--text-secondary)',
-    margin: '0 0 4px 0'
-  },
-  historyTime: {
-    fontSize: '10px',
     color: 'var(--text-secondary)',
     margin: '0'
   },
-  historyRight: {
-    textAlign: 'right'
-  },
-  historyScore: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '18px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    marginBottom: '4px'
-  },
-  historyXP: {
-    fontSize: '11px',
-    color: 'var(--accent-emerald)',
-    fontWeight: '700',
-    margin: '0'
-  },
-  emptyState: {
-    textAlign: 'center',
-    padding: '60px 20px',
-    maxWidth: '900px',
-    margin: '0 auto'
-  },
-  emptyIcon: {
-    fontSize: '48px',
-    margin: '0 0 15px 0'
-  },
-  emptyText: {
+  gameScore: {
     fontSize: '16px',
-    color: 'var(--text-primary)',
-    fontWeight: '600',
-    margin: '0 0 8px 0'
-  },
-  emptySubtext: {
-    fontSize: '13px',
-    color: 'var(--text-secondary)',
+    fontWeight: '700',
+    color: '#2F7D5B',
     margin: '0'
   }
 };

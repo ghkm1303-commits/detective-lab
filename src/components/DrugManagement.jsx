@@ -1,137 +1,144 @@
 import React, { useState } from 'react';
 import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 
-const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageChange }) => {
-  const [newDrugName, setNewDrugName] = useState('');
-  const [newDrugClass, setNewDrugClass] = useState('cardiovascular');
-  const [customDrugs, setCustomDrugs] = useState(drugs.filter(d => d.id > 1000));
+const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'cardiovascular'
+  });
 
   const categories = [
-    { id: 'cardiovascular', name: currentLang === 'en' ? 'Cardiovascular' : 'Cardiaque' },
-    { id: 'nervous', name: currentLang === 'en' ? 'Nervous System' : 'Système Nerveux' },
-    { id: 'endocrine', name: currentLang === 'en' ? 'Endocrine' : 'Endocrinien' },
-    { id: 'respiratory', name: currentLang === 'en' ? 'Respiratory' : 'Respiratoire' },
-    { id: 'digestive', name: currentLang === 'en' ? 'Digestive' : 'Digestif' },
-    { id: 'immune', name: currentLang === 'en' ? 'Immune System' : 'Système Immunitaire' }
+    { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire' },
+    { id: 'nervous', enName: 'Nervous System', frName: 'Système Nerveux' },
+    { id: 'endocrine', enName: 'Endocrine', frName: 'Endocrinien' },
+    { id: 'respiratory', enName: 'Respiratory', frName: 'Respiratoire' },
+    { id: 'digestive', enName: 'Digestive', frName: 'Digestif' },
+    { id: 'immune', enName: 'Immune', frName: 'Immunitaire' },
+    { id: 'musculoskeletal', enName: 'Musculoskeletal', frName: 'Musculo-Squelettique' },
+    { id: 'renal', enName: 'Renal', frName: 'Rénal' }
   ];
 
-  const addDrug = () => {
-    if (!newDrugName.trim()) {
-      alert(currentLang === 'en' ? 'Please enter a drug name' : 'Veuillez entrer un nom');
-      return;
-    }
+  const customDrugs = drugs.filter(d => d.id > 1000);
+
+  const handleAddDrug = () => {
+    if (!formData.name.trim()) return;
 
     const newDrug = {
-      id: Math.random() * 10000,
-      names: { en: newDrugName, fr: newDrugName },
-      class: newDrugClass,
-      therapeuticClass: '',
+      id: Math.max(...drugs.map(d => d.id), 1000) + 1,
+      names: { en: formData.name, fr: formData.name },
+      class: formData.category,
+      therapeuticClass: formData.name,
+      category: formData.name,
       effects: [],
-      indications: '',
+      indications: currentLang === 'en' ? 'Custom drug' : 'Médicament personnalisé',
       route: 'Oral',
-      mechanism: '',
+      mechanism: currentLang === 'en' ? 'To be filled' : 'À remplir',
       sideEffects: [],
       contraindications: [],
-      metabolism: '',
-      elimination: '',
-      halfLife: '',
+      metabolism: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
+      elimination: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
+      halfLife: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
       dosing: { standard: '', maxDose: '', frequency: '' },
       brandNames: [],
-      clinicalPearls: []
+      clinicalPearls: ''
     };
 
-    const updatedDrugs = [...drugs, newDrug];
-    onDrugsUpdate(updatedDrugs);
-    setCustomDrugs([...customDrugs, newDrug]);
-    setNewDrugName('');
+    const updated = [...drugs, newDrug];
+    onDrugsUpdate(updated);
+    setFormData({ name: '', category: 'cardiovascular' });
   };
 
-  const removeDrug = (drugId) => {
-    const updatedDrugs = drugs.filter(d => d.id !== drugId);
-    onDrugsUpdate(updatedDrugs);
-    setCustomDrugs(customDrugs.filter(d => d.id !== drugId));
+  const handleDeleteDrug = (id) => {
+    const updated = drugs.filter(d => d.id !== id);
+    onDrugsUpdate(updated);
   };
 
   return (
     <div style={styles.container}>
+      {/* HEADER */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
-        <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+        <div style={styles.rightGroup}>
+          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+          <button onClick={onStats} className="user-button">
+            👤 {userName}
+          </button>
+        </div>
       </div>
 
-      <h1 style={styles.title}>
-        {currentLang === 'en' ? '⚙️ Manage Drugs' : '⚙️ Gérer les Médicaments'}
-      </h1>
+      <div style={styles.content}>
+        <h1 style={styles.title}>⚙️ {currentLang === 'en' ? 'Manage Drugs' : 'Gérer les Médicaments'}</h1>
 
-      <div style={styles.addSection}>
-        <h2 style={styles.sectionTitle}>
-          {currentLang === 'en' ? '➕ Add New Drug' : '➕ Ajouter un Nouveau Médicament'}
-        </h2>
+        <div style={styles.mainGrid}>
+          {/* ADD NEW DRUG SECTION */}
+          <div style={styles.card}>
+            <h3 style={styles.cardTitle}>➕ {currentLang === 'en' ? 'Add New Drug' : 'Ajouter un Nouveau Médicament'}</h3>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
-            {currentLang === 'en' ? 'Drug Name' : 'Nom du Médicament'}
-          </label>
-          <input
-            type="text"
-            value={newDrugName}
-            onChange={(e) => setNewDrugName(e.target.value)}
-            placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom...'}
-            style={styles.input}
-          />
-        </div>
+            <div style={styles.formSection}>
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Drug Name' : 'Nom du Médicament'}
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
+                style={styles.input}
+              />
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
-            {currentLang === 'en' ? 'Category' : 'Catégorie'}
-          </label>
-          <select
-            value={newDrugClass}
-            onChange={(e) => setNewDrugClass(e.target.value)}
-            style={styles.select}
-          >
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
+              <label style={styles.label}>
+                {currentLang === 'en' ? 'Category' : 'Catégorie'}
+              </label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                style={styles.select}
+              >
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {currentLang === 'en' ? cat.enName : cat.frName}
+                  </option>
+                ))}
+              </select>
 
-        <button style={styles.addButton} onClick={addDrug}>
-          {currentLang === 'en' ? '✓ Add Drug' : '✓ Ajouter'}
-        </button>
-      </div>
+              <button style={styles.addButton} onClick={handleAddDrug}>
+                ✓ {currentLang === 'en' ? 'Add Drug' : 'Ajouter le Médicament'}
+              </button>
+            </div>
+          </div>
 
-      <div style={styles.listSection}>
-        <h2 style={styles.sectionTitle}>
-          {currentLang === 'en' ? '📋 Custom Drugs' : '📋 Médicaments Personnalisés'}
-        </h2>
+          {/* CUSTOM DRUGS SECTION */}
+          <div style={styles.card}>
+            <h3 style={styles.cardTitle}>📋 {currentLang === 'en' ? 'Custom Drugs' : 'Médicaments Personnalisés'}</h3>
 
-        {customDrugs.length > 0 ? (
-          <div style={styles.drugsList}>
-            {customDrugs.map(drug => (
-              <div key={drug.id} style={styles.drugItem}>
-                <div style={styles.drugInfo}>
-                  <h4 style={styles.drugName}>{drug.names.en}</h4>
-                  <p style={styles.drugClass}>{drug.class}</p>
-                </div>
-                <button
-                  style={styles.deleteButton}
-                  onClick={() => removeDrug(drug.id)}
-                >
-                  {currentLang === 'en' ? '🗑️ Delete' : '🗑️ Supprimer'}
-                </button>
+            {customDrugs.length === 0 ? (
+              <p style={styles.emptyMessage}>
+                {currentLang === 'en' ? 'No custom drugs added yet' : 'Aucun médicament personnalisé ajouté'}
+              </p>
+            ) : (
+              <div style={styles.drugsList}>
+                {customDrugs.map(drug => (
+                  <div key={drug.id} style={styles.drugItem}>
+                    <div>
+                      <p style={styles.drugItemName}>{drug.names.en}</p>
+                      <p style={styles.drugItemClass}>{drug.class}</p>
+                    </div>
+                    <button
+                      style={styles.deleteButton}
+                      onClick={() => handleDeleteDrug(drug.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        ) : (
-          <div style={styles.emptyMessage}>
-            {currentLang === 'en' ? 'No custom drugs added yet' : 'Aucun médicament personnalisé'}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -148,89 +155,100 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(0, 217, 255, 0.1)'
+    borderBottom: '1px solid rgba(22, 124, 128, 0.2)'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(0, 217, 255, 0.1)',
-    border: '1px solid var(--border-glow)',
+    background: 'rgba(22, 124, 128, 0.1)',
+    border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
     fontFamily: 'inherit',
-    fontSize: '12px'
-  },
-  title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '28px',
-    color: 'var(--accent-gold)',
-    textAlign: 'center',
-    margin: '0 0 30px 0'
-  },
-  addSection: {
-    maxWidth: '600px',
-    margin: '0 auto 40px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
-    borderRadius: '10px',
-    padding: '20px'
-  },
-  sectionTitle: {
-    fontSize: '16px',
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  formGroup: {
-    marginBottom: '15px'
-  },
-  label: {
-    display: 'block',
     fontSize: '12px',
-    color: 'var(--text-secondary)',
-    marginBottom: '6px',
     fontWeight: '600'
   },
+  rightGroup: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center'
+  },
+  content: {
+    maxWidth: '1000px',
+    margin: '0 auto'
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: '30px',
+    color: '#B89A5A',
+    fontSize: '32px',
+    fontFamily: "'Playfair Display', serif"
+  },
+  mainGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+    gap: '20px'
+  },
+  card: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid rgba(184, 154, 90, 0.2)',
+    borderRadius: '10px',
+    padding: '20px',
+    transition: 'all 0.3s ease'
+  },
+  cardTitle: {
+    color: '#B89A5A',
+    fontSize: '16px',
+    margin: '0 0 20px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  formSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px'
+  },
+  label: {
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    fontWeight: '700',
+    textTransform: 'uppercase'
+  },
   input: {
-    width: '100%',
     padding: '10px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.3)',
-    borderRadius: '6px',
+    background: 'rgba(22, 124, 128, 0.05)',
+    border: '2px solid #167C80',
     color: 'var(--text-primary)',
-    fontSize: '13px',
+    borderRadius: '6px',
     fontFamily: 'inherit',
-    boxSizing: 'border-box'
+    fontSize: '13px'
   },
   select: {
-    width: '100%',
     padding: '10px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.3)',
-    borderRadius: '6px',
+    background: 'rgba(22, 124, 128, 0.05)',
+    border: '2px solid #167C80',
     color: 'var(--text-primary)',
-    fontSize: '13px',
+    borderRadius: '6px',
     fontFamily: 'inherit',
-    boxSizing: 'border-box'
+    fontSize: '13px'
   },
   addButton: {
-    width: '100%',
-    padding: '10px',
-    background: 'rgba(0, 208, 132, 0.15)',
-    border: '2px solid var(--accent-emerald)',
-    color: 'var(--accent-emerald)',
+    padding: '12px',
+    background: 'linear-gradient(135deg, #2F7D5B, #3D9B73)',
+    color: 'white',
+    border: 'none',
     borderRadius: '6px',
-    fontWeight: '700',
     cursor: 'pointer',
+    fontFamily: 'inherit',
     fontSize: '13px',
-    fontFamily: 'inherit'
+    fontWeight: '700'
   },
-  listSection: {
-    maxWidth: '600px',
-    margin: '0 auto'
+  emptyMessage: {
+    color: 'var(--text-secondary)',
+    fontSize: '13px',
+    textAlign: 'center',
+    padding: '20px'
   },
   drugsList: {
     display: 'flex',
@@ -238,44 +256,33 @@ const styles = {
     gap: '10px'
   },
   drugItem: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(42, 47, 74, 0.8) 100%)',
-    border: '2px solid var(--accent-gold)',
-    borderRadius: '8px',
-    padding: '15px',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: '12px',
+    background: 'rgba(22, 124, 128, 0.05)',
+    borderRadius: '6px',
+    borderLeft: '3px solid #167C80'
   },
-  drugInfo: {
-    flex: 1
-  },
-  drugName: {
-    fontSize: '14px',
+  drugItemName: {
+    color: '#B89A5A',
+    fontSize: '13px',
     fontWeight: '700',
-    color: 'var(--accent-gold)',
-    margin: '0 0 4px 0'
+    margin: '0 0 5px 0'
   },
-  drugClass: {
-    fontSize: '11px',
+  drugItemClass: {
     color: 'var(--text-secondary)',
+    fontSize: '11px',
     margin: '0'
   },
   deleteButton: {
-    padding: '6px 12px',
-    background: 'rgba(255, 71, 87, 0.15)',
-    border: '1px solid rgba(255, 71, 87, 0.3)',
-    color: 'var(--danger)',
+    background: 'rgba(230, 57, 70, 0.1)',
+    border: 'none',
+    color: '#E63946',
+    padding: '6px 10px',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '11px',
-    fontFamily: 'inherit',
-    fontWeight: '600'
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    padding: '40px 20px',
-    color: 'var(--text-secondary)',
-    fontSize: '13px'
+    fontSize: '14px'
   }
 };
 

@@ -4,7 +4,7 @@ import ThemeToggle from './ThemeToggle';
 
 const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showMore, setShowMore] = useState({});
+  const [selectedDrug, setSelectedDrug] = useState(null);
 
   const categories = [
     { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire' },
@@ -85,24 +85,172 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
                 <strong>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</strong> {drug.indications}
               </p>
 
-              {showMore[drug.id] && (
-                <>
-                  <p><strong>{currentLang === 'en' ? 'Mechanism:' : 'Mécanisme:'}</strong> {drug.mechanism}</p>
-                  <p><strong>{currentLang === 'en' ? 'Side Effects:' : 'Effets Secondaires:'}</strong> {drug.sideEffects.join(', ')}</p>
-                  <p><strong>{currentLang === 'en' ? 'Dosing:' : 'Posologie:'}</strong> {drug.dosing.standard}</p>
-                </>
-              )}
-
               <button
                 style={styles.moreButton}
-                onClick={() => setShowMore({ ...showMore, [drug.id]: !showMore[drug.id] })}
+                onClick={() => setSelectedDrug(drug)}
               >
-                {showMore[drug.id] ? (currentLang === 'en' ? 'Show Less' : 'Voir Moins') : (currentLang === 'en' ? 'See More' : 'Voir Plus')}
+                {currentLang === 'en' ? 'See More' : 'Voir Plus'} →
               </button>
             </div>
           ))}
         </div>
       </div>
+
+      {/* MODAL - DETAILED DRUG VIEW */}
+      {selectedDrug && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedDrug(null)}>
+          <div style={styles.modal} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <div>
+                <h2 style={styles.modalTitle}>{selectedDrug.names.en}</h2>
+                <p style={styles.modalSubtitle}>{selectedDrug.names.fr}</p>
+              </div>
+              <button 
+                style={styles.closeIconButton}
+                onClick={() => setSelectedDrug(null)}
+              >
+                ↑
+              </button>
+            </div>
+
+            <div style={styles.modalDivider}></div>
+
+            {/* TOP SECTION - Basic Info */}
+            <div style={styles.modalGrid}>
+              <div style={styles.modalSection}>
+                <h4 style={styles.modalLabel}>
+                  {currentLang === 'en' ? 'CLASS:' : 'CLASSE:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.therapeuticClass}</p>
+              </div>
+
+              <div style={styles.modalSection}>
+                <h4 style={styles.modalLabel}>
+                  {currentLang === 'en' ? 'THERAPEUTIC:' : 'THÉRAPEUTIQUE:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.category}</p>
+              </div>
+
+              <div style={styles.modalSection}>
+                <h4 style={styles.modalLabel}>
+                  {currentLang === 'en' ? 'ROUTE:' : 'VOIE:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.route}</p>
+              </div>
+
+              <div style={styles.modalSection}>
+                <h4 style={styles.modalLabel}>
+                  {currentLang === 'en' ? 'MECHANISM:' : 'MÉCANISME:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.mechanism}</p>
+              </div>
+            </div>
+
+            {/* EFFECTS */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
+                ✨ {currentLang === 'en' ? 'EFFECTS:' : 'EFFETS:'}
+              </h4>
+              <p style={styles.modalText}>
+                {selectedDrug.effects && selectedDrug.effects.length > 0
+                  ? selectedDrug.effects.join(', ')
+                  : currentLang === 'en' ? 'Not specified' : 'Non spécifié'}
+              </p>
+            </div>
+
+            {/* INDICATIONS */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#20C997'}}>
+                📋 {currentLang === 'en' ? 'INDICATIONS:' : 'INDICATIONS:'}
+              </h4>
+              <p style={styles.modalText}>{selectedDrug.indications}</p>
+            </div>
+
+            {/* SIDE EFFECTS */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#E63946'}}>
+                ⚠️ {currentLang === 'en' ? 'SIDE EFFECTS:' : 'EFFETS SECONDAIRES:'}
+              </h4>
+              <p style={styles.modalText}>
+                {selectedDrug.sideEffects.join(', ')}
+              </p>
+            </div>
+
+            {/* CONTRAINDICATIONS */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#FF6B7A'}}>
+                🚫 {currentLang === 'en' ? 'CONTRAINDICATIONS:' : 'CONTRE-INDICATIONS:'}
+              </h4>
+              <p style={styles.modalText}>
+                {selectedDrug.contraindications.join(', ')}
+              </p>
+            </div>
+
+            {/* DOSING */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#E8BA24'}}>
+                💊 {currentLang === 'en' ? 'DOSING:' : 'POSOLOGIE:'}
+              </h4>
+              <p style={styles.modalText}>
+                <strong>{currentLang === 'en' ? 'Standard:' : 'Standard:'}</strong> {selectedDrug.dosing.standard}<br/>
+                <strong>{currentLang === 'en' ? 'Max:' : 'Max:'}</strong> {selectedDrug.dosing.maxDose}<br/>
+                <strong>{currentLang === 'en' ? 'Frequency:' : 'Fréquence:'}</strong> {selectedDrug.dosing.frequency}
+              </p>
+            </div>
+
+            {/* METABOLISM */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#667BC6'}}>
+                🧬 {currentLang === 'en' ? 'METABOLISM:' : 'MÉTABOLISME:'}
+              </h4>
+              <p style={styles.modalText}>{selectedDrug.metabolism}</p>
+            </div>
+
+            {/* ELIMINATION */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
+                💧 {currentLang === 'en' ? 'ELIMINATION:' : 'ÉLIMINATION:'}
+              </h4>
+              <p style={styles.modalText}>{selectedDrug.elimination}</p>
+            </div>
+
+            {/* HALF-LIFE */}
+            <div style={styles.modalSection}>
+              <h4 style={{...styles.modalLabel, color: '#D5622B'}}>
+                ⏱️ {currentLang === 'en' ? 'HALF-LIFE:' : 'DEMI-VIE:'}
+              </h4>
+              <p style={styles.modalText}>{selectedDrug.halfLife}</p>
+            </div>
+
+            {/* BRAND NAMES */}
+            {selectedDrug.brandNames && selectedDrug.brandNames.length > 0 && (
+              <div style={styles.modalSection}>
+                <h4 style={{...styles.modalLabel, color: 'var(--accent-gold)'}}>
+                  🏷️ {currentLang === 'en' ? 'BRAND NAMES:' : 'NOMS COMMERCIAUX:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.brandNames.join(', ')}</p>
+              </div>
+            )}
+
+            {/* CLINICAL PEARLS */}
+            {selectedDrug.clinicalPearls && (
+              <div style={styles.modalSection}>
+                <h4 style={{...styles.modalLabel, color: 'var(--accent-teal)'}}>
+                  💡 {currentLang === 'en' ? 'CLINICAL PEARLS:' : 'PERLES CLINIQUES:'}
+                </h4>
+                <p style={styles.modalText}>{selectedDrug.clinicalPearls}</p>
+              </div>
+            )}
+
+            <button
+              style={styles.modalCloseButton}
+              onClick={() => setSelectedDrug(null)}
+            >
+              {currentLang === 'en' ? 'Close' : 'Fermer'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -144,7 +292,10 @@ const styles = {
   },
   title: {
     textAlign: 'center',
-    marginBottom: '30px'
+    marginBottom: '30px',
+    color: 'var(--accent-gold)',
+    fontSize: '32px',
+    fontFamily: "'Playfair Display', serif"
   },
   categoryFilter: {
     display: 'flex',
@@ -205,15 +356,110 @@ const styles = {
     margin: '10px 0'
   },
   moreButton: {
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '1px solid var(--accent-teal)',
-    color: 'var(--accent-teal)',
-    padding: '6px 12px',
-    borderRadius: '4px',
+    background: 'rgba(47, 125, 91, 0.2)',
+    border: '1px solid var(--accent-emerald)',
+    color: 'var(--accent-emerald)',
+    padding: '8px 16px',
+    borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: '600',
-    marginTop: '10px'
+    marginTop: '10px',
+    transition: 'all 0.3s ease',
+    width: '100%'
+  },
+
+  /* MODAL STYLES */
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px'
+  },
+  modal: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '2px solid var(--accent-gold)',
+    borderRadius: '15px',
+    padding: '30px',
+    maxWidth: '700px',
+    maxHeight: '85vh',
+    overflowY: 'auto',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'start',
+    marginBottom: '20px'
+  },
+  modalTitle: {
+    color: 'var(--accent-gold)',
+    fontSize: '28px',
+    fontFamily: "'Playfair Display', serif",
+    margin: '0 0 5px 0'
+  },
+  modalSubtitle: {
+    color: 'var(--accent-teal)',
+    fontSize: '14px',
+    margin: '0'
+  },
+  closeIconButton: {
+    background: 'transparent',
+    border: 'none',
+    color: 'var(--accent-gold)',
+    fontSize: '24px',
+    cursor: 'pointer',
+    padding: '0',
+    fontWeight: '700'
+  },
+  modalDivider: {
+    height: '1px',
+    background: 'linear-gradient(90deg, transparent, var(--accent-gold), transparent)',
+    marginBottom: '20px'
+  },
+  modalGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '20px',
+    marginBottom: '20px'
+  },
+  modalSection: {
+    marginBottom: '20px'
+  },
+  modalLabel: {
+    color: 'var(--accent-gold)',
+    fontSize: '12px',
+    fontWeight: '700',
+    margin: '0 0 8px 0',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+  },
+  modalText: {
+    color: 'var(--text-secondary)',
+    fontSize: '13px',
+    lineHeight: '1.6',
+    margin: '0'
+  },
+  modalCloseButton: {
+    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
+    color: 'var(--bg-obsidian)',
+    border: 'none',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '14px',
+    fontWeight: '700',
+    width: '100%',
+    transition: 'all 0.3s ease',
+    marginTop: '20px'
   }
 };
 
