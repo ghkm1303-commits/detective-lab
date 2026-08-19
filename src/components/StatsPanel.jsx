@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase-config';
 import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
 
-const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange }) => {
+const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, currentLang = 'en', onLanguageChange }) => {
   const [stats, setStats] = useState(() => {
     try {
       const saved = localStorage.getItem(`stats_${user.uid}`);
@@ -28,45 +29,80 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange }) 
   };
 
   const userLevel = Math.floor(stats.totalXP / 100) + 1;
-  const nextLevelXP = (userLevel * 100) - (stats.totalXP % 100);
+
+  const textContent = {
+    en: {
+      title: '📊 Your Profile & Progress',
+      level: 'Level',
+      gamesPlayed: 'Games Played',
+      totalXP: 'Total XP',
+      memberSince: 'Member Since',
+      accountStatus: 'Account Status',
+      modeStats: '📈 Mode Statistics',
+      blindMode: '🔍 Blind Mode',
+      focusedMode: '📚 Focused Mode',
+      games: 'games',
+      recentGames: '🎮 Recent Games',
+      logout: '🚪 Logout',
+      back: '← Back',
+      xpToNextLevel: 'XP to next level',
+      premium: 'Premium',
+      active: 'Active'
+    },
+    fr: {
+      title: '📊 Votre Profil et Progression',
+      level: 'Niveau',
+      gamesPlayed: 'Jeux Joués',
+      totalXP: 'XP Total',
+      memberSince: 'Membre Depuis',
+      accountStatus: 'État du Compte',
+      modeStats: '📈 Statistiques par Mode',
+      blindMode: '🔍 Mode Aveugle',
+      focusedMode: '📚 Mode Ciblé',
+      games: 'jeux',
+      recentGames: '🎮 Jeux Récents',
+      logout: '🚪 Déconnexion',
+      back: '← Retour',
+      xpToNextLevel: 'XP jusqu\'au prochain niveau',
+      premium: 'Premium',
+      active: 'Actif'
+    }
+  };
+
+  const t = textContent[currentLang] || textContent.en;
 
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
         <button style={styles.backButton} onClick={onBack}>
-          ← Back
+          {t.back}
         </button>
         <div style={styles.rightGroup}>
+          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button style={styles.logoutButton} onClick={handleLogout}>
-            🚪 Logout
+            {t.logout}
           </button>
         </div>
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.pageTitle}>📊 Your Profile & Progress</h1>
+        <h1 style={styles.pageTitle}>{t.title}</h1>
 
-        {/* TOP SECTION - User Card + Level */}
         <div style={styles.topGrid}>
-          {/* User Card */}
           <div style={styles.card}>
             <div style={styles.userAvatarSection}>
-              <div style={styles.userAvatar}>
-                👤
-              </div>
+              <div style={styles.userAvatar}>👤</div>
               <div>
                 <h2 style={styles.userName}>{userName}</h2>
                 <p style={styles.userEmail}>{user.email}</p>
               </div>
             </div>
-            <div style={styles.statusBadge}>Active</div>
+            <div style={styles.statusBadge}>{t.active}</div>
           </div>
 
-          {/* Level Card */}
           <div style={styles.card}>
-            <h3 style={styles.levelTitle}>Level {userLevel}</h3>
+            <h3 style={styles.levelTitle}>{t.level} {userLevel}</h3>
             <div style={styles.progressBar}>
               <div 
                 style={{
@@ -75,51 +111,48 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange }) 
                 }}
               ></div>
             </div>
-            <p style={styles.progressText}>{stats.totalXP % 100} / 100 XP to next level</p>
+            <p style={styles.progressText}>{stats.totalXP % 100} / 100 {t.xpToNextLevel}</p>
           </div>
         </div>
 
-        {/* STATS SECTION */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>Games Played</h4>
+            <h4 style={styles.statLabel}>{t.gamesPlayed}</h4>
             <p style={styles.statValue}>{stats.totalGamesPlayed}</p>
           </div>
           <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>Total XP</h4>
+            <h4 style={styles.statLabel}>{t.totalXP}</h4>
             <p style={styles.statValue}>{stats.totalXP}</p>
           </div>
           <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>Member Since</h4>
+            <h4 style={styles.statLabel}>{t.memberSince}</h4>
             <p style={styles.statValue}>{new Date(user.metadata.creationTime).toLocaleDateString()}</p>
           </div>
           <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>Account Status</h4>
-            <p style={styles.statValue}>Premium</p>
+            <h4 style={styles.statLabel}>{t.accountStatus}</h4>
+            <p style={styles.statValue}>{t.premium}</p>
           </div>
         </div>
 
-        {/* MODE STATS */}
         <div style={styles.card}>
-          <h3 style={styles.sectionTitle}>📈 Mode Statistics</h3>
+          <h3 style={styles.sectionTitle}>{t.modeStats}</h3>
           <div style={styles.modeStatsGrid}>
             <div style={styles.modeStatCard}>
-              <p style={styles.modeLabel}>🔍 Blind Mode</p>
-              <p style={styles.modeStat}>{stats.modeStats['blind']?.played || 0} games</p>
+              <p style={styles.modeLabel}>{t.blindMode}</p>
+              <p style={styles.modeStat}>{stats.modeStats['blind']?.played || 0} {t.games}</p>
               <p style={styles.modeXP}>{stats.modeStats['blind']?.totalXP || 0} XP</p>
             </div>
             <div style={styles.modeStatCard}>
-              <p style={styles.modeLabel}>📚 Focused Mode</p>
-              <p style={styles.modeStat}>{stats.modeStats['known']?.played || 0} games</p>
+              <p style={styles.modeLabel}>{t.focusedMode}</p>
+              <p style={styles.modeStat}>{stats.modeStats['known']?.played || 0} {t.games}</p>
               <p style={styles.modeXP}>{stats.modeStats['known']?.totalXP || 0} XP</p>
             </div>
           </div>
         </div>
 
-        {/* GAME HISTORY */}
         {stats.gameHistory.length > 0 && (
           <div style={styles.card}>
-            <h3 style={styles.sectionTitle}>🎮 Recent Games</h3>
+            <h3 style={styles.sectionTitle}>{t.recentGames}</h3>
             <div style={styles.historyList}>
               {stats.gameHistory.slice(-5).reverse().map((game, idx) => (
                 <div key={idx} style={styles.historyItem}>
@@ -143,7 +176,8 @@ const styles = {
     minHeight: '100vh',
     padding: '15px',
     position: 'relative',
-    zIndex: 10
+    zIndex: 10,
+    background: 'linear-gradient(135deg, var(--bg-obsidian) 0%, var(--bg-dark) 100%)'
   },
   header: {
     display: 'flex',
@@ -151,12 +185,14 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid rgba(22, 124, 128, 0.2)'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid #B89A5A',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '2px solid var(--accent-emerald)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -167,7 +203,8 @@ const styles = {
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   logoutButton: {
     padding: '8px 16px',
@@ -250,7 +287,7 @@ const styles = {
   progressBar: {
     width: '100%',
     height: '8px',
-    background: 'rgba(22, 124, 128, 0.1)',
+    background: 'rgba(47, 125, 91, 0.1)',
     borderRadius: '10px',
     overflow: 'hidden',
     marginBottom: '10px'
@@ -274,7 +311,7 @@ const styles = {
   },
   statCard: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(22, 124, 128, 0.2)',
+    border: '1px solid rgba(47, 125, 91, 0.2)',
     borderRadius: '8px',
     padding: '15px',
     textAlign: 'center'
@@ -305,8 +342,8 @@ const styles = {
     gap: '15px'
   },
   modeStatCard: {
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '1px solid rgba(22, 124, 128, 0.2)',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '1px solid rgba(47, 125, 91, 0.2)',
     borderRadius: '8px',
     padding: '15px',
     textAlign: 'center'
@@ -338,7 +375,7 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '12px',
-    background: 'rgba(22, 124, 128, 0.05)',
+    background: 'rgba(47, 125, 91, 0.05)',
     borderRadius: '6px',
     borderLeft: '3px solid #167C80'
   },

@@ -13,7 +13,6 @@ import PracticeMode from './components/PracticeMode';
 import DrugDirectory from './components/DrugDirectory';
 import DrugManagement from './components/DrugManagement';
 import ResultScreen from './components/ResultScreen';
-import ThemeToggle from './components/ThemeToggle';
 import drugsData from './data/drugs.json';
 import './App.css';
 
@@ -30,14 +29,12 @@ export default function App() {
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState('pharmacology');
 
-  // Load theme from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem('detective-lab-theme') || 'dark';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
 
-  // Update theme in DOM and localStorage
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
@@ -48,13 +45,11 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Get username from displayName or extract from email
         const name = currentUser.displayName || currentUser.email.split('@')[0];
         setUserName(name);
       }
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
@@ -100,6 +95,7 @@ export default function App() {
         onContinue={() => setScreen('subjectSelector')}
         theme={theme}
         onThemeChange={handleThemeChange}
+        currentLang={currentLang}
       />
     );
   }
@@ -117,7 +113,6 @@ export default function App() {
         onLogout={() => setUser(null)}
         onBack={() => setScreen('dashboard')}
         currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
         userName={userName}
         onStats={() => setScreen('stats')}
         theme={theme}
@@ -135,6 +130,8 @@ export default function App() {
         onLogout={() => setUser(null)}
         theme={theme}
         onThemeChange={handleThemeChange}
+        currentLang={currentLang}
+        onLanguageChange={setCurrentLang}
       />
     );
   }
@@ -149,11 +146,10 @@ export default function App() {
 
   const handleGameTypeSelect = (type) => {
     setGameMode(type);
-    if (type === 'blind') { 
-      setSelectedClass(null); 
-      setScreen('mainGame'); 
-    }
-    else setScreen('classSelector');
+    if (type === 'blind') {
+      setSelectedClass(null);
+      setScreen('mainGame');
+    } else setScreen('classSelector');
   };
 
   const handleClassSelect = (className) => {
@@ -184,106 +180,99 @@ export default function App() {
   return (
     <div className="app">
       {screen === 'modeSelector' && (
-        <ModeSelector 
-          onSelectMode={handleModeSelect} 
+        <ModeSelector
+          onSelectMode={handleModeSelect}
           onBack={() => setScreen('subjectSelector')}
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'gameTypeSelector' && (
-        <GameTypeSelector 
-          onSelectMode={handleGameTypeSelect} 
-          onBack={handleBackToMode} 
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+        <GameTypeSelector
+          onSelectMode={handleGameTypeSelect}
+          onBack={handleBackToMode}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'classSelector' && (
-        <ClassSelector 
-          onSelectClass={handleClassSelect} 
-          onBack={handleBackToGame} 
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+        <ClassSelector
+          onSelectClass={handleClassSelect}
+          onBack={handleBackToGame}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'mainGame' && (
-        <MainGame 
-          drugs={drugs} 
-          selectedClass={selectedClass} 
-          gameMode={gameMode} 
-          onGameEnd={handleGameEnd} 
-          onBack={handleBackToMode} 
-          currentLang={currentLang} 
+        <MainGame
+          drugs={drugs}
+          selectedClass={selectedClass}
+          gameMode={gameMode}
+          onGameEnd={handleGameEnd}
+          onBack={handleBackToMode}
+          currentLang={currentLang}
           theme={theme}
         />
       )}
+
       {screen === 'practiceMode' && (
-        <PracticeMode 
-          onBack={handleBackToMode} 
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+        <PracticeMode
+          onBack={handleBackToMode}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'drugDirectory' && (
-        <DrugDirectory 
-          drugs={drugs} 
-          onBack={handleBackToMode} 
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+        <DrugDirectory
+          drugs={drugs}
+          onBack={handleBackToMode}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'drugManagement' && (
-        <DrugManagement 
-          drugs={drugs} 
-          onDrugsUpdate={handleDrugsUpdate} 
-          onBack={handleBackToMode} 
-          currentLang={currentLang} 
-          onLanguageChange={setCurrentLang}
+        <DrugManagement
+          drugs={drugs}
+          onDrugsUpdate={handleDrugsUpdate}
+          onBack={handleBackToMode}
+          currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
           theme={theme}
           onThemeChange={handleThemeChange}
         />
       )}
+
       {screen === 'result' && (
-        <ResultScreen 
-          result={gameResult} 
-          drugs={drugs} 
-          onPlayAgain={handleBackToGame} 
-          onBackToMode={handleBackToMode} 
-          currentLang={currentLang} 
-          theme={theme}
-        />
-      )}
-      {screen === 'stats' && (
-        <StatsPanel 
-          user={user} 
-          userName={userName}
-          onBack={() => setScreen('modeSelector')} 
-          onLogout={() => setUser(null)} 
+        <ResultScreen
+          result={gameResult}
+          drugs={drugs}
+          onPlayAgain={handleBackToGame}
+          onBackToMode={handleBackToMode}
+          currentLang={currentLang}
           theme={theme}
           onThemeChange={handleThemeChange}
+          userName={userName}
         />
       )}
     </div>
@@ -321,6 +310,7 @@ function saveGameStats(userId, result, gameMode) {
         totalXP: 0
       };
     }
+
     currentStats.modeStats[mode].played += 1;
     currentStats.modeStats[mode].totalScore += gameRecord.score;
     currentStats.modeStats[mode].totalXP += gameRecord.xpEarned;

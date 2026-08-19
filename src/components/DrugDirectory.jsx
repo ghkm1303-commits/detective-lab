@@ -259,8 +259,8 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid #B89A5A',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '2px solid var(--accent-emerald)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -334,7 +334,7 @@ const styles = {
     borderRadius: '4px'
   },
   drugClass: {
-    color: 'var(--accent-teal)',
+    color: 'var(--text-secondary)',
     fontSize: '12px',
     margin: '5px 0'
   },
@@ -393,7 +393,7 @@ const styles = {
     margin: '0 0 5px 0'
   },
   modalSubtitle: {
-    color: 'var(--accent-teal)',
+    color: 'var(--text-secondary)',
     fontSize: '14px',
     margin: '0'
   },

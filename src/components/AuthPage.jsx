@@ -1,122 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserLocalPersistence
-} from 'firebase/auth';
-import { auth, db } from '../firebase-config';
-import { doc, setDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase-config';
+import ThemeToggle from './ThemeToggle';
 
 const AuthPage = ({ onAuthSuccess }) => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState('dark');
 
-  useEffect(() => {
-    // Set persistence once when component mounts
-    setPersistence(auth, browserLocalPersistence)
-      .catch((err) => console.error('Persistence error:', err));
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem('detective-lab-theme') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    if (!email || !password || !name) {
-      setError('Please fill all fields');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Save user to Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: email,
-        name: name,
-        createdAt: new Date().toISOString(),
-        subscriptionStatus: 'free',
-        subscriptionExpiry: null
-      });
-
-      console.log('User created:', user.uid);
-      onAuthSuccess(user);
-    } catch (err) {
-      console.error('Signup error:', err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Email already in use');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Password too weak (min 6 chars)');
-      } else {
-        setError(err.message);
-      }
-    }
-
-    setLoading(false);
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('detective-lab-theme', newTheme);
   };
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    if (!email || !password) {
-      setError('Please fill all fields');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log('User logged in:', user.uid);
-      onAuthSuccess(user);
-    } catch (err) {
-      console.error('Login error:', err);
-      if (err.code === 'auth/user-not-found') {
-        setError('Email not found');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Wrong password');
+      if (isSignUp) {
+        if (!displayName.trim()) {
+          setError('Please enter a username');
+          setLoading(false);
+          return;
+        }
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await userCredential.user.updateProfile({ displayName });
+        onAuthSuccess(userCredential.user);
       } else {
-        setError(err.message);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        onAuthSuccess(userCredential.user);
       }
+    } catch (err) {
+      setError(err.message || 'Authentication failed');
     }
-
     setLoading(false);
   };
 
   return (
     <div style={styles.container}>
+      <div style={styles.themeToggleContainer}>
+        <ThemeToggle theme={theme} onThemeChange={handleThemeChange} />
+      </div>
+
       <div style={styles.content}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>🔬 Detective Lab</h1>
-          <p style={styles.subtitle}>Pharmacy Edition</p>
-        </div>
+        <h1 style={styles.title}>🔬 Detective Lab</h1>
+        <p style={styles.subtitle}>
+          {isSignUp ? 'Create Your Account' : 'Welcome Back'}
+        </p>
 
         <div style={styles.card}>
-          <h2 style={styles.cardTitle}>
-            {isLogin ? '🔓 Login' : '📝 Create Account'}
-          </h2>
-
-          <form onSubmit={isLogin ? handleLogin : handleSignup}>
-            {!isLogin && (
+          <form onSubmit={handleSubmit} style={styles.form}>
+            {isSignUp && (
               <div style={styles.formGroup}>
-                <label style={styles.label}>Full Name</label>
+                <label style={styles.label}>Username</label>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Enter your username"
                   style={styles.input}
-                  disabled={loading}
                 />
               </div>
             )}
@@ -129,7 +84,6 @@ const AuthPage = ({ onAuthSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
                 style={styles.input}
-                disabled={loading}
               />
             </div>
 
@@ -139,56 +93,29 @@ const AuthPage = ({ onAuthSuccess }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min 6 characters"
+                placeholder="Enter your password"
                 style={styles.input}
-                disabled={loading}
               />
             </div>
 
-            {error && (
-              <div style={styles.errorBox}>
-                ❌ {error}
-              </div>
-            )}
+            {error && <p style={styles.error}>{error}</p>}
 
-            <button
-              type="submit"
-              style={{
-                ...styles.button,
-                opacity: loading ? 0.6 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
-              disabled={loading}
-            >
-              {loading ? '⏳ Loading...' : (isLogin ? '🔓 Login' : '✅ Create Account')}
+            <button type="submit" style={styles.submitButton} disabled={loading}>
+              {loading ? '...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </button>
           </form>
 
-          <div style={styles.toggle}>
-            <p style={styles.toggleText}>
-              {isLogin ? "Don't have an account?" : 'Already have an account?'}
-            </p>
-            <button
-              style={styles.toggleButton}
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setError('');
-                setEmail('');
-                setPassword('');
-                setName('');
-              }}
-              disabled={loading}
-            >
-              {isLogin ? 'Sign Up' : 'Login'}
-            </button>
-          </div>
-        </div>
-
-        <div style={styles.infoBox}>
-          <h3 style={styles.infoTitle}>ℹ️ What is Detective Lab?</h3>
-          <p style={styles.infoText}>
-            Master pharmaceutical knowledge through interactive games. Practice different drug identification modes, build your database, and become a pharmaceutical expert.
-          </p>
+          <button
+            style={styles.toggleButton}
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setError('');
+            }}
+          >
+            {isSignUp
+              ? 'Already have an account? Sign In'
+              : "Don't have an account? Sign Up"}
+          </button>
         </div>
       </div>
     </div>
@@ -205,120 +132,85 @@ const styles = {
     position: 'relative',
     zIndex: 10
   },
+  themeToggleContainer: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px'
+  },
   content: {
-    maxWidth: '500px',
+    textAlign: 'center',
+    maxWidth: '400px',
     width: '100%'
   },
-  header: {
-    textAlign: 'center',
-    marginBottom: '30px'
-  },
   title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '42px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    margin: '0 0 5px 0'
+    marginBottom: '10px',
+    fontSize: '40px'
   },
   subtitle: {
-    fontSize: '14px',
-    color: 'var(--text-secondary)',
-    margin: '0'
+    color: 'var(--text-primary)',
+    marginBottom: '30px',
+    fontSize: '16px'
   },
   card: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '1px solid var(--border-gold)',
     borderRadius: '10px',
     padding: '30px',
+    transition: 'all 0.3s ease'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
     marginBottom: '20px'
   },
-  cardTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '24px',
-    color: 'var(--accent-gold)',
-    margin: '0 0 20px 0',
-    textAlign: 'center'
-  },
   formGroup: {
-    marginBottom: '15px'
+    textAlign: 'left'
   },
   label: {
     display: 'block',
+    color: 'var(--text-primary)',
     fontSize: '12px',
-    color: 'var(--text-secondary)',
-    marginBottom: '6px',
-    fontWeight: '600'
+    fontWeight: '700',
+    marginBottom: '8px',
+    textTransform: 'uppercase'
   },
   input: {
     width: '100%',
     padding: '12px',
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.3)',
-    borderRadius: '6px',
+    background: 'rgba(47, 125, 91, 0.05)',
+    border: '2px solid var(--accent-emerald)',
     color: 'var(--text-primary)',
-    fontSize: '13px',
+    borderRadius: '6px',
     fontFamily: 'inherit',
-    boxSizing: 'border-box'
-  },
-  errorBox: {
-    background: 'rgba(255, 71, 87, 0.1)',
-    border: '1px solid var(--danger)',
-    borderRadius: '6px',
-    padding: '10px',
-    marginBottom: '15px',
-    fontSize: '12px',
-    color: 'var(--danger)',
-    textAlign: 'center'
-  },
-  button: {
-    width: '100%',
-    padding: '12px',
-    background: 'rgba(212, 175, 55, 0.15)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--accent-gold)',
-    borderRadius: '6px',
-    fontWeight: '700',
     fontSize: '14px',
+    transition: 'all 0.3s ease'
+  },
+  submitButton: {
+    padding: '12px',
+    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
+    color: 'var(--bg-obsidian)',
+    border: 'none',
+    borderRadius: '6px',
     cursor: 'pointer',
-    fontFamily: 'inherit'
-  },
-  toggle: {
-    textAlign: 'center',
-    marginTop: '15px',
-    paddingTop: '15px',
-    borderTop: '1px solid rgba(0, 217, 255, 0.1)'
-  },
-  toggleText: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0 0 8px 0'
+    fontFamily: 'inherit',
+    fontSize: '14px',
+    fontWeight: '700',
+    transition: 'all 0.3s ease'
   },
   toggleButton: {
     background: 'transparent',
     border: 'none',
-    color: 'var(--accent-gold)',
+    color: 'var(--accent-emerald)',
+    fontSize: '12px',
     cursor: 'pointer',
-    fontWeight: '700',
+    fontFamily: 'inherit',
+    textDecoration: 'underline'
+  },
+  error: {
+    color: '#E63946',
     fontSize: '12px',
-    fontFamily: 'inherit'
-  },
-  infoBox: {
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
-    borderRadius: '8px',
-    padding: '15px'
-  },
-  infoTitle: {
-    fontSize: '12px',
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
-    margin: '0 0 8px 0'
-  },
-  infoText: {
-    fontSize: '11px',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.6',
-    margin: '0'
+    textAlign: 'center'
   }
 };
 

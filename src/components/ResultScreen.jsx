@@ -1,64 +1,85 @@
 import React from 'react';
+import ThemeToggle from './ThemeToggle';
 
-const ResultScreen = ({ result, drugs, onPlayAgain, onBackToMode, currentLang }) => {
-  const drug = drugs.find(d => d.names.en === result.drugName);
-  const isWin = result.score > 500;
+const ResultScreen = ({ result, drugs, onPlayAgain, onBackToMode, currentLang, theme, onThemeChange, userName }) => {
+  const handleThemeChange = (newTheme) => {
+    onThemeChange(newTheme);
+  };
+
+  const resultDrug = drugs.find(d => d.names.en === result.drugName);
 
   return (
     <div style={styles.container}>
-      <div style={styles.resultBox}>
-        <div style={styles.resultIcon}>
-          {isWin ? '🎉' : '🎮'}
+      <div style={styles.header}>
+        <button style={styles.backButton} onClick={onBackToMode}>
+          ← {currentLang === 'en' ? 'Back to Menu' : 'Retour au Menu'}
+        </button>
+        <div style={styles.rightGroup}>
+          <ThemeToggle theme={theme} onThemeChange={handleThemeChange} />
+          <span style={styles.userName}>👤 {userName}</span>
         </div>
+      </div>
 
-        <h1 style={styles.resultTitle}>
-          {isWin 
-            ? (currentLang === 'en' ? 'Excellent!' : 'Excellent!')
-            : (currentLang === 'en' ? 'Game Over!' : 'Fin du Jeu!')}
-        </h1>
+      <div style={styles.content}>
+        {result.correct ? (
+          <div style={styles.resultCard}>
+            <h1 style={styles.successTitle}>🎉 {currentLang === 'en' ? 'Correct!' : 'Correct!'}</h1>
+            <p style={styles.drugName}>{result.drugName}</p>
 
-        <div style={styles.scoreBox}>
-          <div style={styles.scoreLabel}>
-            {currentLang === 'en' ? 'Score' : 'Score'}
-          </div>
-          <div style={styles.scoreValue}>{result.score}</div>
-        </div>
+            {resultDrug && (
+              <div style={styles.drugInfo}>
+                <p style={styles.drugDetail}>
+                  <strong>{currentLang === 'en' ? 'Class:' : 'Classe:'}</strong> {resultDrug.therapeuticClass}
+                </p>
+                <p style={styles.drugDetail}>
+                  <strong>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</strong> {resultDrug.indications}
+                </p>
+              </div>
+            )}
 
-        <div style={styles.details}>
-          <div style={styles.detailItem}>
-            <span style={styles.detailLabel}>
-              {currentLang === 'en' ? 'Drug:' : 'Médicament:'}
-            </span>
-            <span style={styles.detailValue}>{result.drugName}</span>
-          </div>
-          {drug && (
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>
-                {currentLang === 'en' ? 'Class:' : 'Classe:'}
-              </span>
-              <span style={styles.detailValue}>{drug.class}</span>
+            <div style={styles.scoreCard}>
+              <div style={styles.scoreItem}>
+                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'Score' : 'Score'}</p>
+                <p style={styles.scoreValue}>{result.score}</p>
+              </div>
+              <div style={styles.scoreItem}>
+                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'XP Earned' : 'XP Gagné'}</p>
+                <p style={styles.scoreValue}>{result.xpEarned}</p>
+              </div>
+              <div style={styles.scoreItem}>
+                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'Clues Used' : 'Indices Utilisés'}</p>
+                <p style={styles.scoreValue}>{result.cluesUsed}/8</p>
+              </div>
             </div>
-          )}
-          <div style={styles.detailItem}>
-            <span style={styles.detailLabel}>
-              {currentLang === 'en' ? 'Clues Used:' : 'Indices Utilisés:'}
-            </span>
-            <span style={styles.detailValue}>{result.cluesUsed}</span>
           </div>
-          <div style={styles.detailItem}>
-            <span style={styles.detailLabel}>
-              {currentLang === 'en' ? 'XP Earned:' : 'XP Gagnés:'}
-            </span>
-            <span style={styles.detailValue}>+{Math.max(result.score - 300, 0)}</span>
-          </div>
-        </div>
+        ) : (
+          <div style={styles.resultCard}>
+            <h1 style={styles.failureTitle}>❌ {currentLang === 'en' ? 'Game Over' : 'Fin du Jeu'}</h1>
+            <p style={styles.drugName}>{currentLang === 'en' ? 'The drug was:' : 'Le médicament était:'} {result.drugName}</p>
 
-        <div style={styles.buttonGroup}>
+            {resultDrug && (
+              <div style={styles.drugInfo}>
+                <p style={styles.drugDetail}>
+                  <strong>{currentLang === 'en' ? 'Class:' : 'Classe:'}</strong> {resultDrug.therapeuticClass}
+                </p>
+                <p style={styles.drugDetail}>
+                  <strong>{currentLang === 'en' ? 'Mechanism:' : 'Mécanisme:'}</strong> {resultDrug.mechanism}
+                </p>
+              </div>
+            )}
+
+            <p style={styles.tryAgainMessage}>
+              {currentLang === 'en' ? 'Better luck next time!' : 'Meilleure chance la prochaine fois!'}
+            </p>
+          </div>
+        )}
+
+        <div style={styles.buttonsGroup}>
           <button style={styles.playAgainButton} onClick={onPlayAgain}>
-            {currentLang === 'en' ? '🔄 Play Again' : '🔄 Rejouer'}
+            🎮 {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
           </button>
           <button style={styles.menuButton} onClick={onBackToMode}>
-            {currentLang === 'en' ? '📖 Back to Menu' : '📖 Retour au Menu'}
+            📊 {currentLang === 'en' ? 'Back to Menu' : 'Retour au Menu'}
           </button>
         </div>
       </div>
@@ -69,100 +90,144 @@ const ResultScreen = ({ result, drugs, onPlayAgain, onBackToMode, currentLang })
 const styles = {
   container: {
     minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: '15px',
     position: 'relative',
     zIndex: 10
   },
-  resultBox: {
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(42, 47, 74, 0.9) 100%)',
-    border: '2px solid var(--accent-gold)',
-    borderRadius: '10px',
-    padding: '40px',
-    maxWidth: '500px',
-    textAlign: 'center'
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '30px',
+    paddingBottom: '15px',
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
-  resultIcon: {
-    fontSize: '80px',
-    marginBottom: '15px'
-  },
-  resultTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '32px',
-    color: 'var(--accent-gold)',
-    margin: '0 0 20px 0'
-  },
-  scoreBox: {
-    background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.15) 0%, rgba(0, 217, 255, 0.15) 100%)',
+  backButton: {
+    padding: '8px 16px',
+    background: 'rgba(47, 125, 91, 0.1)',
     border: '2px solid var(--accent-emerald)',
-    borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '20px'
-  },
-  scoreLabel: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    fontWeight: '600',
-    marginBottom: '5px'
-  },
-  scoreValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '48px',
-    fontWeight: '700',
-    color: 'var(--accent-emerald)'
-  },
-  details: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '12px',
-    marginBottom: '25px'
-  },
-  detailItem: {
-    background: 'rgba(0, 217, 255, 0.05)',
-    border: '1px solid rgba(0, 217, 255, 0.2)',
+    color: 'var(--text-primary)',
     borderRadius: '6px',
-    padding: '10px',
-    fontSize: '11px'
-  },
-  detailLabel: {
-    color: 'var(--text-secondary)',
-    display: 'block',
-    marginBottom: '4px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
     fontWeight: '600'
   },
-  detailValue: {
-    color: 'var(--accent-gold)',
-    fontWeight: '700',
-    fontSize: '12px'
+  rightGroup: {
+    display: 'flex',
+    gap: '15px',
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
-  buttonGroup: {
+  userName: {
+    color: 'var(--text-primary)',
+    fontSize: '13px',
+    fontWeight: '600'
+  },
+  content: {
+    maxWidth: '600px',
+    margin: '0 auto',
+    textAlign: 'center'
+  },
+  resultCard: {
+    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+    border: '2px solid var(--accent-gold)',
+    borderRadius: '15px',
+    padding: '30px',
+    marginBottom: '30px'
+  },
+  successTitle: {
+    color: 'var(--accent-emerald)',
+    fontSize: '36px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  failureTitle: {
+    color: '#E63946',
+    fontSize: '36px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  drugName: {
+    color: 'var(--accent-gold)',
+    fontSize: '24px',
+    fontWeight: '700',
+    margin: '0 0 20px 0'
+  },
+  drugInfo: {
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '1px solid rgba(47, 125, 91, 0.2)',
+    borderRadius: '8px',
+    padding: '15px',
+    marginBottom: '20px'
+  },
+  drugDetail: {
+    color: 'var(--text-secondary)',
+    fontSize: '13px',
+    margin: '8px 0'
+  },
+  scoreCard: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '12px'
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '15px',
+    marginBottom: '20px'
+  },
+  scoreItem: {
+    background: 'rgba(47, 125, 91, 0.1)',
+    borderRadius: '8px',
+    padding: '12px'
+  },
+  scoreLabel: {
+    color: 'var(--text-secondary)',
+    fontSize: '11px',
+    fontWeight: '700',
+    margin: '0 0 8px 0',
+    textTransform: 'uppercase'
+  },
+  scoreValue: {
+    color: 'var(--accent-gold)',
+    fontSize: '20px',
+    fontWeight: '700',
+    margin: '0'
+  },
+  tryAgainMessage: {
+    color: 'var(--text-secondary)',
+    fontSize: '14px',
+    fontStyle: 'italic',
+    marginTop: '20px'
+  },
+  buttonsGroup: {
+    display: 'flex',
+    gap: '15px',
+    flexWrap: 'wrap'
   },
   playAgainButton: {
+    flex: 1,
+    minWidth: '150px',
     padding: '12px',
-    background: 'rgba(0, 208, 132, 0.15)',
+    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
+    color: 'var(--bg-obsidian)',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '13px',
+    fontWeight: '700'
+  },
+  menuButton: {
+    flex: 1,
+    minWidth: '150px',
+    padding: '12px',
+    background: 'rgba(47, 125, 91, 0.2)',
     border: '2px solid var(--accent-emerald)',
     color: 'var(--accent-emerald)',
     borderRadius: '6px',
-    fontWeight: '700',
     cursor: 'pointer',
+    fontFamily: 'inherit',
     fontSize: '13px',
-    fontFamily: 'inherit'
-  },
-  menuButton: {
-    padding: '12px',
-    background: 'rgba(212, 175, 55, 0.15)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--accent-gold)',
-    borderRadius: '6px',
-    fontWeight: '700',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontFamily: 'inherit'
+    fontWeight: '700'
   }
 };
 

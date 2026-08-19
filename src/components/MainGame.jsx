@@ -17,16 +17,16 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
     if (filteredDrugs.length > 0) {
       const drug = pickRandomDrug(filteredDrugs);
       setHiddenDrug(drug);
-      // Create 8 simple clues
+      
       const clues = [
-        drug.effects && drug.effects[0] ? `Effect: ${drug.effects[0]}` : `Class: ${drug.therapeuticClass}`,
-        `Route: ${drug.route}`,
-        `Indication: ${drug.indications.substring(0, 50)}...`,
-        `Side effect: ${drug.sideEffects[0] || 'None listed'}`,
+        `Indication: ${drug.indications.substring(0, 60)}`,
+        `Route: ${drug.route} administration`,
+        `Mechanism: ${drug.mechanism.substring(0, 70)}`,
+        `Therapeutic Class: ${drug.therapeuticClass}`,
+        `Side Effect: ${drug.sideEffects[0] || 'Headache'}`,
         `Metabolism: ${drug.metabolism}`,
         `Elimination: ${drug.elimination}`,
-        `Half-life: ${drug.halfLife}`,
-        `Contraindication: ${drug.contraindications[0] || 'None listed'}`
+        `Half-life: ${drug.halfLife}`
       ];
       setAllClues(clues);
       setRevealedCluesCount(1);
@@ -135,7 +135,6 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
       </div>
 
       <div style={styles.content}>
-        {/* GUESS SECTION - TOP */}
         <div style={styles.guessSection}>
           <h3 style={styles.guessTitle}>
             {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
@@ -159,7 +158,6 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
           )}
         </div>
 
-        {/* CLUES SECTION */}
         <div style={styles.cluesSection}>
           <h3 style={styles.cluesTitle}>
             {currentLang === 'en' ? 'Available Clues' : 'Indices Disponibles'} ({revealedCluesCount}/8)
@@ -216,8 +214,8 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid #B89A5A',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '2px solid var(--accent-emerald)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -232,9 +230,9 @@ const styles = {
     fontFamily: "'Playfair Display', serif"
   },
   modeIndicator: {
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '1px solid #167C80',
-    color: '#167C80',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '1px solid var(--accent-emerald)',
+    color: 'var(--accent-emerald)',
     padding: '6px 12px',
     borderRadius: '20px',
     fontSize: '12px',
@@ -260,8 +258,8 @@ const styles = {
   guessInput: {
     width: '100%',
     padding: '12px',
-    background: 'rgba(22, 124, 128, 0.05)',
-    border: '2px solid #167C80',
+    background: 'rgba(47, 125, 91, 0.05)',
+    border: '2px solid var(--accent-emerald)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     fontFamily: 'inherit',
@@ -302,10 +300,10 @@ const styles = {
   },
   clueCard: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(22, 124, 128, 0.2)',
+    border: '1px solid rgba(47, 125, 91, 0.2)',
     borderRadius: '8px',
     padding: '15px',
-    borderLeft: '3px solid #167C80'
+    borderLeft: '3px solid var(--accent-emerald)'
   },
   clueNumber: {
     color: '#B89A5A',
@@ -371,8 +369,8 @@ const styles = {
     margin: '0 0 20px 0'
   },
   scoreBreakdown: {
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '1px solid rgba(22, 124, 128, 0.2)',
+    background: 'rgba(47, 125, 91, 0.1)',
+    border: '1px solid rgba(47, 125, 91, 0.2)',
     borderRadius: '6px',
     padding: '15px',
     marginBottom: '20px'
