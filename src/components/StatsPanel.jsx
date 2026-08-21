@@ -29,7 +29,6 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, cu
   };
 
   const userLevel = Math.floor(stats.totalXP / 100) + 1;
-
   const textContent = {
     en: {
       title: '📊 Your Profile & Progress',
@@ -104,7 +103,7 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, cu
           <div style={styles.card}>
             <h3 style={styles.levelTitle}>{t.level} {userLevel}</h3>
             <div style={styles.progressBar}>
-              <div 
+              <div
                 style={{
                   ...styles.progressFill,
                   width: `${((stats.totalXP % 100) / 100) * 100}%`
@@ -191,8 +190,8 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '2px solid var(--accent-emerald)',
+    background: 'rgba(184, 154, 90, 0.1)',
+    border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',

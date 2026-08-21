@@ -1,28 +1,25 @@
 import React from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const ClassSelector = ({ onSelectClass, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
-  const classes = [
-    { id: 'cardiovascular', frName: 'Médicaments du Système Cardiaque', enName: 'Cardiovascular System Drugs', icon: '❤️' },
-    { id: 'nervous', frName: 'Médicaments du Système Nerveux', enName: 'Nervous System Drugs', icon: '🧠' },
-    { id: 'endocrine', frName: 'Médicaments du Système Endocrinien', enName: 'Endocrine System Drugs', icon: '⚗️' },
-    { id: 'respiratory', frName: 'Médicaments du Système Respiratoire', enName: 'Respiratory System Drugs', icon: '💨' },
-    { id: 'digestive', frName: 'Médicaments du Système Digestif', enName: 'Digestive System Drugs', icon: '🍽️' },
-    { id: 'immune', frName: 'Médicaments du Système Immunitaire', enName: 'Immune System Drugs', icon: '🛡️' },
-    { id: 'musculoskeletal', frName: 'Médicaments Musculo-Squelettiques', enName: 'Musculoskeletal Drugs', icon: '🦴' },
-    { id: 'renal', frName: 'Médicaments du Système Rénal', enName: 'Renal System Drugs', icon: '💧' }
+const ClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+  const categories = [
+    { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire', icon: '❤️' },
+    { id: 'nervous', enName: 'Nervous System', frName: 'Système Nerveux', icon: '🧠' },
+    { id: 'endocrine', enName: 'Endocrine', frName: 'Endocrinien', icon: '⚗️' },
+    { id: 'respiratory', enName: 'Respiratory', frName: 'Respiratoire', icon: '💨' },
+    { id: 'digestive', enName: 'Digestive', frName: 'Digestif', icon: '🍽️' },
+    { id: 'immune', enName: 'Immune', frName: 'Immunitaire', icon: '🛡️' },
+    { id: 'musculoskeletal', enName: 'Musculoskeletal', frName: 'Musculo-Squelettique', icon: '🦴' },
+    { id: 'renal', enName: 'Renal', frName: 'Rénal', icon: '💧' }
   ];
 
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
+        <button className="back-button" onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
@@ -32,19 +29,19 @@ const ClassSelector = ({ onSelectClass, onBack, currentLang, onLanguageChange, u
 
       <div style={styles.content}>
         <h1 style={styles.title}>
-          {currentLang === 'en' ? 'Select Drug Class' : 'Sélectionnez la Classe de Médicaments'}
+          {currentLang === 'en' ? 'Select Drug Category' : 'Sélectionnez la Catégorie'}
         </h1>
 
-        <div style={styles.classesGrid}>
-          {classes.map(cls => (
+        <div style={styles.classGrid}>
+          {categories.map(cat => (
             <button
-              key={cls.id}
+              key={cat.id}
               style={styles.classCard}
-              onClick={() => onSelectClass(cls.id)}
+              onClick={() => onSelectClass(cat.id)}
             >
-              <div style={styles.classIcon}>{cls.icon}</div>
+              <div style={styles.classIcon}>{cat.icon}</div>
               <h3 style={styles.className}>
-                {currentLang === 'en' ? cls.enName : cls.frName}
+                {currentLang === 'en' ? cat.enName : cat.frName}
               </h3>
             </button>
           ))}
@@ -67,60 +64,47 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)'
-  },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
     maxWidth: '1000px',
-    margin: '0 auto',
-    textAlign: 'center'
+    margin: '0 auto'
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '36px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    margin: '0 0 40px 0'
+    textAlign: 'center',
+    marginBottom: '40px'
   },
-  classesGrid: {
+  classGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '20px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '15px'
   },
   classCard: {
-    padding: '25px 15px',
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '2px solid var(--accent-teal)',
+    border: '2px solid var(--accent-gold)',
     borderRadius: '10px',
+    padding: '20px',
     cursor: 'pointer',
-    fontFamily: 'inherit',
-    transition: 'all 0.3s ease'
+    transition: 'all 0.3s ease',
+    textAlign: 'center'
   },
   classIcon: {
-    fontSize: '48px',
+    fontSize: '36px',
     marginBottom: '12px'
   },
   className: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '16px',
-    fontWeight: '700',
-    color: 'var(--accent-teal)',
-    margin: '0'
+    color: 'var(--accent-gold)',
+    fontSize: '14px',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
   }
 };
 

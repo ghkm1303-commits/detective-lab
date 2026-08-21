@@ -1,40 +1,14 @@
 import React from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
-  const modes = [
-    {
-      id: 'blind',
-      icon: '🔍',
-      enTitle: 'Blind Investigation',
-      frTitle: 'Investigation à l\'Aveugle',
-      enSubtitle: 'HARD 🔥',
-      frSubtitle: 'DIFFICILE 🔥',
-      enDesc: 'No class hints given. Drug could be from ANY category. Maximum XP reward.',
-      frDesc: 'Aucun indice de classe. Le médicament peut provenir de N\'IMPORTE QUELLE catégorie. Récompense XP maximale.'
-    },
-    {
-      id: 'known',
-      icon: '📚',
-      enTitle: 'Focused Investigation',
-      frTitle: 'Investigation Ciblée',
-      enSubtitle: 'MEDIUM ⭐',
-      frSubtitle: 'MOYEN ⭐',
-      enDesc: 'Choose your drug class first. Focus on specific categories. Perfect for learning.',
-      frDesc: 'Choisissez d\'abord votre classe. Concentrez-vous sur des catégories spécifiques. Parfait pour apprendre.'
-    }
-  ];
-
+const GameTypeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
+        <button className="back-button" onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
@@ -44,32 +18,39 @@ const GameTypeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange,
 
       <div style={styles.content}>
         <h1 style={styles.title}>
-          {currentLang === 'en' ? '⚔️ Choose Your Challenge' : '⚔️ Choisissez Votre Défi'}
+          {currentLang === 'en' ? 'Select Game Mode' : 'Sélectionner le Mode de Jeu'}
         </h1>
-        <p style={styles.subtitle}>
-          {currentLang === 'en' ? 'Select difficulty and game mode' : 'Sélectionnez la difficulté et le mode de jeu'}
-        </p>
 
-        <div style={styles.modesGrid}>
-          {modes.map(mode => (
-            <button
-              key={mode.id}
-              style={styles.modeCard}
-              onClick={() => onSelectMode(mode.id)}
-            >
-              <div style={styles.modeIcon}>{mode.icon}</div>
-              <h2 style={styles.modeTitle}>
-                {currentLang === 'en' ? mode.enTitle : mode.frTitle}
-              </h2>
-              <div style={styles.modeBadge}>
-                {currentLang === 'en' ? mode.enSubtitle : mode.frSubtitle}
-              </div>
-              <p style={styles.modeDescription}>
-                {currentLang === 'en' ? mode.enDesc : mode.frDesc}
-              </p>
-              <div style={styles.arrow}>→</div>
-            </button>
-          ))}
+        <div style={styles.typeGrid}>
+          <button
+            style={styles.typeCard}
+            onClick={() => onSelectMode('blind')}
+          >
+            <div style={styles.typeIcon}>🔍</div>
+            <h3 style={styles.typeName}>
+              {currentLang === 'en' ? 'Blind Mode' : 'Mode Aveugle'}
+            </h3>
+            <p style={styles.typeDesc}>
+              {currentLang === 'en'
+                ? 'Guess from any category'
+                : 'Devinez de n\'importe quelle catégorie'}
+            </p>
+          </button>
+
+          <button
+            style={styles.typeCard}
+            onClick={() => onSelectMode('focused')}
+          >
+            <div style={styles.typeIcon}>📚</div>
+            <h3 style={styles.typeName}>
+              {currentLang === 'en' ? 'Focused Mode' : 'Mode Ciblé'}
+            </h3>
+            <p style={styles.typeDesc}>
+              {currentLang === 'en'
+                ? 'Choose a category first'
+                : 'Choisissez une catégorie d\'abord'}
+            </p>
+          </button>
         </div>
       </div>
     </div>
@@ -89,92 +70,52 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)'
-  },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
-    maxWidth: '900px',
+    maxWidth: '800px',
     margin: '0 auto'
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '36px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
     textAlign: 'center',
-    margin: '0 0 10px 0'
-  },
-  subtitle: {
-    fontSize: '14px',
-    color: 'var(--text-secondary)',
-    textAlign: 'center',
-    margin: '0 0 40px 0'
-  },
-  modesGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '20px',
     marginBottom: '40px'
   },
-  modeCard: {
-    padding: '25px',
+  typeGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '30px'
+  },
+  typeCard: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid var(--accent-gold)',
     borderRadius: '10px',
+    padding: '40px 30px',
     cursor: 'pointer',
-    fontFamily: 'inherit',
     transition: 'all 0.3s ease',
-    textAlign: 'center',
-    position: 'relative'
+    textAlign: 'center'
   },
-  modeIcon: {
-    fontSize: '48px',
-    marginBottom: '12px'
+  typeIcon: {
+    fontSize: '60px',
+    marginBottom: '20px'
   },
-  modeTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '20px',
-    fontWeight: '700',
+  typeName: {
     color: 'var(--accent-gold)',
-    margin: '0 0 8px 0'
+    fontSize: '22px',
+    margin: '0 0 15px 0',
+    fontFamily: "'Playfair Display', serif"
   },
-  modeBadge: {
-    display: 'inline-block',
-    fontSize: '11px',
-    fontWeight: '700',
-    color: 'var(--bg-obsidian)',
-    background: 'var(--accent-gold)',
-    padding: '4px 12px',
-    borderRadius: '20px',
-    marginBottom: '12px'
-  },
-  modeDescription: {
-    fontSize: '12px',
+  typeDesc: {
     color: 'var(--text-secondary)',
-    lineHeight: '1.5',
+    fontSize: '14px',
     margin: '0'
-  },
-  arrow: {
-    position: 'absolute',
-    top: '15px',
-    right: '15px',
-    fontSize: '24px',
-    color: 'var(--accent-gold)'
   }
 };
 

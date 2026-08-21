@@ -6,12 +6,10 @@ import Dashboard from './components/Dashboard';
 import SubjectSelector from './components/SubjectSelector';
 import StatsPanel from './components/StatsPanel';
 import ModeSelector from './components/ModeSelector';
-import GameTypeSelector from './components/GameTypeSelector';
 import ClassSelector from './components/ClassSelector';
 import MainGame from './components/MainGame';
 import PracticeMode from './components/PracticeMode';
 import DrugDirectory from './components/DrugDirectory';
-import DrugManagement from './components/DrugManagement';
 import ResultScreen from './components/ResultScreen';
 import drugsData from './data/drugs.json';
 import './App.css';
@@ -83,7 +81,7 @@ export default function App() {
   }
 
   if (!user) {
-    return <AuthPage onAuthSuccess={setUser} />;
+    return <AuthPage onAuthSuccess={setUser} theme={theme} onThemeChange={handleThemeChange} currentLang={currentLang} />;
   }
 
   if (screen === 'dashboard') {
@@ -110,7 +108,6 @@ export default function App() {
           setSelectedSubject(subject);
           setScreen('modeSelector');
         }}
-        onLogout={() => setUser(null)}
         onBack={() => setScreen('dashboard')}
         currentLang={currentLang}
         userName={userName}
@@ -136,20 +133,19 @@ export default function App() {
     );
   }
 
+  // ---- Mode routing ----
   const handleModeSelect = (mode) => {
-    if (mode === 'mainGame') setScreen('gameTypeSelector');
-    else if (mode === 'practiceMode') setScreen('practiceMode');
-    else if (mode === 'drugDirectory') setScreen('drugDirectory');
-    else if (mode === 'drugManagement') setScreen('drugManagement');
-    else setScreen(mode);
-  };
-
-  const handleGameTypeSelect = (type) => {
-    setGameMode(type);
-    if (type === 'blind') {
+    if (mode === 'blind') {
+      setGameMode('blind');
       setSelectedClass(null);
       setScreen('mainGame');
-    } else setScreen('classSelector');
+    } else if (mode === 'focused') {
+      setGameMode('focused');
+      setScreen('classSelector');
+    } else if (mode === 'studyMode') {
+      setScreen('drugDirectory');
+    }
+    // practiceMode tile is disabled in ModeSelector, so it never reaches here
   };
 
   const handleClassSelect = (className) => {
@@ -163,11 +159,6 @@ export default function App() {
     setScreen('result');
   };
 
-  const handleDrugsUpdate = (updatedDrugs) => {
-    setDrugs(updatedDrugs);
-    localStorage.setItem('drugs', JSON.stringify(updatedDrugs));
-  };
-
   const handleBackToMode = () => {
     setScreen('modeSelector');
     setSelectedClass(null);
@@ -175,7 +166,19 @@ export default function App() {
     setGameResult(null);
   };
 
-  const handleBackToGame = () => setScreen('gameTypeSelector');
+  const handleBackFromClassSelector = () => {
+    setScreen('modeSelector');
+    setGameMode(null);
+  };
+
+  const handlePlayAgain = () => {
+    setGameResult(null);
+    if (gameMode === 'focused') {
+      setScreen('classSelector');
+    } else {
+      setScreen('mainGame');
+    }
+  };
 
   return (
     <div className="app">
@@ -191,22 +194,10 @@ export default function App() {
         />
       )}
 
-      {screen === 'gameTypeSelector' && (
-        <GameTypeSelector
-          onSelectMode={handleGameTypeSelect}
-          onBack={handleBackToMode}
-          currentLang={currentLang}
-          userName={userName}
-          onStats={() => setScreen('stats')}
-          theme={theme}
-          onThemeChange={handleThemeChange}
-        />
-      )}
-
       {screen === 'classSelector' && (
         <ClassSelector
           onSelectClass={handleClassSelect}
-          onBack={handleBackToGame}
+          onBack={handleBackFromClassSelector}
           currentLang={currentLang}
           userName={userName}
           onStats={() => setScreen('stats')}
@@ -223,7 +214,10 @@ export default function App() {
           onGameEnd={handleGameEnd}
           onBack={handleBackToMode}
           currentLang={currentLang}
+          userName={userName}
+          onStats={() => setScreen('stats')}
           theme={theme}
+          onThemeChange={handleThemeChange}
         />
       )}
 
@@ -250,24 +244,11 @@ export default function App() {
         />
       )}
 
-      {screen === 'drugManagement' && (
-        <DrugManagement
-          drugs={drugs}
-          onDrugsUpdate={handleDrugsUpdate}
-          onBack={handleBackToMode}
-          currentLang={currentLang}
-          userName={userName}
-          onStats={() => setScreen('stats')}
-          theme={theme}
-          onThemeChange={handleThemeChange}
-        />
-      )}
-
       {screen === 'result' && (
         <ResultScreen
           result={gameResult}
           drugs={drugs}
-          onPlayAgain={handleBackToGame}
+          onPlayAgain={handlePlayAgain}
           onBackToMode={handleBackToMode}
           currentLang={currentLang}
           theme={theme}
@@ -292,7 +273,7 @@ function saveGameStats(userId, result, gameMode) {
     const gameRecord = {
       mode: gameMode === 'blind' ? 'blind' : 'known',
       score: result.score || 0,
-      xpEarned: result.score ? Math.max(result.score - 300, 0) : 0,
+      xpEarned: result.score || 0,
       drugName: result.drugName || 'Unknown',
       cluesUsed: result.cluesUsed || 0,
       timestamp: new Date().toISOString()

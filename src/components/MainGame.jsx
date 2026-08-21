@@ -6,18 +6,17 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
   const [allClues, setAllClues] = useState([]);
   const [revealedCluesCount, setRevealedCluesCount] = useState(1);
   const [guess, setGuess] = useState('');
-  const [result, setResult] = useState(null);
   const [wrongGuesses, setWrongGuesses] = useState(0);
 
   useEffect(() => {
     const filteredDrugs = selectedClass
       ? drugs.filter(d => d.class === selectedClass)
       : drugs;
-    
+
     if (filteredDrugs.length > 0) {
       const drug = pickRandomDrug(filteredDrugs);
       setHiddenDrug(drug);
-      
+
       const clues = [
         `Indication: ${drug.indications.substring(0, 60)}`,
         `Route: ${drug.route} administration`,
@@ -41,18 +40,11 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
     if (isCorrect) {
       const score = Math.max(100, 1000 - (revealedCluesCount * 100));
       const xpEarned = Math.max(score - 300, 0);
-      
-      setResult({
-        correct: true,
-        drugName: hiddenDrug.names.en,
-        score,
-        xpEarned,
-        cluesUsed: revealedCluesCount
-      });
 
       onGameEnd({
         correct: true,
         drugName: hiddenDrug.names.en,
+        drugClass: hiddenDrug.therapeuticClass,
         score,
         xpEarned,
         cluesUsed: revealedCluesCount
@@ -70,15 +62,10 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
   };
 
   const handleGiveUp = () => {
-    setResult({
-      correct: false,
-      drugName: hiddenDrug.names.en,
-      message: currentLang === 'en' ? 'You gave up!' : 'Vous avez abandonné!'
-    });
-
     onGameEnd({
       correct: false,
       drugName: hiddenDrug.names.en,
+      drugClass: hiddenDrug.therapeuticClass,
       score: 0,
       xpEarned: 0,
       cluesUsed: revealedCluesCount
@@ -87,37 +74,6 @@ const MainGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLa
 
   if (!hiddenDrug) {
     return <div style={styles.loading}>{currentLang === 'en' ? 'Loading game...' : 'Chargement du jeu...'}</div>;
-  }
-
-  if (result) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <button style={styles.backButton} onClick={onBack}>
-            ← {currentLang === 'en' ? 'Back' : 'Retour'}
-          </button>
-        </div>
-
-        <div style={styles.content}>
-          <div style={styles.resultCard}>
-            <h2 style={styles.resultTitle}>
-              {result.correct ? '🎉 Correct!' : '❌ Game Over'}
-            </h2>
-            <p style={styles.resultDrug}>{result.drugName}</p>
-            {result.correct && (
-              <div style={styles.scoreBreakdown}>
-                <p><strong>{currentLang === 'en' ? 'Score:' : 'Score:'}</strong> {result.score} pts</p>
-                <p><strong>{currentLang === 'en' ? 'XP Earned:' : 'XP Gagné:'}</strong> {result.xpEarned}</p>
-                <p><strong>{currentLang === 'en' ? 'Clues Used:' : 'Indices Utilisés:'}</strong> {result.cluesUsed}/8</p>
-              </div>
-            )}
-            <button style={styles.continueButton} onClick={onBack}>
-              {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   const revealedClues = allClues.slice(0, revealedCluesCount);
@@ -214,8 +170,8 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '2px solid var(--accent-emerald)',
+    background: 'transparent',
+    border: '2px solid var(--accent-gold)',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -345,46 +301,6 @@ const styles = {
     cursor: 'pointer',
     fontFamily: 'inherit',
     fontSize: '13px',
-    fontWeight: '700'
-  },
-  resultCard: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '2px solid #B89A5A',
-    borderRadius: '10px',
-    padding: '30px',
-    textAlign: 'center',
-    maxWidth: '500px',
-    margin: '50px auto'
-  },
-  resultTitle: {
-    color: '#2F7D5B',
-    fontSize: '32px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  resultDrug: {
-    color: '#B89A5A',
-    fontSize: '24px',
-    fontWeight: '700',
-    margin: '0 0 20px 0'
-  },
-  scoreBreakdown: {
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '1px solid rgba(47, 125, 91, 0.2)',
-    borderRadius: '6px',
-    padding: '15px',
-    marginBottom: '20px'
-  },
-  continueButton: {
-    width: '100%',
-    padding: '12px',
-    background: 'linear-gradient(135deg, #B89A5A, #D4AE69)',
-    color: '#0B0D0D',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '14px',
     fontWeight: '700'
   }
 };

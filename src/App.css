@@ -3,35 +3,35 @@
   --bg-dark: #0F1117;
   --bg-card: #1A1F2E;
   --bg-hover: #252C3A;
-  
+
   --text-paper: #F2EFE6;
   --text-primary: #F2EFE6;
   --text-secondary: #C9C4B8;
   --text-muted: #8B8680;
-  
+
   --accent-gold: #B89A5A;
   --accent-gold-light: #D4AE69;
   --accent-gold-dark: #9D8049;
-  
+
   --accent-teal: #167C80;
   --accent-teal-light: #1E9CA0;
   --accent-teal-dark: #0F5A5E;
-  
+
   --accent-emerald: #2F7D5B;
   --accent-emerald-light: #3D9B73;
   --accent-emerald-dark: #1F4A38;
-  
+
   --accent-blue: #3F628C;
   --accent-blue-light: #5278A8;
   --accent-blue-dark: #2A4460;
-  
+
   --ink-blue: #1D2A3A;
-  
+
   --success: #2F7D5B;
   --warning: #B89A5A;
   --error: #E63946;
   --info: #167C80;
-  
+
   --border-gold: rgba(184, 154, 90, 0.2);
   --border-teal: rgba(22, 124, 128, 0.2);
   --border-emerald: rgba(47, 125, 91, 0.2);
@@ -42,30 +42,30 @@ html[data-theme="light"] {
   --bg-dark: #F8F7F4;
   --bg-card: #F2EFE6;
   --bg-hover: #E8E5DC;
-  
+
   --text-paper: #0D0D0D;
   --text-primary: #0D0D0D;
   --text-secondary: #0D0D0D;
   --text-muted: #5A5A5A;
-  
+
   --accent-gold: #B89A5A;
   --accent-gold-light: #D4AE69;
   --accent-gold-dark: #9D8049;
-  
+
   --accent-teal: #0A3E42;
   --accent-teal-light: #1A6A72;
   --accent-teal-dark: #062C30;
-  
+
   --accent-emerald: #1A3A2E;
   --accent-emerald-light: #2F7D5B;
   --accent-emerald-dark: #0F2A1F;
-  
+
   --accent-blue: #1A2A40;
   --accent-blue-light: #2A4460;
   --accent-blue-dark: #0F1820;
-  
+
   --ink-blue: #0D1A2A;
-  
+
   --border-gold: rgba(184, 154, 90, 0.15);
   --border-teal: rgba(10, 62, 66, 0.3);
   --border-emerald: rgba(26, 58, 46, 0.3);
@@ -88,19 +88,13 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.5px;
 }
 
-h1 { 
-  font-size: 48px; 
-  color: var(--accent-gold); 
-  text-shadow: 0 4px 12px rgba(184, 154, 90, 0.2); 
-}
-
-html[data-theme="dark"] h1 {
+/* FIX: titles must stay gold and readable in BOTH themes.
+   The old light-mode override that forced white text on h1 is removed —
+   that was causing "Select Game Mode" / "Practice Mode" to be invisible. */
+h1 {
+  font-size: 48px;
   color: var(--accent-gold);
-}
-
-html[data-theme="light"] h1 {
-  color: #FFFFFF;
-  text-shadow: 0 2px 8px rgba(22, 124, 128, 0.3);
+  text-shadow: 0 4px 12px rgba(184, 154, 90, 0.2);
 }
 
 h2 { font-size: 28px; color: var(--accent-gold-light); }
@@ -132,6 +126,21 @@ button:active { transform: translateY(0); }
 
 .btn-danger { background: rgba(230, 57, 70, 0.1); color: #FF6B7A; border: 2px solid #E63946; }
 .btn-danger:hover { background: rgba(230, 57, 70, 0.2); }
+
+/* BACK BUTTON — empty inside, gold outline, text follows theme */
+.back-button {
+  background: transparent;
+  border: 2px solid var(--accent-gold);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.back-button:hover {
+  background: rgba(184, 154, 90, 0.1);
+}
 
 .card { background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%); border: 1px solid var(--border-gold); border-radius: 10px; padding: 20px; transition: all 0.3s ease; }
 .card:hover { border-color: var(--accent-gold); box-shadow: 0 8px 24px rgba(184, 154, 90, 0.15); transform: translateY(-4px); }
@@ -241,33 +250,39 @@ input::placeholder { color: var(--text-muted); }
 
 .user-button:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 16px rgba(184, 154, 90, 0.3) !important; }
 
+.mode-card-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   h1 { font-size: 36px; }
   h2 { font-size: 22px; }
-  
+
   .app-header {
     flex-direction: column;
     align-items: flex-start;
     padding: 12px 15px;
   }
-  
+
   .header-actions {
     width: 100%;
     justify-content: flex-end;
   }
-  
+
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  
+
   .user-button {
     padding: 6px 12px !important;
     font-size: 11px !important;
     gap: 5px;
   }
-  
+
   .theme-toggle {
     padding: 3px;
   }
-  
+
   .theme-toggle button {
     padding: 5px 10px;
     font-size: 12px;
@@ -278,10 +293,10 @@ input::placeholder { color: var(--text-muted); }
   body { font-size: 12px; }
   h1 { font-size: 28px; }
   h2 { font-size: 18px; }
-  
+
   .card { padding: 15px; }
   button { padding: 8px 12px; font-size: 12px; }
-  
+
   .header-actions { gap: 8px; }
   .app-header { padding: 10px; gap: 8px; }
 }

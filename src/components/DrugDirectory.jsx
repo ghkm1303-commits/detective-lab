@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
+const DrugDirectory = ({ drugs, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDrug, setSelectedDrug] = useState(null);
 
@@ -17,9 +16,7 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
     { id: 'renal', enName: 'Renal', frName: 'Rénal' }
   ];
 
-  const filteredDrugs = selectedCategory
-    ? drugs.filter(drug => drug.class === selectedCategory)
-    : drugs;
+  const filteredDrugs = selectedCategory ? drugs.filter(drug => drug.class === selectedCategory) : drugs;
 
   return (
     <div style={styles.container}>
@@ -28,7 +25,6 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
@@ -81,11 +77,7 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               <p style={styles.drugIndication}>
                 <strong>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</strong> {drug.indications}
               </p>
-
-              <button
-                style={styles.moreButton}
-                onClick={() => setSelectedDrug(drug)}
-              >
+              <button style={styles.moreButton} onClick={() => setSelectedDrug(drug)}>
                 {currentLang === 'en' ? 'See More' : 'Voir Plus'} →
               </button>
             </div>
@@ -101,48 +93,33 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
                 <h2 style={styles.modalTitle}>{selectedDrug.names.en}</h2>
                 <p style={styles.modalSubtitle}>{selectedDrug.names.fr}</p>
               </div>
-              <button 
-                style={styles.closeIconButton}
-                onClick={() => setSelectedDrug(null)}
-              >
+              <button style={styles.closeIconButton} onClick={() => setSelectedDrug(null)}>
                 ↑
               </button>
             </div>
-
             <div style={styles.modalDivider}></div>
 
             <div style={styles.modalGrid}>
               <div style={styles.modalSection}>
-                <h4 style={styles.modalLabel}>
-                  {currentLang === 'en' ? 'CLASS:' : 'CLASSE:'}
-                </h4>
+                <h4 style={styles.modalLabel}>{currentLang === 'en' ? 'CLASS:' : 'CLASSE:'}</h4>
                 <p style={styles.modalText}>{selectedDrug.therapeuticClass}</p>
               </div>
-
               <div style={styles.modalSection}>
-                <h4 style={styles.modalLabel}>
-                  {currentLang === 'en' ? 'THERAPEUTIC:' : 'THÉRAPEUTIQUE:'}
-                </h4>
+                <h4 style={styles.modalLabel}>{currentLang === 'en' ? 'THERAPEUTIC:' : 'THÉRAPEUTIQUE:'}</h4>
                 <p style={styles.modalText}>{selectedDrug.category}</p>
               </div>
-
               <div style={styles.modalSection}>
-                <h4 style={styles.modalLabel}>
-                  {currentLang === 'en' ? 'ROUTE:' : 'VOIE:'}
-                </h4>
+                <h4 style={styles.modalLabel}>{currentLang === 'en' ? 'ROUTE:' : 'VOIE:'}</h4>
                 <p style={styles.modalText}>{selectedDrug.route}</p>
               </div>
-
               <div style={styles.modalSection}>
-                <h4 style={styles.modalLabel}>
-                  {currentLang === 'en' ? 'MECHANISM:' : 'MÉCANISME:'}
-                </h4>
+                <h4 style={styles.modalLabel}>{currentLang === 'en' ? 'MECHANISM:' : 'MÉCANISME:'}</h4>
                 <p style={styles.modalText}>{selectedDrug.mechanism}</p>
               </div>
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-teal)'}}>
                 ✨ {currentLang === 'en' ? 'EFFECTS:' : 'EFFETS:'}
               </h4>
               <p style={styles.modalText}>
@@ -153,14 +130,14 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#20C997'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-emerald)'}}>
                 📋 {currentLang === 'en' ? 'INDICATIONS:' : 'INDICATIONS:'}
               </h4>
               <p style={styles.modalText}>{selectedDrug.indications}</p>
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#E63946'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-blue)'}}>
                 ⚠️ {currentLang === 'en' ? 'SIDE EFFECTS:' : 'EFFETS SECONDAIRES:'}
               </h4>
               <p style={styles.modalText}>
@@ -169,7 +146,7 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#FF6B7A'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-blue)'}}>
                 🚫 {currentLang === 'en' ? 'CONTRAINDICATIONS:' : 'CONTRE-INDICATIONS:'}
               </h4>
               <p style={styles.modalText}>
@@ -178,7 +155,7 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#E8BA24'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-gold)'}}>
                 💊 {currentLang === 'en' ? 'DOSING:' : 'POSOLOGIE:'}
               </h4>
               <p style={styles.modalText}>
@@ -189,21 +166,21 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#667BC6'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-blue)'}}>
                 🧬 {currentLang === 'en' ? 'METABOLISM:' : 'MÉTABOLISME:'}
               </h4>
               <p style={styles.modalText}>{selectedDrug.metabolism}</p>
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#4ECDC4'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-teal)'}}>
                 💧 {currentLang === 'en' ? 'ELIMINATION:' : 'ÉLIMINATION:'}
               </h4>
               <p style={styles.modalText}>{selectedDrug.elimination}</p>
             </div>
 
             <div style={styles.modalSection}>
-              <h4 style={{...styles.modalLabel, color: '#D5622B'}}>
+              <h4 style={{...styles.modalLabel, color: 'var(--accent-emerald)'}}>
                 ⏱️ {currentLang === 'en' ? 'HALF-LIFE:' : 'DEMI-VIE:'}
               </h4>
               <p style={styles.modalText}>{selectedDrug.halfLife}</p>
@@ -227,10 +204,7 @@ const DrugDirectory = ({ drugs, onBack, currentLang, onLanguageChange, userName,
               </div>
             )}
 
-            <button
-              style={styles.modalCloseButton}
-              onClick={() => setSelectedDrug(null)}
-            >
+            <button style={styles.modalCloseButton} onClick={() => setSelectedDrug(null)}>
               {currentLang === 'en' ? 'Close' : 'Fermer'}
             </button>
           </div>
@@ -259,8 +233,8 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '2px solid var(--accent-emerald)',
+    background: 'rgba(184, 154, 90, 0.1)',
+    border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
     borderRadius: '6px',
     cursor: 'pointer',
@@ -300,7 +274,8 @@ const styles = {
     fontFamily: 'inherit',
     fontSize: '12px',
     fontWeight: '600',
-    transition: 'all 0.3s ease'
+    transition: 'all 0.3s ease',
+    background: 'transparent'
   },
   drugsList: {
     display: 'grid',
@@ -328,7 +303,7 @@ const styles = {
   },
   drugId: {
     fontSize: '10px',
-    color: 'var(--text-muted)',
+    color: 'var(--text-secondary)',
     background: 'rgba(22, 124, 128, 0.1)',
     padding: '2px 8px',
     borderRadius: '4px'
@@ -341,22 +316,18 @@ const styles = {
   drugIndication: {
     fontSize: '12px',
     color: 'var(--text-secondary)',
-    margin: '10px 0'
+    margin: '5px 0'
   },
   moreButton: {
-    background: 'rgba(47, 125, 91, 0.2)',
-    border: '1px solid var(--accent-emerald)',
-    color: 'var(--accent-emerald)',
-    padding: '8px 16px',
-    borderRadius: '6px',
+    padding: '8px 12px',
+    background: 'var(--accent-gold)',
+    color: 'var(--bg-obsidian)',
+    border: 'none',
+    borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '12px',
-    fontWeight: '600',
-    marginTop: '10px',
-    transition: 'all 0.3s ease',
-    width: '100%'
+    fontSize: '11px',
+    fontWeight: '600'
   },
-
   modalOverlay: {
     position: 'fixed',
     top: 0,
@@ -367,54 +338,50 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
-    padding: '20px'
+    zIndex: 1000
   },
   modal: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '2px solid var(--accent-gold)',
-    borderRadius: '15px',
+    background: 'var(--bg-card)',
+    borderRadius: '12px',
     padding: '30px',
-    maxWidth: '700px',
-    maxHeight: '85vh',
+    maxWidth: '600px',
+    maxHeight: '80vh',
     overflowY: 'auto',
-    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+    border: '2px solid var(--accent-gold)'
   },
   modalHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'start',
-    marginBottom: '20px'
+    marginBottom: '15px'
   },
   modalTitle: {
     color: 'var(--accent-gold)',
-    fontSize: '28px',
-    fontFamily: "'Playfair Display', serif",
-    margin: '0 0 5px 0'
+    fontSize: '24px',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
   },
   modalSubtitle: {
     color: 'var(--text-secondary)',
-    fontSize: '14px',
-    margin: '0'
+    fontSize: '12px',
+    margin: '5px 0 0 0'
   },
   closeIconButton: {
     background: 'transparent',
     border: 'none',
     color: 'var(--accent-gold)',
-    fontSize: '24px',
-    cursor: 'pointer',
-    padding: '0',
-    fontWeight: '700'
+    fontSize: '20px',
+    cursor: 'pointer'
   },
   modalDivider: {
     height: '1px',
-    background: 'linear-gradient(90deg, transparent, var(--accent-gold), transparent)',
+    background: 'var(--border-gold)',
     marginBottom: '20px'
   },
   modalGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '20px',
+    gap: '15px',
     marginBottom: '20px'
   },
   modalSection: {
@@ -422,31 +389,29 @@ const styles = {
   },
   modalLabel: {
     color: 'var(--accent-gold)',
-    fontSize: '12px',
+    fontSize: '11px',
     fontWeight: '700',
-    margin: '0 0 8px 0',
     textTransform: 'uppercase',
-    letterSpacing: '1px'
+    margin: '0 0 8px 0',
+    letterSpacing: '0.5px'
   },
   modalText: {
-    color: 'var(--text-secondary)',
+    color: 'var(--text-primary)',
     fontSize: '13px',
     lineHeight: '1.6',
     margin: '0'
   },
   modalCloseButton: {
-    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
+    width: '100%',
+    padding: '12px',
+    background: 'var(--accent-gold)',
     color: 'var(--bg-obsidian)',
     border: 'none',
-    padding: '12px 24px',
-    borderRadius: '8px',
+    borderRadius: '6px',
     cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '14px',
-    fontWeight: '700',
-    width: '100%',
-    transition: 'all 0.3s ease',
-    marginTop: '20px'
+    fontWeight: '600',
+    fontSize: '13px',
+    marginTop: '15px'
   }
 };
 

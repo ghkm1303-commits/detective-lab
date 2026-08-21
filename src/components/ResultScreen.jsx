@@ -1,85 +1,51 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
 
-const ResultScreen = ({ result, drugs, onPlayAgain, onBackToMode, currentLang, theme, onThemeChange, userName }) => {
-  const handleThemeChange = (newTheme) => {
-    onThemeChange(newTheme);
-  };
+const ResultScreen = ({ result, onPlayAgain, onBackToMode, currentLang }) => {
+  if (!result) return null;
 
-  const resultDrug = drugs.find(d => d.names.en === result.drugName);
+  const isWin = result.correct;
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBackToMode}>
-          ← {currentLang === 'en' ? 'Back to Menu' : 'Retour au Menu'}
-        </button>
-        <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={handleThemeChange} />
-          <span style={styles.userName}>👤 {userName}</span>
+      <div style={styles.card}>
+        <div style={styles.icon}>{isWin ? '🎉' : '🎮'}</div>
+
+        <h1 style={styles.title}>
+          {isWin
+            ? (currentLang === 'en' ? 'Victory!' : 'Victoire!')
+            : (currentLang === 'en' ? 'Game Over!' : 'Jeu Terminé!')}
+        </h1>
+
+        <div style={styles.scoreBox}>
+          <p style={styles.scoreLabel}>{currentLang === 'en' ? 'Score' : 'Score'}</p>
+          <p style={styles.scoreValue}>{result.score}</p>
         </div>
-      </div>
 
-      <div style={styles.content}>
-        {result.correct ? (
-          <div style={styles.resultCard}>
-            <h1 style={styles.successTitle}>🎉 {currentLang === 'en' ? 'Correct!' : 'Correct!'}</h1>
-            <p style={styles.drugName}>{result.drugName}</p>
-
-            {resultDrug && (
-              <div style={styles.drugInfo}>
-                <p style={styles.drugDetail}>
-                  <strong>{currentLang === 'en' ? 'Class:' : 'Classe:'}</strong> {resultDrug.therapeuticClass}
-                </p>
-                <p style={styles.drugDetail}>
-                  <strong>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</strong> {resultDrug.indications}
-                </p>
-              </div>
-            )}
-
-            <div style={styles.scoreCard}>
-              <div style={styles.scoreItem}>
-                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'Score' : 'Score'}</p>
-                <p style={styles.scoreValue}>{result.score}</p>
-              </div>
-              <div style={styles.scoreItem}>
-                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'XP Earned' : 'XP Gagné'}</p>
-                <p style={styles.scoreValue}>{result.xpEarned}</p>
-              </div>
-              <div style={styles.scoreItem}>
-                <p style={styles.scoreLabel}>{currentLang === 'en' ? 'Clues Used' : 'Indices Utilisés'}</p>
-                <p style={styles.scoreValue}>{result.cluesUsed}/8</p>
-              </div>
-            </div>
+        <div style={styles.statsGrid}>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>{currentLang === 'en' ? 'Drug:' : 'Médicament:'}</p>
+            <p style={styles.statValue}>{result.drugName}</p>
           </div>
-        ) : (
-          <div style={styles.resultCard}>
-            <h1 style={styles.failureTitle}>❌ {currentLang === 'en' ? 'Game Over' : 'Fin du Jeu'}</h1>
-            <p style={styles.drugName}>{currentLang === 'en' ? 'The drug was:' : 'Le médicament était:'} {result.drugName}</p>
-
-            {resultDrug && (
-              <div style={styles.drugInfo}>
-                <p style={styles.drugDetail}>
-                  <strong>{currentLang === 'en' ? 'Class:' : 'Classe:'}</strong> {resultDrug.therapeuticClass}
-                </p>
-                <p style={styles.drugDetail}>
-                  <strong>{currentLang === 'en' ? 'Mechanism:' : 'Mécanisme:'}</strong> {resultDrug.mechanism}
-                </p>
-              </div>
-            )}
-
-            <p style={styles.tryAgainMessage}>
-              {currentLang === 'en' ? 'Better luck next time!' : 'Meilleure chance la prochaine fois!'}
-            </p>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>{currentLang === 'en' ? 'Class:' : 'Classe:'}</p>
+            <p style={styles.statValue}>{result.drugClass}</p>
           </div>
-        )}
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>{currentLang === 'en' ? 'Clues Used:' : 'Indices Utilisés:'}</p>
+            <p style={styles.statValueNeutral}>{result.cluesUsed}</p>
+          </div>
+          <div style={styles.statCard}>
+            <p style={styles.statLabel}>{currentLang === 'en' ? 'XP Earned:' : 'XP Gagné:'}</p>
+            <p style={styles.statValueNeutral}>+{result.xpEarned}</p>
+          </div>
+        </div>
 
-        <div style={styles.buttonsGroup}>
-          <button style={styles.playAgainButton} onClick={onPlayAgain}>
-            🎮 {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
+        <div style={styles.buttons}>
+          <button style={styles.playAgainBtn} onClick={onPlayAgain}>
+            🔄 {currentLang === 'en' ? 'Play Again' : 'Rejouer'}
           </button>
-          <button style={styles.menuButton} onClick={onBackToMode}>
-            📊 {currentLang === 'en' ? 'Back to Menu' : 'Retour au Menu'}
+          <button style={styles.backBtn} onClick={onBackToMode}>
+            📖 {currentLang === 'en' ? 'Back to Menu' : 'Retour au Menu'}
           </button>
         </div>
       </div>
@@ -90,144 +56,102 @@ const ResultScreen = ({ result, drugs, onPlayAgain, onBackToMode, currentLang, t
 const styles = {
   container: {
     minHeight: '100vh',
-    padding: '15px',
-    position: 'relative',
-    zIndex: 10
-  },
-  header: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '30px',
-    paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)',
-    flexWrap: 'wrap',
-    gap: '10px'
+    justifyContent: 'center',
+    padding: '20px'
   },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '2px solid var(--accent-emerald)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
-  },
-  rightGroup: {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center',
-    flexWrap: 'wrap'
-  },
-  userName: {
-    color: 'var(--text-primary)',
-    fontSize: '13px',
-    fontWeight: '600'
-  },
-  content: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    textAlign: 'center'
-  },
-  resultCard: {
+  card: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
     border: '2px solid var(--accent-gold)',
-    borderRadius: '15px',
-    padding: '30px',
-    marginBottom: '30px'
+    borderRadius: '14px',
+    padding: '35px 30px',
+    maxWidth: '420px',
+    width: '100%',
+    textAlign: 'center'
   },
-  successTitle: {
-    color: 'var(--accent-emerald)',
-    fontSize: '36px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
+  icon: {
+    fontSize: '56px',
+    marginBottom: '10px'
   },
-  failureTitle: {
-    color: '#E63946',
-    fontSize: '36px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  drugName: {
+  title: {
     color: 'var(--accent-gold)',
-    fontSize: '24px',
-    fontWeight: '700',
-    margin: '0 0 20px 0'
+    fontSize: '32px',
+    margin: '0 0 25px 0',
+    fontFamily: "'Playfair Display', serif"
   },
-  drugInfo: {
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '1px solid rgba(47, 125, 91, 0.2)',
-    borderRadius: '8px',
-    padding: '15px',
+  scoreBox: {
+    background: 'linear-gradient(135deg, rgba(22, 124, 128, 0.15) 0%, rgba(47, 125, 91, 0.15) 100%)',
+    border: '2px solid var(--accent-teal)',
+    borderRadius: '10px',
+    padding: '20px',
     marginBottom: '20px'
-  },
-  drugDetail: {
-    color: 'var(--text-secondary)',
-    fontSize: '13px',
-    margin: '8px 0'
-  },
-  scoreCard: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '15px',
-    marginBottom: '20px'
-  },
-  scoreItem: {
-    background: 'rgba(47, 125, 91, 0.1)',
-    borderRadius: '8px',
-    padding: '12px'
   },
   scoreLabel: {
-    color: 'var(--text-secondary)',
-    fontSize: '11px',
-    fontWeight: '700',
-    margin: '0 0 8px 0',
-    textTransform: 'uppercase'
+    color: 'var(--text-primary)',
+    fontSize: '14px',
+    margin: '0 0 10px 0'
   },
   scoreValue: {
+    color: 'var(--accent-emerald)',
+    fontSize: '40px',
+    fontWeight: '700',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  statsGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px',
+    marginBottom: '25px'
+  },
+  statCard: {
+    background: 'rgba(22, 124, 128, 0.08)',
+    border: '1px solid var(--border-teal)',
+    borderRadius: '8px',
+    padding: '14px 10px'
+  },
+  statLabel: {
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    margin: '0 0 8px 0'
+  },
+  statValue: {
     color: 'var(--accent-gold)',
-    fontSize: '20px',
+    fontSize: '15px',
     fontWeight: '700',
     margin: '0'
   },
-  tryAgainMessage: {
-    color: 'var(--text-secondary)',
-    fontSize: '14px',
-    fontStyle: 'italic',
-    marginTop: '20px'
+  statValueNeutral: {
+    color: 'var(--text-primary)',
+    fontSize: '15px',
+    fontWeight: '700',
+    margin: '0'
   },
-  buttonsGroup: {
-    display: 'flex',
-    gap: '15px',
-    flexWrap: 'wrap'
+  buttons: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px'
   },
-  playAgainButton: {
-    flex: 1,
-    minWidth: '150px',
+  playAgainBtn: {
     padding: '12px',
-    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
-    color: 'var(--bg-obsidian)',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '13px',
-    fontWeight: '700'
-  },
-  menuButton: {
-    flex: 1,
-    minWidth: '150px',
-    padding: '12px',
-    background: 'rgba(47, 125, 91, 0.2)',
+    background: 'rgba(47, 125, 91, 0.1)',
     border: '2px solid var(--accent-emerald)',
     color: 'var(--accent-emerald)',
-    borderRadius: '6px',
+    borderRadius: '8px',
     cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '13px',
-    fontWeight: '700'
+    fontWeight: '700',
+    fontSize: '13px'
+  },
+  backBtn: {
+    padding: '12px',
+    background: 'rgba(184, 154, 90, 0.1)',
+    border: '2px solid var(--accent-gold)',
+    color: 'var(--accent-gold)',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontWeight: '700',
+    fontSize: '13px'
   }
 };
 

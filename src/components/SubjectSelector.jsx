@@ -1,8 +1,7 @@
 import React from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const SubjectSelector = ({ onSelectSubject, onLogout, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
+const SubjectSelector = ({ onSelectSubject, onLogout, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
   const subjects = [
     {
       id: 'pharmacology',
@@ -44,13 +43,11 @@ const SubjectSelector = ({ onSelectSubject, onLogout, onBack, currentLang, onLan
 
   return (
     <div style={styles.container}>
-      {/* HEADER WITH BACK, LANGUAGE, THEME, USERNAME */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
+        <button className="back-button" onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
@@ -63,7 +60,6 @@ const SubjectSelector = ({ onSelectSubject, onLogout, onBack, currentLang, onLan
         <h2 style={styles.subtitle}>
           {currentLang === 'en' ? 'Select Subject' : 'Sélectionnez le Sujet'}
         </h2>
-
         <div style={styles.subjectsGrid}>
           {subjects.map(subject => (
             <button
@@ -109,23 +105,15 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)'
-  },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
     maxWidth: '1000px',

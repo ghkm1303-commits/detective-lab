@@ -1,88 +1,83 @@
 import React from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const ModeSelector = ({ onSelectMode, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
+const ModeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
   const modes = [
     {
-      id: 'mainGame',
-      icon: '🎮',
-      enTitle: 'Main Game',
-      frTitle: 'Jeu Principal',
-      enDesc: 'Test your pharmaceutical knowledge',
-      frDesc: 'Testez vos connaissances pharmaceutiques'
+      id: 'blind',
+      icon: '🔍',
+      enName: 'Blind Mode',
+      frName: 'Mode Aveugle',
+      enDesc: 'Guess the drug from any category',
+      frDesc: 'Devinez le médicament de n\'importe quelle catégorie',
+      available: true
     },
     {
-      id: 'drugDirectory',
+      id: 'focused',
+      icon: '📚',
+      enName: 'Focused Mode',
+      frName: 'Mode Ciblé',
+      enDesc: 'Choose a category first, then guess',
+      frDesc: 'Choisissez une catégorie d\'abord, puis devinez',
+      available: true
+    },
+    {
+      id: 'studyMode',
       icon: '📖',
-      enTitle: 'Drug Dictionary',
-      frTitle: 'Dictionnaire des Médicaments',
+      enName: 'Study Mode',
+      frName: 'Mode Étude',
       enDesc: 'Browse and study all drugs',
-      frDesc: 'Parcourez et étudiez tous les médicaments'
-    },
-    {
-      id: 'drugManagement',
-      icon: '⚙️',
-      enTitle: 'Manage Drugs',
-      frTitle: 'Gérer les Médicaments',
-      enDesc: 'Add or remove custom drugs',
-      frDesc: 'Ajouter ou supprimer des médicaments personnalisés'
+      frDesc: 'Parcourir et étudier tous les médicaments',
+      available: true
     },
     {
       id: 'practiceMode',
-      icon: '🧠',
-      enTitle: 'Practice Mode',
-      frTitle: 'Mode Pratique',
-      enDesc: 'Challenge the AI (Coming Soon)',
-      frDesc: 'Défiez l\'IA (Bientôt disponible)'
+      icon: '🎯',
+      enName: 'Practice Mode',
+      frName: 'Mode Pratique',
+      enDesc: 'Learn drugs at your own pace',
+      frDesc: 'Apprenez les médicaments à votre rythme',
+      available: false
     }
   ];
 
   return (
     <div style={styles.container}>
-      {/* HEADER WITH BACK, LANGUAGE TOGGLE, THEME TOGGLE, USERNAME */}
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
+        <button className="back-button" onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
-          <button
-            onClick={onStats}
-            className="user-button"
-          >
+          <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>
         </div>
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.title}>🔬 Detective Lab</h1>
-        <h2 style={styles.subtitle}>
-          {currentLang === 'en' ? 'Select Game Mode' : 'Sélectionnez le Mode de Jeu'}
-        </h2>
+        <h1 style={styles.title}>
+          {currentLang === 'en' ? 'Select Game Mode' : 'Sélectionner le Mode de Jeu'}
+        </h1>
 
-        <div style={styles.modesGrid}>
+        <div style={styles.modeGrid}>
           {modes.map(mode => (
             <button
               key={mode.id}
-              style={{
-                ...styles.modeCard,
-                opacity: mode.id === 'practiceMode' ? 0.6 : 1,
-                cursor: mode.id === 'practiceMode' ? 'not-allowed' : 'pointer'
-              }}
-              onClick={() => {
-                if (mode.id !== 'practiceMode') {
-                  onSelectMode(mode.id);
-                }
-              }}
-              disabled={mode.id === 'practiceMode'}
+              className={!mode.available ? 'mode-card-disabled' : ''}
+              style={styles.modeCard}
+              onClick={() => mode.available && onSelectMode(mode.id)}
+              disabled={!mode.available}
             >
               <div style={styles.modeIcon}>{mode.icon}</div>
               <h3 style={styles.modeName}>
-                {currentLang === 'en' ? mode.enTitle : mode.frTitle}
+                {currentLang === 'en' ? mode.enName : mode.frName}
               </h3>
+              {!mode.available && (
+                <div style={styles.comingSoon}>
+                  {currentLang === 'en' ? 'Coming Soon' : 'Bientôt Disponible'}
+                </div>
+              )}
               <p style={styles.modeDesc}>
                 {currentLang === 'en' ? mode.enDesc : mode.frDesc}
               </p>
@@ -107,73 +102,62 @@ const styles = {
     alignItems: 'center',
     marginBottom: '30px',
     paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)'
-  },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
-    border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
+    borderBottom: '1px solid var(--border-teal)',
+    flexWrap: 'wrap',
+    gap: '10px'
   },
   rightGroup: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   content: {
     maxWidth: '1000px',
-    margin: '0 auto',
-    textAlign: 'center'
+    margin: '0 auto'
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '48px',
-    fontWeight: '700',
-    color: 'var(--accent-gold)',
-    margin: '0 0 10px 0'
+    textAlign: 'center',
+    marginBottom: '40px'
   },
-  subtitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '28px',
-    fontWeight: '600',
-    color: 'var(--text-primary)',
-    margin: '0 0 40px 0'
-  },
-  modesGrid: {
+  modeGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: '20px'
   },
   modeCard: {
-    padding: '30px 20px',
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '2px solid var(--accent-gold)',
+    border: '1px solid var(--border-gold)',
     borderRadius: '10px',
+    padding: '25px',
     cursor: 'pointer',
-    fontFamily: 'inherit',
     transition: 'all 0.3s ease',
-    textAlign: 'center'
+    textAlign: 'center',
+    position: 'relative'
   },
   modeIcon: {
-    fontSize: '56px',
+    fontSize: '40px',
     marginBottom: '15px'
   },
   modeName: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '18px',
-    fontWeight: '700',
     color: 'var(--accent-gold)',
-    margin: '0 0 10px 0'
+    fontSize: '18px',
+    margin: '0 0 10px 0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  comingSoon: {
+    display: 'inline-block',
+    background: 'var(--accent-teal)',
+    color: 'white',
+    padding: '4px 12px',
+    borderRadius: '20px',
+    fontSize: '10px',
+    fontWeight: '700',
+    marginBottom: '10px'
   },
   modeDesc: {
-    fontSize: '12px',
     color: 'var(--text-secondary)',
-    lineHeight: '1.4',
+    fontSize: '13px',
     margin: '0'
   }
 };

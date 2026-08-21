@@ -1,71 +1,8 @@
 import React, { useState } from 'react';
-import LanguageToggle from './LanguageToggle';
 import ThemeToggle from './ThemeToggle';
 
-const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageChange, userName, onStats, theme, onThemeChange }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    category: 'cardiovascular',
-    therapeuticClass: '',
-    indications: '',
-    route: 'Oral',
-    sideEffects: '',
-    dosing: ''
-  });
-
-  const categories = [
-    { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire' },
-    { id: 'nervous', enName: 'Nervous System', frName: 'Système Nerveux' },
-    { id: 'endocrine', enName: 'Endocrine', frName: 'Endocrinien' },
-    { id: 'respiratory', enName: 'Respiratory', frName: 'Respiratoire' },
-    { id: 'digestive', enName: 'Digestive', frName: 'Digestif' },
-    { id: 'immune', enName: 'Immune', frName: 'Immunitaire' },
-    { id: 'musculoskeletal', enName: 'Musculoskeletal', frName: 'Musculo-Squelettique' },
-    { id: 'renal', enName: 'Renal', frName: 'Rénal' }
-  ];
-
-  const customDrugs = drugs.filter(d => d.id > 1000);
-
-  const handleAddDrug = () => {
-    if (!formData.name.trim()) return;
-
-    const newDrug = {
-      id: Math.max(...drugs.map(d => d.id), 1000) + 1,
-      names: { en: formData.name, fr: formData.name },
-      class: formData.category,
-      therapeuticClass: formData.therapeuticClass || formData.name,
-      category: formData.category,
-      effects: [],
-      indications: formData.indications || (currentLang === 'en' ? 'Custom drug' : 'Médicament personnalisé'),
-      route: formData.route,
-      mechanism: currentLang === 'en' ? 'To be filled' : 'À remplir',
-      sideEffects: formData.sideEffects ? formData.sideEffects.split(',').map(s => s.trim()) : [],
-      contraindications: [],
-      metabolism: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
-      elimination: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
-      halfLife: currentLang === 'en' ? 'Not specified' : 'Non spécifié',
-      dosing: { standard: formData.dosing, maxDose: '', frequency: '' },
-      brandNames: [],
-      clinicalPearls: ''
-    };
-
-    const updated = [...drugs, newDrug];
-    onDrugsUpdate(updated);
-    setFormData({
-      name: '',
-      category: 'cardiovascular',
-      therapeuticClass: '',
-      indications: '',
-      route: 'Oral',
-      sideEffects: '',
-      dosing: ''
-    });
-  };
-
-  const handleDeleteDrug = (id) => {
-    const updated = drugs.filter(d => d.id !== id);
-    onDrugsUpdate(updated);
-  };
+const DrugManagement = ({ drugs, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+  const [selectedDrug, setSelectedDrug] = useState(null);
 
   return (
     <div style={styles.container}>
@@ -74,7 +11,6 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
@@ -83,129 +19,85 @@ const DrugManagement = ({ drugs, onDrugsUpdate, onBack, currentLang, onLanguageC
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.title}>⚙️ {currentLang === 'en' ? 'Manage Drugs' : 'Gérer les Médicaments'}</h1>
+        <h1 style={styles.title}>
+          {currentLang === 'en' ? '📚 Drug Database' : '📚 Base de Données des Médicaments'}
+        </h1>
 
-        <div style={styles.mainGrid}>
-          {/* ADD NEW DRUG SECTION */}
-          <div style={styles.card}>
-            <h3 style={styles.cardTitle}>➕ {currentLang === 'en' ? 'Add New Drug' : 'Ajouter un Nouveau Médicament'}</h3>
-
-            <div style={styles.formSection}>
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Drug Name *' : 'Nom du Médicament *'}
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
-                style={styles.input}
-              />
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Category' : 'Catégorie'}
-              </label>
-              <select
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                style={styles.select}
+        <div style={styles.drugsGrid}>
+          {drugs.map(drug => (
+            <div key={drug.id} style={styles.drugCard}>
+              <h3 style={styles.drugCardTitle}>{drug.names.en}</h3>
+              <p style={styles.drugCardSubtitle}>{drug.names.fr}</p>
+              <p style={styles.drugCardClass}>{drug.therapeuticClass}</p>
+              <button
+                style={styles.viewButton}
+                onClick={() => setSelectedDrug(drug)}
               >
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {currentLang === 'en' ? cat.enName : cat.frName}
-                  </option>
-                ))}
-              </select>
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Therapeutic Class' : 'Classe Thérapeutique'}
-              </label>
-              <input
-                type="text"
-                value={formData.therapeuticClass}
-                onChange={(e) => setFormData({ ...formData, therapeuticClass: e.target.value })}
-                placeholder={currentLang === 'en' ? 'e.g., Beta Blocker' : 'ex., Bêta-bloquant'}
-                style={styles.input}
-              />
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Indications' : 'Indications'}
-              </label>
-              <textarea
-                value={formData.indications}
-                onChange={(e) => setFormData({ ...formData, indications: e.target.value })}
-                placeholder={currentLang === 'en' ? 'Main uses...' : 'Utilisations principales...'}
-                style={{...styles.input, minHeight: '60px'}}
-              />
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Route' : 'Voie'}
-              </label>
-              <input
-                type="text"
-                value={formData.route}
-                onChange={(e) => setFormData({ ...formData, route: e.target.value })}
-                placeholder={currentLang === 'en' ? 'e.g., Oral' : 'ex., Orale'}
-                style={styles.input}
-              />
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Side Effects (comma-separated)' : 'Effets secondaires (séparés par des virgules)'}
-              </label>
-              <input
-                type="text"
-                value={formData.sideEffects}
-                onChange={(e) => setFormData({ ...formData, sideEffects: e.target.value })}
-                placeholder={currentLang === 'en' ? 'e.g., Nausea, Dizziness' : 'ex., Nausée, Vertiges'}
-                style={styles.input}
-              />
-
-              <label style={styles.label}>
-                {currentLang === 'en' ? 'Dosing' : 'Posologie'}
-              </label>
-              <input
-                type="text"
-                value={formData.dosing}
-                onChange={(e) => setFormData({ ...formData, dosing: e.target.value })}
-                placeholder={currentLang === 'en' ? 'e.g., 10mg twice daily' : 'ex., 10mg deux fois par jour'}
-                style={styles.input}
-              />
-
-              <button style={styles.addButton} onClick={handleAddDrug}>
-                ✓ {currentLang === 'en' ? 'Add Drug' : 'Ajouter le Médicament'}
+                {currentLang === 'en' ? 'View Details' : 'Voir les Détails'}
               </button>
             </div>
+          ))}
+        </div>
+
+        {drugs.length === 0 && (
+          <div style={styles.emptyState}>
+            <p style={styles.emptyText}>
+              {currentLang === 'en' ? 'No drugs in database' : 'Aucun médicament dans la base de données'}
+            </p>
           </div>
+        )}
+      </div>
 
-          {/* CUSTOM DRUGS SECTION */}
-          <div style={styles.card}>
-            <h3 style={styles.cardTitle}>📋 {currentLang === 'en' ? 'Custom Drugs' : 'Médicaments Personnalisés'}</h3>
+      {selectedDrug && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedDrug(null)}>
+          <div style={styles.modal} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>{selectedDrug.names.en}</h2>
+              <button
+                style={styles.closeButton}
+                onClick={() => setSelectedDrug(null)}
+              >
+                ✕
+              </button>
+            </div>
 
-            {customDrugs.length === 0 ? (
-              <p style={styles.emptyMessage}>
-                {currentLang === 'en' ? 'No custom drugs added yet' : 'Aucun médicament personnalisé ajouté'}
-              </p>
-            ) : (
-              <div style={styles.drugsList}>
-                {customDrugs.map(drug => (
-                  <div key={drug.id} style={styles.drugItem}>
-                    <div>
-                      <p style={styles.drugItemName}>{drug.names.en}</p>
-                      <p style={styles.drugItemClass}>{drug.therapeuticClass || drug.class}</p>
-                    </div>
-                    <button
-                      style={styles.deleteButton}
-                      onClick={() => handleDeleteDrug(drug.id)}
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))}
+            <div style={styles.modalContent}>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Class:' : 'Classe:'}</label>
+                <p style={styles.value}>{selectedDrug.therapeuticClass}</p>
               </div>
-            )}
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Category:' : 'Catégorie:'}</label>
+                <p style={styles.value}>{selectedDrug.category}</p>
+              </div>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Route:' : 'Voie:'}</label>
+                <p style={styles.value}>{selectedDrug.route}</p>
+              </div>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Mechanism:' : 'Mécanisme:'}</label>
+                <p style={styles.value}>{selectedDrug.mechanism}</p>
+              </div>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Indications:' : 'Indications:'}</label>
+                <p style={styles.value}>{selectedDrug.indications}</p>
+              </div>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Side Effects:' : 'Effets Secondaires:'}</label>
+                <p style={styles.value}>{selectedDrug.sideEffects.join(', ')}</p>
+              </div>
+              <div style={styles.infoRow}>
+                <label style={styles.label}>{currentLang === 'en' ? 'Dosing:' : 'Posologie:'}</label>
+                <p style={styles.value}>
+                  <strong>{currentLang === 'en' ? 'Standard:' : 'Standard:'}</strong> {selectedDrug.dosing.standard}<br/>
+                  <strong>{currentLang === 'en' ? 'Max:' : 'Max:'}</strong> {selectedDrug.dosing.maxDose}<br/>
+                  <strong>{currentLang === 'en' ? 'Frequency:' : 'Fréquence:'}</strong> {selectedDrug.dosing.frequency}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -229,7 +121,7 @@ const styles = {
   },
   backButton: {
     padding: '8px 16px',
-    background: 'rgba(22, 124, 128, 0.1)',
+    background: 'rgba(184, 154, 90, 0.1)',
     border: '2px solid #B89A5A',
     color: 'var(--text-primary)',
     borderRadius: '6px',
@@ -245,113 +137,127 @@ const styles = {
     flexWrap: 'wrap'
   },
   content: {
-    maxWidth: '1000px',
+    maxWidth: '1200px',
     margin: '0 auto'
   },
   title: {
     textAlign: 'center',
-    marginBottom: '30px',
-    color: '#B89A5A',
-    fontSize: '32px',
+    marginBottom: '40px',
+    color: 'var(--accent-gold)',
+    fontSize: '36px',
     fontFamily: "'Playfair Display', serif"
   },
-  mainGrid: {
+  drugsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
     gap: '20px'
   },
-  card: {
+  drugCard: {
     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(184, 154, 90, 0.2)',
+    border: '1px solid var(--border-gold)',
     borderRadius: '10px',
     padding: '20px',
+    textAlign: 'center',
+    cursor: 'pointer',
     transition: 'all 0.3s ease'
   },
-  cardTitle: {
-    color: '#B89A5A',
-    fontSize: '16px',
-    margin: '0 0 20px 0',
+  drugCardTitle: {
+    color: 'var(--accent-gold)',
+    fontSize: '18px',
+    margin: '0 0 5px 0',
     fontFamily: "'Playfair Display', serif"
   },
-  formSection: {
+  drugCardSubtitle: {
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    margin: '0 0 10px 0'
+  },
+  drugCardClass: {
+    color: 'var(--accent-teal)',
+    fontSize: '13px',
+    margin: '0 0 15px 0',
+    fontWeight: '600'
+  },
+  viewButton: {
+    padding: '8px 16px',
+    background: 'var(--accent-gold)',
+    color: 'var(--bg-obsidian)',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '12px'
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '60px 20px'
+  },
+  emptyText: {
+    color: 'var(--text-secondary)',
+    fontSize: '16px'
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000
+  },
+  modal: {
+    background: 'var(--bg-card)',
+    borderRadius: '12px',
+    padding: '30px',
+    maxWidth: '500px',
+    maxHeight: '80vh',
+    overflowY: 'auto',
+    border: '2px solid var(--accent-gold)'
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px'
+  },
+  modalTitle: {
+    color: 'var(--accent-gold)',
+    fontSize: '24px',
+    margin: '0',
+    fontFamily: "'Playfair Display', serif"
+  },
+  closeButton: {
+    background: 'transparent',
+    border: 'none',
+    color: 'var(--accent-gold)',
+    fontSize: '24px',
+    cursor: 'pointer'
+  },
+  modalContent: {
     display: 'flex',
     flexDirection: 'column',
     gap: '15px'
   },
+  infoRow: {
+    paddingBottom: '15px',
+    borderBottom: '1px solid var(--border-gold)'
+  },
   label: {
-    color: 'var(--text-secondary)',
+    color: 'var(--accent-gold)',
     fontSize: '12px',
     fontWeight: '700',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    display: 'block',
+    marginBottom: '8px'
   },
-  input: {
-    padding: '10px',
-    background: 'rgba(22, 124, 128, 0.05)',
-    border: '2px solid #167C80',
+  value: {
     color: 'var(--text-primary)',
-    borderRadius: '6px',
-    fontFamily: 'inherit',
-    fontSize: '13px'
-  },
-  select: {
-    padding: '10px',
-    background: 'rgba(22, 124, 128, 0.05)',
-    border: '2px solid #167C80',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    fontFamily: 'inherit',
-    fontSize: '13px'
-  },
-  addButton: {
-    padding: '12px',
-    background: 'linear-gradient(135deg, #2F7D5B, #3D9B73)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
     fontSize: '13px',
-    fontWeight: '700'
-  },
-  emptyMessage: {
-    color: 'var(--text-secondary)',
-    fontSize: '13px',
-    textAlign: 'center',
-    padding: '20px'
-  },
-  drugsList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px'
-  },
-  drugItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '12px',
-    background: 'rgba(22, 124, 128, 0.05)',
-    borderRadius: '6px',
-    borderLeft: '3px solid #167C80'
-  },
-  drugItemName: {
-    color: '#B89A5A',
-    fontSize: '13px',
-    fontWeight: '700',
-    margin: '0 0 5px 0'
-  },
-  drugItemClass: {
-    color: 'var(--text-secondary)',
-    fontSize: '11px',
+    lineHeight: '1.6',
     margin: '0'
-  },
-  deleteButton: {
-    background: 'rgba(230, 57, 70, 0.1)',
-    border: 'none',
-    color: '#E63946',
-    padding: '6px 10px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '14px'
   }
 };
 
