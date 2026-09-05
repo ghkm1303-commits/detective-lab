@@ -201,3 +201,80 @@
     font-size: 13px;
   }
 }
+/* ---------- Feedback / feature request ---------- */
+.landing-feedback {
+  text-align: center;
+  padding: 50px 24px;
+  border-top: 1px solid var(--border-teal);
+}
+
+.landing-feedback h2 {
+  font-family: 'Ubuntu', sans-serif;
+  color: var(--text-primary);
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.landing-feedback > p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.landing-feedback-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.landing-feedback-input,
+.landing-feedback-textarea {
+  width: 100%;
+  padding: 9px 14px;
+  background: transparent;
+  border: 1.5px solid var(--border-teal, #167C80);
+  border-radius: 20px;
+  color: var(--text-primary, #0B0D0D);
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 13px;
+}
+
+.landing-feedback-textarea {
+  border-radius: 14px;
+  resize: none;
+  min-height: 70px;
+}
+
+.landing-feedback-input::placeholder,
+.landing-feedback-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.landing-feedback-input:focus,
+.landing-feedback-textarea:focus {
+  outline: none;
+  border-color: var(--accent-emerald, #2F7D5B);
+}
+
+.landing-feedback-submit {
+  align-self: center;
+  padding: 8px 24px;
+  font-size: 13px;
+  border-radius: 20px;
+}
+
+.landing-feedback-success {
+  color: var(--accent-emerald, #2F7D5B);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.landing-feedback-error {
+  color: #E63946;
+  font-size: 12px;
+  margin: 0;
+}
