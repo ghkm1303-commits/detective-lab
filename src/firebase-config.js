@@ -1,30 +1,28 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAHkcDuxYNqak9L2V8y2SN-FAUm6G5uRJE",
-  authDomain: "medical-game133003.firebaseapp.com",
-  projectId: "medical-game133003",
-  storageBucket: "medical-game133003.firebasestorage.app",
-  messagingSenderId: "66759480785",
-  appId: "1:66759480785:web:b225c95c91dbd661f53cf0"
+  apiKey: "AIzaSyAL3ZxQCG3Wvd3IC224jglLSIPMpAeLcUA",
+  authDomain: "detective-labs.firebaseapp.com",
+  projectId: "detective-labs",
+  storageBucket: "detective-labs.firebasestorage.app",
+  messagingSenderId: "31887148396",
+  appId: "1:31887148396:web:24388f222ed7686f091f49",
+  measurementId: "G-6WS43HG0PQ"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Auth with proper persistence
+// Initialize services used across the app
 export const auth = getAuth(app);
-
-// Set persistence to localStorage (more reliable than IndexedDB)
-setPersistence(auth, browserLocalPersistence)
-  .catch((error) => {
-    console.error('Error setting persistence:', error);
-    // Firebase will still work, just won't persist sessions
-  });
-
-// Initialize Firestore
 export const db = getFirestore(app);
+
+// Analytics (only works in the browser, not during server-side rendering)
+export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 export default app;
