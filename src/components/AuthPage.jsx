@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
 import { auth } from '../firebase-config';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
+import './AuthPage.css';
 
-const AuthPage = ({ onAuthSuccess }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
+const googleProvider = new GoogleAuthProvider();
+
+const AuthPage = ({ onAuthSuccess, initialMode = 'login', onBack }) => {
+  const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [theme, setTheme] = useState('dark');
 
   React.useEffect(() => {
@@ -49,64 +59,122 @@ const AuthPage = ({ onAuthSuccess }) => {
     setLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setGoogleLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      onAuthSuccess(result.user);
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed');
+    }
+    setGoogleLoading(false);
+  };
+
   return (
-    <div style={styles.container}>
-      <div style={styles.themeToggleContainer}>
+    <div className="auth-container">
+      <div className="auth-top-bar">
+        {onBack ? (
+          <button className="auth-back-btn" onClick={onBack} aria-label="Back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        ) : <div />}
         <ThemeToggle theme={theme} onThemeChange={handleThemeChange} />
       </div>
 
-      <div style={styles.content}>
-        <h1 style={styles.title}>🔬 Detective Lab</h1>
-        <p style={styles.subtitle}>
+      <div className="auth-content">
+        <div className="auth-logo-wrapper">
+          <Logo variant="horizontal" theme={theme} />
+        </div>
+        <p className="auth-subtitle">
           {isSignUp ? 'Create Your Account' : 'Welcome Back'}
         </p>
 
-        <div style={styles.card}>
-          <form onSubmit={handleSubmit} style={styles.form}>
+        <div className="auth-card">
+          <button
+            type="button"
+            className="auth-google-btn"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading}
+          >
+            <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+            </svg>
+            {googleLoading ? '...' : 'Continue with Google'}
+          </button>
+
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
             {isSignUp && (
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Username</label>
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Enter your username"
-                  style={styles.input}
-                />
+              <div className="auth-form-group">
+                <label className="auth-label">Username</label>
+                <div className="auth-input-wrapper">
+                  <svg className="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" strokeWidth="1.8"/>
+                    <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                  </svg>
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Enter your username"
+                    className="auth-input"
+                  />
+                </div>
               </div>
             )}
 
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                style={styles.input}
-              />
+            <div className="auth-form-group">
+              <label className="auth-label">Email</label>
+              <div className="auth-input-wrapper">
+                <svg className="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6H20V18H4V6Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                  <path d="M4 6L12 13L20 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="auth-input"
+                />
+              </div>
             </div>
 
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                style={styles.input}
-              />
+            <div className="auth-form-group">
+              <label className="auth-label">Password</label>
+              <div className="auth-input-wrapper">
+                <svg className="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="5" y="11" width="14" height="9" rx="1.6" stroke="currentColor" strokeWidth="1.8"/>
+                  <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" strokeWidth="1.8"/>
+                </svg>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="auth-input"
+                />
+              </div>
             </div>
 
-            {error && <p style={styles.error}>{error}</p>}
+            {error && <p className="auth-error">{error}</p>}
 
-            <button type="submit" style={styles.submitButton} disabled={loading}>
+            <button type="submit" className="auth-submit-btn" disabled={loading}>
               {loading ? '...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </button>
           </form>
 
           <button
-            style={styles.toggleButton}
+            className="auth-toggle-btn"
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError('');
@@ -120,98 +188,6 @@ const AuthPage = ({ onAuthSuccess }) => {
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px',
-    position: 'relative',
-    zIndex: 10
-  },
-  themeToggleContainer: {
-    position: 'absolute',
-    top: '20px',
-    right: '20px'
-  },
-  content: {
-    textAlign: 'center',
-    maxWidth: '400px',
-    width: '100%'
-  },
-  title: {
-    marginBottom: '10px',
-    fontSize: '40px'
-  },
-  subtitle: {
-    color: 'var(--text-primary)',
-    marginBottom: '30px',
-    fontSize: '16px'
-  },
-  card: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid var(--border-gold)',
-    borderRadius: '10px',
-    padding: '30px',
-    transition: 'all 0.3s ease'
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-    marginBottom: '20px'
-  },
-  formGroup: {
-    textAlign: 'left'
-  },
-  label: {
-    display: 'block',
-    color: 'var(--text-primary)',
-    fontSize: '12px',
-    fontWeight: '700',
-    marginBottom: '8px',
-    textTransform: 'uppercase'
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    background: 'rgba(47, 125, 91, 0.05)',
-    border: '2px solid var(--accent-emerald)',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    fontFamily: 'inherit',
-    fontSize: '14px',
-    transition: 'all 0.3s ease'
-  },
-  submitButton: {
-    padding: '12px',
-    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
-    color: 'var(--bg-obsidian)',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '14px',
-    fontWeight: '700',
-    transition: 'all 0.3s ease'
-  },
-  toggleButton: {
-    background: 'transparent',
-    border: 'none',
-    color: 'var(--accent-emerald)',
-    fontSize: '12px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    textDecoration: 'underline'
-  },
-  error: {
-    color: '#E63946',
-    fontSize: '12px',
-    textAlign: 'center'
-  }
 };
 
 export default AuthPage;

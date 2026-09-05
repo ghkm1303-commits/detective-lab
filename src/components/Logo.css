@@ -1,0 +1,62 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #B89A5A;
+}
+
+.logo-stacked {
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.logo-icon {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.logo-icon path,
+.logo-icon polygon {
+  fill: currentColor;
+}
+
+.logo-icon-only .logo-icon {
+  height: 52px;
+}
+
+.logo-stacked .logo-icon {
+  height: 44px;
+}
+
+/* Barre verticale — même couleur que le reste du logo */
+.logo-divider {
+  width: 3px;
+  height: 40px;
+  background: currentColor;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.logo-text {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.15;
+  letter-spacing: 0.2px;
+}
+
+.logo-text-single {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 480px) {
+  .logo-icon { height: 32px; }
+  .logo-divider { height: 32px; }
+  .logo-text,
+  .logo-text-single { font-size: 15px; }
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 
 const Dashboard = ({ user, userName, onLogout, onContinue, theme, onThemeChange, currentLang }) => {
   return (
@@ -15,7 +16,9 @@ const Dashboard = ({ user, userName, onLogout, onContinue, theme, onThemeChange,
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.title}>🔬 Detective Lab</h1>
+        <div style={styles.logoWrapper}>
+          <Logo variant="stacked" theme={theme} />
+        </div>
         <p style={styles.subtitle}>
           {currentLang === 'en' 
             ? `Welcome back, ${userName}!` 
@@ -70,8 +73,7 @@ const styles = {
     justifyContent: 'center',
     textAlign: 'center'
   },
-  title: {
-    fontSize: '60px',
+  logoWrapper: {
     marginBottom: '20px'
   },
   subtitle: {

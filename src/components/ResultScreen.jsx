@@ -1,9 +1,13 @@
 import React from 'react';
 
-const ResultScreen = ({ result, onPlayAgain, onBackToMode, currentLang }) => {
+const ResultScreen = ({ result, onPlayAgain, onBackToMode, currentLang, subject }) => {
   if (!result) return null;
 
   const isWin = result.correct;
+  const itemLabel = subject === 'parasitology'
+    ? (currentLang === 'en' ? 'Organism:' : 'Organisme:')
+    : (currentLang === 'en' ? 'Drug:' : 'Médicament:');
+  const classLabel = currentLang === 'en' ? 'Class:' : 'Classe:';
 
   return (
     <div style={styles.container}>
@@ -23,11 +27,11 @@ const ResultScreen = ({ result, onPlayAgain, onBackToMode, currentLang }) => {
 
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
-            <p style={styles.statLabel}>{currentLang === 'en' ? 'Drug:' : 'Médicament:'}</p>
+            <p style={styles.statLabel}>{itemLabel}</p>
             <p style={styles.statValue}>{result.drugName}</p>
           </div>
           <div style={styles.statCard}>
-            <p style={styles.statLabel}>{currentLang === 'en' ? 'Class:' : 'Classe:'}</p>
+            <p style={styles.statLabel}>{classLabel}</p>
             <p style={styles.statValue}>{result.drugClass}</p>
           </div>
           <div style={styles.statCard}>

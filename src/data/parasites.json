@@ -1,243 +1,486 @@
 {
   "organisms": [
-    {
+        {
       "id": "entamoeba-histolytica",
       "lessonId": 2,
       "names": { "en": "Entamoeba histolytica", "fr": "Entamoeba histolytica" },
       "category": "protozoa",
-      "class": "Amoeba",
-      "morphology": "Trophozoite (10-60 μm, motile, erythrophagocytosis) and cyst (10-20 μm, up to 4 nuclei)",
-      "transmission": "Fecal-oral, ingestion of mature cysts in contaminated food/water",
-      "lifecycle": "Cyst ingested → excystation in small intestine → trophozoites colonize colon → encystation → cysts passed in stool",
-      "clinicalManifestations": [
-        "Amoebic dysentery (bloody diarrhea)",
-        "Amoebic liver abscess",
-        "Asymptomatic carriage (most common)"
-      ],
-      "diagnosis": "Stool microscopy (cysts/trophozoites), antigen detection ELISA, PCR to distinguish from E. dispar",
-      "treatment": "Metronidazole (invasive disease) + luminal agent (paromomycin) to eliminate cysts",
-      "geographicDistribution": "Worldwide, especially tropics with poor sanitation"
+      "class": { "en": "Amoeba", "fr": "Amibe" },
+      "morphology": {
+        "en": "Trophozoite (10-60 μm, motile, erythrophagocytosis) and cyst (10-20 μm, up to 4 nuclei)",
+        "fr": "Trophozoïte (10-60 μm, mobile, érythrophagocytose) et kyste (10-20 μm, jusqu'à 4 noyaux)"
+      },
+      "transmission": {
+        "en": "Fecal-oral, ingestion of mature cysts in contaminated food/water",
+        "fr": "Fécale-orale, ingestion de kystes matures dans l'eau/aliments contaminés"
+      },
+      "lifecycle": {
+        "en": "Cyst ingested → excystation in small intestine → trophozoites colonize colon → encystation → cysts passed in stool",
+        "fr": "Kyste ingéré → déskystation dans l'intestin grêle → les trophozoïtes colonisent le côlon → enkystement → kystes émis dans les selles"
+      },
+      "clinicalManifestations": {
+        "en": ["Amoebic dysentery (bloody diarrhea)", "Amoebic liver abscess", "Asymptomatic carriage (most common)"],
+        "fr": ["Dysenterie amibienne (diarrhée sanglante)", "Abcès amibien du foie", "Portage asymptomatique (le plus fréquent)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy (cysts/trophozoites), antigen detection ELISA, PCR to distinguish from E. dispar",
+        "fr": "Microscopie des selles (kystes/trophozoïtes), détection d'antigène ELISA, PCR pour distinguer d'E. dispar"
+      },
+      "treatment": {
+        "en": "Metronidazole (invasive disease) + luminal agent (paromomycin) to eliminate cysts",
+        "fr": "Métronidazole (forme invasive) + agent de contact (paromomycine) pour éliminer les kystes"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, especially tropics with poor sanitation",
+        "fr": "Mondiale, surtout zones tropicales à assainissement précaire"
+      },
+      "eosinophilia": false
     },
     {
       "id": "entamoeba-coli",
       "lessonId": 2,
       "names": { "en": "Entamoeba coli", "fr": "Entamoeba coli" },
       "category": "protozoa",
-      "class": "Amoeba",
-      "morphology": "Non-pathogenic commensal; cyst has up to 8 nuclei",
-      "transmission": "Fecal-oral",
-      "lifecycle": "Same as E. histolytica but non-invasive",
-      "clinicalManifestations": ["Non-pathogenic — marker of fecal-oral contamination"],
-      "diagnosis": "Stool microscopy, must be distinguished from E. histolytica",
-      "treatment": "None required",
-      "geographicDistribution": "Worldwide"
+      "class": { "en": "Amoeba", "fr": "Amibe" },
+      "morphology": {
+        "en": "Non-pathogenic commensal; cyst has up to 8 nuclei",
+        "fr": "Commensale non pathogène ; le kyste possède jusqu'à 8 noyaux"
+      },
+      "transmission": { "en": "Fecal-oral", "fr": "Fécale-orale" },
+      "lifecycle": {
+        "en": "Same as E. histolytica but non-invasive",
+        "fr": "Identique à E. histolytica mais non invasive"
+      },
+      "clinicalManifestations": {
+        "en": ["Non-pathogenic — marker of fecal-oral contamination"],
+        "fr": ["Non pathogène — marqueur de contamination féco-orale"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy, must be distinguished from E. histolytica",
+        "fr": "Microscopie des selles, à distinguer d'E. histolytica"
+      },
+      "treatment": { "en": "None required", "fr": "Aucun traitement nécessaire" },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
+      "eosinophilia": false
     },
     {
       "id": "giardia-intestinalis",
       "lessonId": 3,
       "names": { "en": "Giardia intestinalis (duodenalis/lamblia)", "fr": "Giardia intestinalis" },
       "category": "protozoa",
-      "class": "Flagellate",
-      "morphology": "Pear-shaped trophozoite with 2 nuclei and 4 pairs of flagella ('face' appearance); oval cyst with 4 nuclei",
-      "transmission": "Fecal-oral, waterborne (resistant to chlorination)",
-      "lifecycle": "Cyst ingested → excystation in duodenum → trophozoites attach to mucosa via ventral disc → encystation → cysts shed",
-      "clinicalManifestations": [
-        "Chronic diarrhea, malabsorption, steatorrhea",
-        "Bloating, weight loss",
-        "Often asymptomatic"
-      ],
-      "diagnosis": "Stool microscopy (cysts/trophozoites), antigen detection, string test/duodenal aspirate",
-      "treatment": "Metronidazole or tinidazole",
-      "geographicDistribution": "Worldwide, common in travelers and daycare settings"
+      "class": { "en": "Flagellate", "fr": "Flagellé" },
+      "morphology": {
+        "en": "Pear-shaped trophozoite with 2 nuclei and 4 pairs of flagella ('face' appearance); oval cyst with 4 nuclei",
+        "fr": "Trophozoïte piriforme à 2 noyaux et 4 paires de flagelles (aspect en 'visage') ; kyste ovale à 4 noyaux"
+      },
+      "transmission": {
+        "en": "Fecal-oral, waterborne (resistant to chlorination)",
+        "fr": "Fécale-orale, hydrique (résistante à la chloration)"
+      },
+      "lifecycle": {
+        "en": "Cyst ingested → excystation in duodenum → trophozoites attach to mucosa via ventral disc → encystation → cysts shed",
+        "fr": "Kyste ingéré → déskystation dans le duodénum → les trophozoïtes se fixent à la muqueuse via le disque ventral → enkystement → émission de kystes"
+      },
+      "clinicalManifestations": {
+        "en": ["Chronic diarrhea, malabsorption, steatorrhea", "Bloating, weight loss", "Often asymptomatic"],
+        "fr": ["Diarrhée chronique, malabsorption, stéatorrhée", "Ballonnements, amaigrissement", "Souvent asymptomatique"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy (cysts/trophozoites), antigen detection, string test/duodenal aspirate",
+        "fr": "Microscopie des selles (kystes/trophozoïtes), détection d'antigène, test à la ficelle/tubage duodénal"
+      },
+      "treatment": { "en": "Metronidazole or tinidazole", "fr": "Métronidazole ou tinidazole" },
+      "geographicDistribution": {
+        "en": "Worldwide, common in travelers and daycare settings",
+        "fr": "Mondiale, fréquente chez les voyageurs et en crèche"
+      },
+      "eosinophilia": false
     },
     {
       "id": "trichomonas-vaginalis",
       "lessonId": 3,
       "names": { "en": "Trichomonas vaginalis", "fr": "Trichomonas vaginalis" },
       "category": "protozoa",
-      "class": "Flagellate",
-      "morphology": "Pear-shaped, motile trophozoite only (no cyst stage), 4 anterior flagella + undulating membrane",
-      "transmission": "Sexual transmission",
-      "lifecycle": "Direct transmission between hosts, no environmental cyst stage",
-      "clinicalManifestations": [
-        "Vaginitis with frothy, malodorous discharge (women)",
-        "Often asymptomatic (men)",
-        "Increased HIV transmission risk"
-      ],
-      "diagnosis": "Wet mount microscopy of vaginal/urethral secretions, NAAT",
-      "treatment": "Metronidazole or tinidazole (treat both partners)",
-      "geographicDistribution": "Worldwide"
+      "class": { "en": "Flagellate", "fr": "Flagellé" },
+      "morphology": {
+        "en": "Pear-shaped, motile trophozoite only (no cyst stage), 4 anterior flagella + undulating membrane",
+        "fr": "Trophozoïte piriforme mobile uniquement (pas de forme kystique), 4 flagelles antérieurs + membrane ondulante"
+      },
+      "transmission": { "en": "Sexual transmission", "fr": "Transmission sexuelle" },
+      "lifecycle": {
+        "en": "Direct transmission between hosts, no environmental cyst stage",
+        "fr": "Transmission directe entre hôtes, pas de forme kystique dans l'environnement"
+      },
+      "clinicalManifestations": {
+        "en": ["Vaginitis with frothy, malodorous discharge (women)", "Often asymptomatic (men)", "Increased HIV transmission risk"],
+        "fr": ["Vaginite avec leucorrhées mousseuses malodorantes (femme)", "Souvent asymptomatique (homme)", "Risque accru de transmission du VIH"]
+      },
+      "diagnosis": {
+        "en": "Wet mount microscopy of vaginal/urethral secretions, NAAT",
+        "fr": "Examen à l'état frais des sécrétions vaginales/urétrales, TAAN"
+      },
+      "treatment": { "en": "Metronidazole or tinidazole (treat both partners)", "fr": "Métronidazole ou tinidazole (traiter les deux partenaires)" },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
+      "eosinophilia": false
     },
     {
       "id": "balantidium-coli",
       "lessonId": 3,
       "names": { "en": "Balantidium coli", "fr": "Balantidium coli" },
       "category": "protozoa",
-      "class": "Ciliate",
-      "morphology": "Largest human protozoan parasite; ciliated trophozoite, macro/micronucleus; encysted form",
-      "transmission": "Fecal-oral, especially from pigs (zoonotic)",
-      "lifecycle": "Cyst ingested → excystation in colon → trophozoites can invade mucosa",
-      "clinicalManifestations": ["Diarrhea, dysentery, colonic ulceration (rare, usually mild/asymptomatic)"],
-      "diagnosis": "Stool microscopy — large ciliated trophozoites/cysts",
-      "treatment": "Tetracycline or metronidazole",
-      "geographicDistribution": "Worldwide, associated with pig farming"
+      "class": { "en": "Ciliate", "fr": "Cilié" },
+      "morphology": {
+        "en": "Largest human protozoan parasite; ciliated trophozoite, macro/micronucleus; encysted form",
+        "fr": "Plus grand protozoaire parasite de l'homme ; trophozoïte cilié, macro/micronoyau ; forme kystique"
+      },
+      "transmission": {
+        "en": "Fecal-oral, especially from pigs (zoonotic)",
+        "fr": "Fécale-orale, surtout à partir du porc (zoonose)"
+      },
+      "lifecycle": {
+        "en": "Cyst ingested → excystation in colon → trophozoites can invade mucosa",
+        "fr": "Kyste ingéré → déskystation dans le côlon → les trophozoïtes peuvent envahir la muqueuse"
+      },
+      "clinicalManifestations": {
+        "en": ["Diarrhea, dysentery, colonic ulceration (rare, usually mild/asymptomatic)"],
+        "fr": ["Diarrhée, dysenterie, ulcération colique (rare, généralement bénigne/asymptomatique)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy — large ciliated trophozoites/cysts",
+        "fr": "Microscopie des selles — gros trophozoïtes ciliés/kystes"
+      },
+      "treatment": { "en": "Tetracycline or metronidazole", "fr": "Tétracycline ou métronidazole" },
+      "geographicDistribution": {
+        "en": "Worldwide, associated with pig farming",
+        "fr": "Mondiale, associée à l'élevage porcin"
+      },
+      "eosinophilia": false
     },
     {
       "id": "cryptosporidium-spp",
       "lessonId": 4,
       "names": { "en": "Cryptosporidium spp.", "fr": "Cryptosporidium spp." },
       "category": "protozoa",
-      "class": "Coccidian (opportunistic)",
-      "morphology": "Oocysts 4-6 μm, intracellular but extracytoplasmic location in intestinal epithelium",
-      "transmission": "Fecal-oral, waterborne (highly chlorine-resistant), zoonotic",
-      "lifecycle": "Oocyst ingested → sporozoites invade enterocytes → asexual/sexual cycles → oocysts shed (auto-infective)",
-      "clinicalManifestations": [
-        "Self-limited watery diarrhea (immunocompetent)",
-        "Severe, chronic, life-threatening diarrhea (AIDS/immunocompromised)"
-      ],
-      "diagnosis": "Modified Ziehl-Neelsen stain of stool, antigen ELISA, PCR",
-      "treatment": "Nitazoxanide (immunocompetent); ART reconstitution in HIV patients",
-      "geographicDistribution": "Worldwide, major cause of waterborne outbreaks"
+      "class": { "en": "Coccidian (opportunistic)", "fr": "Coccidie (opportuniste)" },
+      "morphology": {
+        "en": "Oocysts 4-6 μm, intracellular but extracytoplasmic location in intestinal epithelium",
+        "fr": "Oocystes de 4-6 μm, localisation intracellulaire mais extracytoplasmique dans l'épithélium intestinal"
+      },
+      "transmission": {
+        "en": "Fecal-oral, waterborne (highly chlorine-resistant), zoonotic",
+        "fr": "Fécale-orale, hydrique (très résistante au chlore), zoonotique"
+      },
+      "lifecycle": {
+        "en": "Oocyst ingested → sporozoites invade enterocytes → asexual/sexual cycles → oocysts shed (auto-infective)",
+        "fr": "Oocyste ingéré → les sporozoïtes envahissent les entérocytes → cycles asexué/sexué → émission d'oocystes (auto-infestant)"
+      },
+      "clinicalManifestations": {
+        "en": ["Self-limited watery diarrhea (immunocompetent)", "Severe, chronic, life-threatening diarrhea (AIDS/immunocompromised)"],
+        "fr": ["Diarrhée hydrique spontanément résolutive (immunocompétent)", "Diarrhée sévère, chronique, engageant le pronostic vital (SIDA/immunodéprimé)"]
+      },
+      "diagnosis": {
+        "en": "Modified Ziehl-Neelsen stain of stool, antigen ELISA, PCR",
+        "fr": "Coloration de Ziehl-Neelsen modifiée des selles, ELISA antigénique, PCR"
+      },
+      "treatment": {
+        "en": "Nitazoxanide (immunocompetent); ART reconstitution in HIV patients",
+        "fr": "Nitazoxanide (immunocompétent) ; restauration immunitaire par ARV chez le patient VIH"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, major cause of waterborne outbreaks",
+        "fr": "Mondiale, cause majeure d'épidémies hydriques"
+      },
+      "eosinophilia": false
     },
     {
       "id": "cystoisospora-belli",
       "lessonId": 4,
       "names": { "en": "Cystoisospora belli (Isospora belli)", "fr": "Cystoisospora belli" },
       "category": "protozoa",
-      "class": "Coccidian (opportunistic)",
-      "morphology": "Large ellipsoidal oocysts (20-30 μm) with 2 sporoblasts",
-      "transmission": "Fecal-oral",
-      "lifecycle": "Similar coccidian cycle, intracellular in enterocytes",
-      "clinicalManifestations": ["Chronic watery diarrhea, especially in AIDS patients", "Eosinophilia (distinctive feature)"],
-      "diagnosis": "Modified Ziehl-Neelsen stain, autofluorescence under UV microscopy",
-      "treatment": "Trimethoprim-sulfamethoxazole (TMP-SMX)",
-      "geographicDistribution": "Tropics/subtropics, HIV-associated worldwide"
+      "class": { "en": "Coccidian (opportunistic)", "fr": "Coccidie (opportuniste)" },
+      "morphology": {
+        "en": "Large ellipsoidal oocysts (20-30 μm) with 2 sporoblasts",
+        "fr": "Grands oocystes ellipsoïdaux (20-30 μm) à 2 sporoblastes"
+      },
+      "transmission": { "en": "Fecal-oral", "fr": "Fécale-orale" },
+      "lifecycle": {
+        "en": "Similar coccidian cycle, intracellular in enterocytes",
+        "fr": "Cycle coccidien similaire, intracellulaire dans les entérocytes"
+      },
+      "clinicalManifestations": {
+        "en": ["Chronic watery diarrhea, especially in AIDS patients", "Eosinophilia (distinctive feature)"],
+        "fr": ["Diarrhée hydrique chronique, surtout chez les patients SIDA", "Hyperéosinophilie (caractéristique distinctive)"]
+      },
+      "diagnosis": {
+        "en": "Modified Ziehl-Neelsen stain, autofluorescence under UV microscopy",
+        "fr": "Coloration de Ziehl-Neelsen modifiée, autofluorescence en microscopie UV"
+      },
+      "treatment": { "en": "Trimethoprim-sulfamethoxazole (TMP-SMX)", "fr": "Triméthoprime-sulfaméthoxazole (TMP-SMX)" },
+      "geographicDistribution": {
+        "en": "Tropics/subtropics, HIV-associated worldwide",
+        "fr": "Zones tropicales/subtropicales, associée au VIH dans le monde"
+      },
+      "eosinophilia": true
     },
     {
       "id": "cyclospora-cayetanensis",
       "lessonId": 4,
       "names": { "en": "Cyclospora cayetanensis", "fr": "Cyclospora cayetanensis" },
       "category": "protozoa",
-      "class": "Coccidian (opportunistic)",
-      "morphology": "Oocysts 8-10 μm, autofluorescent under UV light",
-      "transmission": "Fecal-oral, contaminated fresh produce/water",
-      "lifecycle": "Requires environmental sporulation before becoming infectious (unlike Cryptosporidium)",
-      "clinicalManifestations": ["Prolonged watery diarrhea, fatigue, weight loss; relapsing pattern"],
-      "diagnosis": "Modified Ziehl-Neelsen (variable acid-fastness), UV autofluorescence, PCR",
-      "treatment": "TMP-SMX",
-      "geographicDistribution": "Worldwide, linked to imported fresh produce outbreaks"
+      "class": { "en": "Coccidian (opportunistic)", "fr": "Coccidie (opportuniste)" },
+      "morphology": {
+        "en": "Oocysts 8-10 μm, autofluorescent under UV light",
+        "fr": "Oocystes de 8-10 μm, autofluorescents sous lumière UV"
+      },
+      "transmission": {
+        "en": "Fecal-oral, contaminated fresh produce/water",
+        "fr": "Fécale-orale, produits frais/eau contaminés"
+      },
+      "lifecycle": {
+        "en": "Requires environmental sporulation before becoming infectious (unlike Cryptosporidium)",
+        "fr": "Nécessite une sporulation dans l'environnement avant de devenir infestant (contrairement à Cryptosporidium)"
+      },
+      "clinicalManifestations": {
+        "en": ["Prolonged watery diarrhea, fatigue, weight loss; relapsing pattern"],
+        "fr": ["Diarrhée hydrique prolongée, fatigue, amaigrissement ; évolution par rechutes"]
+      },
+      "diagnosis": {
+        "en": "Modified Ziehl-Neelsen (variable acid-fastness), UV autofluorescence, PCR",
+        "fr": "Ziehl-Neelsen modifié (acido-résistance variable), autofluorescence UV, PCR"
+      },
+      "treatment": { "en": "TMP-SMX", "fr": "TMP-SMX" },
+      "geographicDistribution": {
+        "en": "Worldwide, linked to imported fresh produce outbreaks",
+        "fr": "Mondiale, liée à des épidémies sur produits frais importés"
+      },
+      "eosinophilia": false
     },
     {
       "id": "sarcocystis-spp",
       "lessonId": 4,
       "names": { "en": "Sarcocystis spp.", "fr": "Sarcocystis spp." },
       "category": "protozoa",
-      "class": "Coccidian (opportunistic)",
-      "morphology": "Sporocysts in stool (intestinal form) or sarcocysts in muscle (muscular form)",
-      "transmission": "Ingestion of undercooked meat containing sarcocysts",
-      "lifecycle": "Two-host cycle: herbivore (intermediate) → carnivore/human (definitive, intestinal form)",
-      "clinicalManifestations": ["Usually asymptomatic; mild GI symptoms or myositis (muscular form)"],
-      "diagnosis": "Stool microscopy for sporocysts, muscle biopsy for sarcocysts",
-      "treatment": "Usually self-limited; no established standard therapy",
-      "geographicDistribution": "Worldwide, higher in areas eating raw/undercooked meat"
+      "class": { "en": "Coccidian (opportunistic)", "fr": "Coccidie (opportuniste)" },
+      "morphology": {
+        "en": "Sporocysts in stool (intestinal form) or sarcocysts in muscle (muscular form)",
+        "fr": "Sporocystes dans les selles (forme intestinale) ou sarcocystes musculaires (forme musculaire)"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked meat containing sarcocysts",
+        "fr": "Ingestion de viande insuffisamment cuite contenant des sarcocystes"
+      },
+      "lifecycle": {
+        "en": "Two-host cycle: herbivore (intermediate) → carnivore/human (definitive, intestinal form)",
+        "fr": "Cycle à deux hôtes : herbivore (intermédiaire) → carnivore/homme (définitif, forme intestinale)"
+      },
+      "clinicalManifestations": {
+        "en": ["Usually asymptomatic; mild GI symptoms or myositis (muscular form)"],
+        "fr": ["Généralement asymptomatique ; troubles digestifs légers ou myosite (forme musculaire)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for sporocysts, muscle biopsy for sarcocysts",
+        "fr": "Microscopie des selles pour sporocystes, biopsie musculaire pour sarcocystes"
+      },
+      "treatment": { "en": "Usually self-limited; no established standard therapy", "fr": "Généralement résolutif spontanément ; pas de traitement standard établi" },
+      "geographicDistribution": {
+        "en": "Worldwide, higher in areas eating raw/undercooked meat",
+        "fr": "Mondiale, plus fréquente là où la viande crue/peu cuite est consommée"
+      },
+      "eosinophilia": false
     },
     {
       "id": "blastocystis-hominis",
       "lessonId": 4,
       "names": { "en": "Blastocystis hominis", "fr": "Blastocystis hominis" },
       "category": "protozoa",
-      "class": "Opportunistic (pathogenicity debated)",
-      "morphology": "Highly pleomorphic — vacuolar, granular, amoeboid, cyst forms",
-      "transmission": "Fecal-oral",
-      "lifecycle": "Not fully elucidated; cyst form considered infective stage",
-      "clinicalManifestations": ["Often asymptomatic (colonizer)", "Possible association with IBS-like symptoms in some patients"],
-      "diagnosis": "Stool microscopy, PCR",
-      "treatment": "Treatment controversial; metronidazole if symptomatic and no other cause found",
-      "geographicDistribution": "Worldwide, very common finding in stool exams"
+      "class": { "en": "Opportunistic (pathogenicity debated)", "fr": "Opportuniste (pathogénicité débattue)" },
+      "morphology": {
+        "en": "Highly pleomorphic — vacuolar, granular, amoeboid, cyst forms",
+        "fr": "Très pléomorphe — formes vacuolaire, granulaire, amiboïde, kystique"
+      },
+      "transmission": { "en": "Fecal-oral", "fr": "Fécale-orale" },
+      "lifecycle": {
+        "en": "Not fully elucidated; cyst form considered infective stage",
+        "fr": "Non totalement élucidé ; la forme kystique est considérée comme la forme infestante"
+      },
+      "clinicalManifestations": {
+        "en": ["Often asymptomatic (colonizer)", "Possible association with IBS-like symptoms in some patients"],
+        "fr": ["Souvent asymptomatique (colonisation)", "Association possible avec des symptômes de type SII chez certains patients"]
+      },
+      "diagnosis": { "en": "Stool microscopy, PCR", "fr": "Microscopie des selles, PCR" },
+      "treatment": {
+        "en": "Treatment controversial; metronidazole if symptomatic and no other cause found",
+        "fr": "Traitement controversé ; métronidazole si symptomatique et absence d'autre cause identifiée"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, very common finding in stool exams",
+        "fr": "Mondiale, découverte très fréquente à l'examen parasitologique des selles"
+      },
+      "eosinophilia": false
     },
     {
       "id": "trypanosoma-brucei",
       "lessonId": 5,
       "names": { "en": "Trypanosoma brucei (gambiense/rhodesiense)", "fr": "Trypanosoma brucei" },
       "category": "protozoa",
-      "class": "Hemoflagellate",
-      "morphology": "Elongated trypomastigote with undulating membrane and free flagellum in blood/CSF",
-      "transmission": "Tsetse fly bite (Glossina spp.)",
-      "lifecycle": "Fly injects metacyclic trypomastigotes → bloodstream/lymphatics → CNS invasion (late stage)",
-      "clinicalManifestations": [
-        "African sleeping sickness: chancre, fever, lymphadenopathy (Winterbottom's sign)",
-        "Late stage: meningoencephalitis, sleep-wake cycle disruption, coma"
-      ],
-      "diagnosis": "Blood/lymph node aspirate/CSF microscopy, CATT serology (gambiense)",
-      "treatment": "Pentamidine/suramin (hemolymphatic stage); melarsoprol/eflornithine (CNS stage)",
-      "geographicDistribution": "Sub-Saharan Africa (gambiense: West/Central; rhodesiense: East Africa)"
+      "class": { "en": "Hemoflagellate", "fr": "Hémoflagellé" },
+      "morphology": {
+        "en": "Elongated trypomastigote with undulating membrane and free flagellum in blood/CSF",
+        "fr": "Trypomastigote allongé à membrane ondulante et flagelle libre dans le sang/LCR"
+      },
+      "transmission": { "en": "Tsetse fly bite (Glossina spp.)", "fr": "Piqûre de mouche tsé-tsé (Glossina spp.)" },
+      "lifecycle": {
+        "en": "Fly injects metacyclic trypomastigotes → bloodstream/lymphatics → CNS invasion (late stage)",
+        "fr": "La mouche injecte les trypomastigotes métacycliques → sang/lymphe → invasion du SNC (phase tardive)"
+      },
+      "clinicalManifestations": {
+        "en": ["African sleeping sickness: chancre, fever, lymphadenopathy (Winterbottom's sign)", "Late stage: meningoencephalitis, sleep-wake cycle disruption, coma"],
+        "fr": ["Maladie du sommeil africaine : chancre, fièvre, adénopathies (signe de Winterbottom)", "Phase tardive : méningoencéphalite, troubles du cycle veille-sommeil, coma"]
+      },
+      "diagnosis": {
+        "en": "Blood/lymph node aspirate/CSF microscopy, CATT serology (gambiense)",
+        "fr": "Microscopie du sang/ponction ganglionnaire/LCR, sérologie CATT (gambiense)"
+      },
+      "treatment": {
+        "en": "Pentamidine/suramin (hemolymphatic stage); melarsoprol/eflornithine (CNS stage)",
+        "fr": "Pentamidine/suramine (phase hémolymphatique) ; mélarsoprol/éflornithine (phase neurologique)"
+      },
+      "geographicDistribution": {
+        "en": "Sub-Saharan Africa (gambiense: West/Central; rhodesiense: East Africa)",
+        "fr": "Afrique subsaharienne (gambiense : Afrique de l'Ouest/Centrale ; rhodesiense : Afrique de l'Est)"
+      },
+      "eosinophilia": false
     },
     {
       "id": "trypanosoma-cruzi",
       "lessonId": 5,
       "names": { "en": "Trypanosoma cruzi", "fr": "Trypanosoma cruzi" },
       "category": "protozoa",
-      "class": "Hemoflagellate",
-      "morphology": "Trypomastigote (blood, C-shaped) and amastigote (intracellular, tissue)",
-      "transmission": "Triatomine ('kissing bug') feces contaminating bite wound; also congenital, transfusion, oral (contaminated food)",
-      "lifecycle": "Bug feces contain metacyclic trypomastigotes → enter through bite site/mucosa → intracellular amastigote replication → trypomastigotes released into blood",
-      "clinicalManifestations": [
-        "Acute: Romaña's sign (periorbital edema), chagoma, fever",
-        "Chronic: cardiomyopathy, megaesophagus, megacolon (10-30 years later)"
-      ],
-      "diagnosis": "Acute: blood smear/PCR. Chronic: serology (2 different tests)",
-      "treatment": "Benznidazole or nifurtimox (most effective in acute phase)",
-      "geographicDistribution": "Latin America (Chagas disease)"
+      "class": { "en": "Hemoflagellate", "fr": "Hémoflagellé" },
+      "morphology": {
+        "en": "Trypomastigote (blood, C-shaped) and amastigote (intracellular, tissue)",
+        "fr": "Trypomastigote (sang, forme en C) et amastigote (intracellulaire, tissulaire)"
+      },
+      "transmission": {
+        "en": "Triatomine ('kissing bug') feces contaminating bite wound; also congenital, transfusion, oral (contaminated food)",
+        "fr": "Déjections de triatome ('punaise embrasseuse') contaminant la plaie de piqûre ; aussi congénitale, transfusionnelle, orale (aliments contaminés)"
+      },
+      "lifecycle": {
+        "en": "Bug feces contain metacyclic trypomastigotes → enter through bite site/mucosa → intracellular amastigote replication → trypomastigotes released into blood",
+        "fr": "Les déjections de la punaise contiennent des trypomastigotes métacycliques → pénètrent par le site de piqûre/la muqueuse → réplication intracellulaire en amastigotes → libération de trypomastigotes dans le sang"
+      },
+      "clinicalManifestations": {
+        "en": ["Acute: Romaña's sign (periorbital edema), chagoma, fever", "Chronic: cardiomyopathy, megaesophagus, megacolon (10-30 years later)"],
+        "fr": ["Phase aiguë : signe de Romaña (œdème périorbitaire), chagome, fièvre", "Phase chronique : cardiomyopathie, mégaœsophage, mégacôlon (10-30 ans plus tard)"]
+      },
+      "diagnosis": {
+        "en": "Acute: blood smear/PCR. Chronic: serology (2 different tests)",
+        "fr": "Phase aiguë : frottis sanguin/PCR. Phase chronique : sérologie (2 tests différents)"
+      },
+      "treatment": {
+        "en": "Benznidazole or nifurtimox (most effective in acute phase)",
+        "fr": "Benznidazole ou nifurtimox (plus efficaces en phase aiguë)"
+      },
+      "geographicDistribution": { "en": "Latin America (Chagas disease)", "fr": "Amérique latine (maladie de Chagas)" },
+      "eosinophilia": false
     },
     {
       "id": "leishmania-spp",
       "lessonId": 6,
       "names": { "en": "Leishmania spp.", "fr": "Leishmania spp." },
       "category": "protozoa",
-      "class": "Hemoflagellate",
-      "morphology": "Amastigote (intracellular, in macrophages) and promastigote (flagellated, in sandfly)",
-      "transmission": "Sandfly bite (Phlebotomus/Lutzomyia)",
-      "lifecycle": "Sandfly injects promastigotes → phagocytosed by macrophages → transform to amastigotes → replicate → new sandfly ingests amastigotes → transform back to promastigotes",
-      "clinicalManifestations": [
-        "Cutaneous leishmaniasis: chronic skin ulcer",
-        "Mucocutaneous leishmaniasis: destructive naso-oropharyngeal lesions",
-        "Visceral leishmaniasis (kala-azar): fever, hepatosplenomegaly, pancytopenia — fatal if untreated"
-      ],
-      "diagnosis": "Tissue/bone marrow/splenic aspirate microscopy (amastigotes), culture (NNN medium), serology, PCR",
-      "treatment": "Liposomal amphotericin B, pentavalent antimonials, miltefosine",
-      "geographicDistribution": "Tropics/subtropics, Mediterranean basin, Latin America, South Asia, East Africa"
+      "class": { "en": "Hemoflagellate", "fr": "Hémoflagellé" },
+      "morphology": {
+        "en": "Amastigote (intracellular, in macrophages) and promastigote (flagellated, in sandfly)",
+        "fr": "Amastigote (intracellulaire, dans les macrophages) et promastigote (flagellé, chez le phlébotome)"
+      },
+      "transmission": { "en": "Sandfly bite (Phlebotomus/Lutzomyia)", "fr": "Piqûre de phlébotome (Phlebotomus/Lutzomyia)" },
+      "lifecycle": {
+        "en": "Sandfly injects promastigotes → phagocytosed by macrophages → transform to amastigotes → replicate → new sandfly ingests amastigotes → transform back to promastigotes",
+        "fr": "Le phlébotome injecte les promastigotes → phagocytés par les macrophages → transformation en amastigotes → réplication → un nouveau phlébotome ingère les amastigotes → retransformation en promastigotes"
+      },
+      "clinicalManifestations": {
+        "en": ["Cutaneous leishmaniasis: chronic skin ulcer", "Mucocutaneous leishmaniasis: destructive naso-oropharyngeal lesions", "Visceral leishmaniasis (kala-azar): fever, hepatosplenomegaly, pancytopenia — fatal if untreated"],
+        "fr": ["Leishmaniose cutanée : ulcération cutanée chronique", "Leishmaniose cutanéo-muqueuse : lésions destructrices naso-oropharyngées", "Leishmaniose viscérale (kala-azar) : fièvre, hépatosplénomégalie, pancytopénie — mortelle en l'absence de traitement"]
+      },
+      "diagnosis": {
+        "en": "Tissue/bone marrow/splenic aspirate microscopy (amastigotes), culture (NNN medium), serology, PCR",
+        "fr": "Microscopie tissulaire/médullaire/ponction splénique (amastigotes), culture (milieu NNN), sérologie, PCR"
+      },
+      "treatment": {
+        "en": "Liposomal amphotericin B, pentavalent antimonials, miltefosine",
+        "fr": "Amphotéricine B liposomale, antimoniés pentavalents, miltéfosine"
+      },
+      "geographicDistribution": {
+        "en": "Tropics/subtropics, Mediterranean basin, Latin America, South Asia, East Africa",
+        "fr": "Zones tropicales/subtropicales, bassin méditerranéen, Amérique latine, Asie du Sud, Afrique de l'Est"
+      },
+      "eosinophilia": false
     },
     {
       "id": "toxoplasma-gondii",
       "lessonId": 7,
       "names": { "en": "Toxoplasma gondii", "fr": "Toxoplasma gondii" },
       "category": "protozoa",
-      "class": "Coccidian",
-      "morphology": "Tachyzoite (acute, crescent-shaped), bradyzoite (tissue cyst, chronic), oocyst (cat feces)",
-      "transmission": "Ingestion of oocysts (cat feces-contaminated food/water) or tissue cysts (undercooked meat); congenital (transplacental)",
-      "lifecycle": "Definitive host: cats (sexual cycle, oocyst shedding). Intermediate hosts (humans, other mammals): tissue cyst formation after ingestion",
-      "clinicalManifestations": [
-        "Immunocompetent: usually asymptomatic or mild mononucleosis-like illness",
-        "Congenital: chorioretinitis, hydrocephalus, intracranial calcifications (classic triad)",
-        "Immunocompromised: toxoplasmic encephalitis (reactivation)"
-      ],
-      "diagnosis": "Serology (IgG/IgM, avidity testing for timing in pregnancy), PCR (amniotic fluid, CSF), imaging for cerebral lesions",
-      "treatment": "Pyrimethamine + sulfadiazine + folinic acid; spiramycin in pregnancy (prevents transplacental transmission)",
-      "geographicDistribution": "Worldwide"
-    },
-        {
+      "class": { "en": "Coccidian", "fr": "Coccidie" },
+      "morphology": {
+        "en": "Tachyzoite (acute, crescent-shaped), bradyzoite (tissue cyst, chronic), oocyst (cat feces)",
+        "fr": "Tachyzoïte (aigu, en croissant), bradyzoïte (kyste tissulaire, chronique), oocyste (fèces de chat)"
+      },
+      "transmission": {
+        "en": "Ingestion of oocysts (cat feces-contaminated food/water) or tissue cysts (undercooked meat); congenital (transplacental)",
+        "fr": "Ingestion d'oocystes (aliments/eau souillés par des fèces de chat) ou de kystes tissulaires (viande peu cuite) ; congénitale (transplacentaire)"
+      },
+      "lifecycle": {
+        "en": "Definitive host: cats (sexual cycle, oocyst shedding). Intermediate hosts (humans, other mammals): tissue cyst formation after ingestion",
+        "fr": "Hôte définitif : le chat (cycle sexué, émission d'oocystes). Hôtes intermédiaires (homme, autres mammifères) : formation de kystes tissulaires après ingestion"
+      },
+      "clinicalManifestations": {
+        "en": ["Immunocompetent: usually asymptomatic or mild mononucleosis-like illness", "Congenital: chorioretinitis, hydrocephalus, intracranial calcifications (classic triad)", "Immunocompromised: toxoplasmic encephalitis (reactivation)"],
+        "fr": ["Immunocompétent : généralement asymptomatique ou syndrome pseudo-grippal mononucléosique", "Congénitale : choriorétinite, hydrocéphalie, calcifications intracrâniennes (triade classique)", "Immunodéprimé : encéphalite toxoplasmique (réactivation)"]
+      },
+      "diagnosis": {
+        "en": "Serology (IgG/IgM, avidity testing for timing in pregnancy), PCR (amniotic fluid, CSF), imaging for cerebral lesions",
+        "fr": "Sérologie (IgG/IgM, test d'avidité pour dater l'infection en grossesse), PCR (liquide amniotique, LCR), imagerie des lésions cérébrales"
+      },
+      "treatment": {
+        "en": "Pyrimethamine + sulfadiazine + folinic acid; spiramycin in pregnancy (prevents transplacental transmission)",
+        "fr": "Pyriméthamine + sulfadiazine + acide folinique ; spiramycine pendant la grossesse (prévient la transmission transplacentaire)"
+      },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
+      "eosinophilia": false
+      },
+          {
       "id": "taenia-saginata",
       "lessonId": 8,
       "names": { "en": "Taenia saginata", "fr": "Taenia saginata (ténia du bœuf)" },
       "category": "helminth",
-      "class": "Cestode (adult)",
-      "morphology": "Adult tapeworm 4-10m, scolex with 4 suckers (no hooks), proglottids with 15-30 uterine branches",
-      "transmission": "Ingestion of undercooked beef containing cysticerci",
-      "lifecycle": "Human (definitive host) ingests larval cysticercus in beef → attaches to intestine → matures → gravid proglottids passed in stool → eggs ingested by cattle (intermediate host) → cysticerci form in muscle",
-      "clinicalManifestations": ["Usually asymptomatic", "Mild abdominal discomfort", "Passage of motile proglottids in stool/undergarments"],
-      "diagnosis": "Stool microscopy for eggs/proglottids, proglottid uterine branch counting for species ID",
-      "treatment": "Praziquantel or niclosamide",
-      "geographicDistribution": "Worldwide, beef-consuming regions",
+      "class": { "en": "Cestode (adult)", "fr": "Cestode (adulte)" },
+      "morphology": {
+        "en": "Adult tapeworm 4-10m, scolex with 4 suckers (no hooks), proglottids with 15-30 uterine branches",
+        "fr": "Ver adulte de 4-10m, scolex à 4 ventouses (sans crochets), anneaux à 15-30 branches utérines"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked beef containing cysticerci",
+        "fr": "Ingestion de viande de bœuf insuffisamment cuite contenant des cysticerques"
+      },
+      "lifecycle": {
+        "en": "Human (definitive host) ingests larval cysticercus in beef → attaches to intestine → matures → gravid proglottids passed in stool → eggs ingested by cattle (intermediate host) → cysticerci form in muscle",
+        "fr": "L'homme (hôte définitif) ingère le cysticerque larvaire dans le bœuf → fixation intestinale → maturation → émission d'anneaux gravides dans les selles → œufs ingérés par les bovins (hôte intermédiaire) → formation de cysticerques musculaires"
+      },
+      "clinicalManifestations": {
+        "en": ["Usually asymptomatic", "Mild abdominal discomfort", "Passage of motile proglottids in stool/undergarments"],
+        "fr": ["Généralement asymptomatique", "Gêne abdominale légère", "Émission d'anneaux mobiles dans les selles/sous-vêtements"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for eggs/proglottids, proglottid uterine branch counting for species ID",
+        "fr": "Microscopie des selles (œufs/anneaux), comptage des branches utérines pour l'identification d'espèce"
+      },
+      "treatment": { "en": "Praziquantel or niclosamide", "fr": "Praziquantel ou niclosamide" },
+      "geographicDistribution": {
+        "en": "Worldwide, beef-consuming regions",
+        "fr": "Mondiale, régions consommatrices de bœuf"
+      },
       "eosinophilia": false
     },
     {
@@ -245,14 +488,35 @@
       "lessonId": 8,
       "names": { "en": "Taenia solium", "fr": "Taenia solium (ténia du porc)" },
       "category": "helminth",
-      "class": "Cestode (adult)",
-      "morphology": "Adult tapeworm 2-7m, scolex with 4 suckers AND a rostellum with hooks, fewer uterine branches (7-13) than T. saginata",
-      "transmission": "Adult worm: undercooked pork with cysticerci. Cysticercosis: fecal-oral ingestion of T. solium eggs",
-      "lifecycle": "Same as T. saginata but pig is intermediate host; humans can also become accidental intermediate host (cysticercosis) if eggs are ingested",
-      "clinicalManifestations": ["Intestinal taeniasis: mild/asymptomatic", "Cysticercosis: subcutaneous nodules, neurocysticercosis (seizures, most common cause of adult-onset epilepsy in endemic areas)"],
-      "diagnosis": "Stool microscopy for taeniasis; imaging (CT/MRI) + serology for neurocysticercosis",
-      "treatment": "Praziquantel/niclosamide (intestinal); albendazole + corticosteroids (neurocysticercosis, careful monitoring for inflammation)",
-      "geographicDistribution": "Latin America, Asia, Sub-Saharan Africa (pork-consuming regions with poor sanitation)",
+      "class": { "en": "Cestode (adult)", "fr": "Cestode (adulte)" },
+      "morphology": {
+        "en": "Adult tapeworm 2-7m, scolex with 4 suckers AND a rostellum with hooks, fewer uterine branches (7-13) than T. saginata",
+        "fr": "Ver adulte de 2-7m, scolex à 4 ventouses ET rostre à crochets, moins de branches utérines (7-13) que T. saginata"
+      },
+      "transmission": {
+        "en": "Adult worm: undercooked pork with cysticerci. Cysticercosis: fecal-oral ingestion of T. solium eggs",
+        "fr": "Ver adulte : porc peu cuit avec cysticerques. Cysticercose : ingestion féco-orale d'œufs de T. solium"
+      },
+      "lifecycle": {
+        "en": "Same as T. saginata but pig is intermediate host; humans can also become accidental intermediate host (cysticercosis) if eggs are ingested",
+        "fr": "Identique à T. saginata mais le porc est l'hôte intermédiaire ; l'homme peut aussi devenir hôte intermédiaire accidentel (cysticercose) en ingérant les œufs"
+      },
+      "clinicalManifestations": {
+        "en": ["Intestinal taeniasis: mild/asymptomatic", "Cysticercosis: subcutaneous nodules, neurocysticercosis (seizures, most common cause of adult-onset epilepsy in endemic areas)"],
+        "fr": ["Tæniasis intestinal : léger/asymptomatique", "Cysticercose : nodules sous-cutanés, neurocysticercose (crises convulsives, principale cause d'épilepsie de l'adulte en zone d'endémie)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for taeniasis; imaging (CT/MRI) + serology for neurocysticercosis",
+        "fr": "Microscopie des selles pour le tæniasis ; imagerie (TDM/IRM) + sérologie pour la neurocysticercose"
+      },
+      "treatment": {
+        "en": "Praziquantel/niclosamide (intestinal); albendazole + corticosteroids (neurocysticercosis, careful monitoring for inflammation)",
+        "fr": "Praziquantel/niclosamide (forme intestinale) ; albendazole + corticoïdes (neurocysticercose, surveillance étroite de l'inflammation)"
+      },
+      "geographicDistribution": {
+        "en": "Latin America, Asia, Sub-Saharan Africa (pork-consuming regions with poor sanitation)",
+        "fr": "Amérique latine, Asie, Afrique subsaharienne (régions consommatrices de porc à assainissement précaire)"
+      },
       "eosinophilia": false
     },
     {
@@ -260,14 +524,32 @@
       "lessonId": 8,
       "names": { "en": "Hymenolepis nana", "fr": "Hymenolepis nana" },
       "category": "helminth",
-      "class": "Cestode (adult)",
-      "morphology": "Smallest human tapeworm (2-4 cm), only one requiring no intermediate host (can auto-infect)",
-      "transmission": "Fecal-oral (direct, egg ingestion); can also involve insect intermediate hosts (fleas, beetles)",
-      "lifecycle": "Egg ingested → larva develops in intestinal villus → matures to adult in lumen → autoinfection possible (unique among tapeworms)",
-      "clinicalManifestations": ["Usually asymptomatic", "Heavy infection: abdominal pain, diarrhea, irritability in children"],
-      "diagnosis": "Stool microscopy for characteristic eggs (polar filaments)",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Worldwide, especially in children in crowded/poor-hygiene settings",
+      "class": { "en": "Cestode (adult)", "fr": "Cestode (adulte)" },
+      "morphology": {
+        "en": "Smallest human tapeworm (2-4 cm), only one requiring no intermediate host (can auto-infect)",
+        "fr": "Plus petit ténia humain (2-4 cm), le seul ne nécessitant pas d'hôte intermédiaire (auto-infestation possible)"
+      },
+      "transmission": {
+        "en": "Fecal-oral (direct, egg ingestion); can also involve insect intermediate hosts (fleas, beetles)",
+        "fr": "Fécale-orale (directe, ingestion d'œufs) ; peut aussi impliquer des hôtes intermédiaires insectes (puces, coléoptères)"
+      },
+      "lifecycle": {
+        "en": "Egg ingested → larva develops in intestinal villus → matures to adult in lumen → autoinfection possible (unique among tapeworms)",
+        "fr": "Œuf ingéré → développement larvaire dans la villosité intestinale → maturation en adulte dans la lumière → auto-infestation possible (unique parmi les cestodes)"
+      },
+      "clinicalManifestations": {
+        "en": ["Usually asymptomatic", "Heavy infection: abdominal pain, diarrhea, irritability in children"],
+        "fr": ["Généralement asymptomatique", "Infestation massive : douleurs abdominales, diarrhée, irritabilité chez l'enfant"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for characteristic eggs (polar filaments)",
+        "fr": "Microscopie des selles — œufs caractéristiques (filaments polaires)"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "Worldwide, especially in children in crowded/poor-hygiene settings",
+        "fr": "Mondiale, surtout chez l'enfant en milieu surpeuplé/hygiène précaire"
+      },
       "eosinophilia": false
     },
     {
@@ -275,14 +557,32 @@
       "lessonId": 8,
       "names": { "en": "Diphyllobothrium latum", "fr": "Diphyllobothrium latum (ténia du poisson)" },
       "category": "helminth",
-      "class": "Cestode (adult)",
-      "morphology": "Longest human tapeworm (up to 10m+), scolex with 2 sucking grooves (bothria), thousands of proglottids",
-      "transmission": "Ingestion of undercooked/raw freshwater fish containing plerocercoid larvae",
-      "lifecycle": "Eggs in water → coracidium → ingested by copepod → procercoid → fish ingests copepod → plerocercoid in fish muscle → human eats fish",
-      "clinicalManifestations": ["Usually asymptomatic", "Vitamin B12 deficiency/megaloblastic anemia (worm competes for B12)"],
-      "diagnosis": "Stool microscopy for operculated eggs",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Cold freshwater lake regions (Scandinavia, Baltic, Great Lakes, Japan)",
+      "class": { "en": "Cestode (adult)", "fr": "Cestode (adulte)" },
+      "morphology": {
+        "en": "Longest human tapeworm (up to 10m+), scolex with 2 sucking grooves (bothria), thousands of proglottids",
+        "fr": "Plus long ténia humain (jusqu'à 10m+), scolex à 2 fossettes de succion (bothridies), milliers d'anneaux"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked/raw freshwater fish containing plerocercoid larvae",
+        "fr": "Ingestion de poisson d'eau douce cru/peu cuit contenant des larves plérocercoïdes"
+      },
+      "lifecycle": {
+        "en": "Eggs in water → coracidium → ingested by copepod → procercoid → fish ingests copepod → plerocercoid in fish muscle → human eats fish",
+        "fr": "Œufs dans l'eau → coracidie → ingérée par un copépode → procercoïde → un poisson ingère le copépode → plérocercoïde dans le muscle du poisson → l'homme mange le poisson"
+      },
+      "clinicalManifestations": {
+        "en": ["Usually asymptomatic", "Vitamin B12 deficiency/megaloblastic anemia (worm competes for B12)"],
+        "fr": ["Généralement asymptomatique", "Carence en vitamine B12/anémie mégaloblastique (le ver capte la B12)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for operculated eggs",
+        "fr": "Microscopie des selles — œufs operculés"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "Cold freshwater lake regions (Scandinavia, Baltic, Great Lakes, Japan)",
+        "fr": "Régions de lacs d'eau douce froide (Scandinavie, Baltique, Grands Lacs, Japon)"
+      },
       "eosinophilia": false
     },
     {
@@ -290,14 +590,32 @@
       "lessonId": 8,
       "names": { "en": "Dipylidium caninum", "fr": "Dipylidium caninum (ténia du chien)" },
       "category": "helminth",
-      "class": "Cestode (adult)",
-      "morphology": "Small tapeworm, proglottids resemble cucumber/rice seeds, double set of genital organs per proglottid",
-      "transmission": "Accidental ingestion of infected fleas (mainly affects dogs/cats; rare in humans, mostly children)",
-      "lifecycle": "Flea larva ingests tapeworm eggs → develops cysticercoid → dog/cat/human ingests infected flea → adult develops in intestine",
-      "clinicalManifestations": ["Usually asymptomatic in humans", "Mild GI upset, passage of proglottids"],
-      "diagnosis": "Stool microscopy for characteristic egg packets or proglottids",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Worldwide, wherever dogs/cats and fleas coexist with humans",
+      "class": { "en": "Cestode (adult)", "fr": "Cestode (adulte)" },
+      "morphology": {
+        "en": "Small tapeworm, proglottids resemble cucumber/rice seeds, double set of genital organs per proglottid",
+        "fr": "Petit ténia, anneaux évoquant des graines de concombre/riz, double appareil génital par anneau"
+      },
+      "transmission": {
+        "en": "Accidental ingestion of infected fleas (mainly affects dogs/cats; rare in humans, mostly children)",
+        "fr": "Ingestion accidentelle de puces infestées (touche surtout chiens/chats ; rare chez l'homme, surtout l'enfant)"
+      },
+      "lifecycle": {
+        "en": "Flea larva ingests tapeworm eggs → develops cysticercoid → dog/cat/human ingests infected flea → adult develops in intestine",
+        "fr": "La larve de puce ingère les œufs → développement d'un cysticercoïde → le chien/chat/homme ingère la puce infestée → développement de l'adulte dans l'intestin"
+      },
+      "clinicalManifestations": {
+        "en": ["Usually asymptomatic in humans", "Mild GI upset, passage of proglottids"],
+        "fr": ["Généralement asymptomatique chez l'homme", "Troubles digestifs légers, émission d'anneaux"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for characteristic egg packets or proglottids",
+        "fr": "Microscopie des selles — capsules ovigères caractéristiques ou anneaux"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "Worldwide, wherever dogs/cats and fleas coexist with humans",
+        "fr": "Mondiale, partout où chiens/chats et puces cohabitent avec l'homme"
+      },
       "eosinophilia": false
     },
     {
@@ -305,14 +623,35 @@
       "lessonId": 9,
       "names": { "en": "Echinococcus granulosus", "fr": "Echinococcus granulosus" },
       "category": "helminth",
-      "class": "Cestode (larval)",
-      "morphology": "Adult (in dog) tiny 3-6mm; larval hydatid cyst in human — fluid-filled, unilocular, with germinal layer producing protoscolices",
-      "transmission": "Fecal-oral ingestion of eggs from dog feces (dogs = definitive host, sheep/humans = intermediate/accidental host)",
-      "lifecycle": "Dog sheds eggs → sheep (or human) ingests eggs → oncosphere migrates to liver/lung → develops into hydatid cyst → dog eats infected offal → adult worm develops in dog intestine",
-      "clinicalManifestations": ["Cystic echinococcosis (hydatid disease): slow-growing cysts in liver (65%) or lung (25%)", "Rupture → anaphylaxis, secondary cyst dissemination"],
-      "diagnosis": "Imaging (ultrasound/CT showing cyst with daughter cysts), serology (indirect hemagglutination, ELISA)",
-      "treatment": "Surgical removal (PAIR technique: puncture-aspiration-injection-reaspiration) + albendazole",
-      "geographicDistribution": "Sheep-raising regions: Mediterranean, Middle East, South America, Central Asia",
+      "class": { "en": "Cestode (larval)", "fr": "Cestode (forme larvaire)" },
+      "morphology": {
+        "en": "Adult (in dog) tiny 3-6mm; larval hydatid cyst in human — fluid-filled, unilocular, with germinal layer producing protoscolices",
+        "fr": "Adulte (chez le chien) minuscule 3-6mm ; kyste hydatique larvaire chez l'homme — liquidien, uniloculaire, à couche germinative produisant des protoscolex"
+      },
+      "transmission": {
+        "en": "Fecal-oral ingestion of eggs from dog feces (dogs = definitive host, sheep/humans = intermediate/accidental host)",
+        "fr": "Ingestion féco-orale d'œufs présents dans les fèces de chien (chien = hôte définitif, mouton/homme = hôte intermédiaire/accidentel)"
+      },
+      "lifecycle": {
+        "en": "Dog sheds eggs → sheep (or human) ingests eggs → oncosphere migrates to liver/lung → develops into hydatid cyst → dog eats infected offal → adult worm develops in dog intestine",
+        "fr": "Le chien émet des œufs → le mouton (ou l'homme) les ingère → l'oncosphère migre vers le foie/poumon → développement d'un kyste hydatique → le chien mange les abats infestés → développement du ver adulte dans l'intestin du chien"
+      },
+      "clinicalManifestations": {
+        "en": ["Cystic echinococcosis (hydatid disease): slow-growing cysts in liver (65%) or lung (25%)", "Rupture → anaphylaxis, secondary cyst dissemination"],
+        "fr": ["Échinococcose kystique (maladie hydatique) : kystes à croissance lente du foie (65%) ou du poumon (25%)", "Rupture → anaphylaxie, dissémination kystique secondaire"]
+      },
+      "diagnosis": {
+        "en": "Imaging (ultrasound/CT showing cyst with daughter cysts), serology (indirect hemagglutination, ELISA)",
+        "fr": "Imagerie (échographie/TDM montrant kyste avec vésicules filles), sérologie (hémagglutination indirecte, ELISA)"
+      },
+      "treatment": {
+        "en": "Surgical removal (PAIR technique: puncture-aspiration-injection-reaspiration) + albendazole",
+        "fr": "Exérèse chirurgicale (technique PAIR : ponction-aspiration-injection-réaspiration) + albendazole"
+      },
+      "geographicDistribution": {
+        "en": "Sheep-raising regions: Mediterranean, Middle East, South America, Central Asia",
+        "fr": "Régions d'élevage ovin : Méditerranée, Moyen-Orient, Amérique du Sud, Asie centrale"
+      },
       "eosinophilia": true
     },
     {
@@ -320,14 +659,35 @@
       "lessonId": 9,
       "names": { "en": "Cysticercosis (T. solium larva)", "fr": "Cysticercose" },
       "category": "helminth",
-      "class": "Cestode (larval)",
-      "morphology": "Fluid-filled cysticercus with invaginated scolex, found in muscle, subcutaneous tissue, brain, eye",
-      "transmission": "Ingestion of T. solium eggs (fecal-oral, autoinfection possible)",
-      "lifecycle": "Egg ingested → oncosphere penetrates gut wall → hematogenous spread → cysticercus forms in tissues",
-      "clinicalManifestations": ["Neurocysticercosis: seizures, headache, hydrocephalus", "Subcutaneous/muscular nodules", "Ocular cysticercosis"],
-      "diagnosis": "CT/MRI (calcified or cystic lesions), serology (EITB)",
-      "treatment": "Albendazole/praziquantel + corticosteroids (active neurocysticercosis); surgery for ocular/ventricular disease",
-      "geographicDistribution": "Latin America, Sub-Saharan Africa, Asia",
+      "class": { "en": "Cestode (larval)", "fr": "Cestode (forme larvaire)" },
+      "morphology": {
+        "en": "Fluid-filled cysticercus with invaginated scolex, found in muscle, subcutaneous tissue, brain, eye",
+        "fr": "Cysticerque liquidien à scolex invaginé, retrouvé dans le muscle, le tissu sous-cutané, le cerveau, l'œil"
+      },
+      "transmission": {
+        "en": "Ingestion of T. solium eggs (fecal-oral, autoinfection possible)",
+        "fr": "Ingestion d'œufs de T. solium (féco-orale, auto-infestation possible)"
+      },
+      "lifecycle": {
+        "en": "Egg ingested → oncosphere penetrates gut wall → hematogenous spread → cysticercus forms in tissues",
+        "fr": "Œuf ingéré → l'oncosphère traverse la paroi intestinale → dissémination hématogène → formation du cysticerque dans les tissus"
+      },
+      "clinicalManifestations": {
+        "en": ["Neurocysticercosis: seizures, headache, hydrocephalus", "Subcutaneous/muscular nodules", "Ocular cysticercosis"],
+        "fr": ["Neurocysticercose : crises convulsives, céphalées, hydrocéphalie", "Nodules sous-cutanés/musculaires", "Cysticercose oculaire"]
+      },
+      "diagnosis": {
+        "en": "CT/MRI (calcified or cystic lesions), serology (EITB)",
+        "fr": "TDM/IRM (lésions calcifiées ou kystiques), sérologie (EITB)"
+      },
+      "treatment": {
+        "en": "Albendazole/praziquantel + corticosteroids (active neurocysticercosis); surgery for ocular/ventricular disease",
+        "fr": "Albendazole/praziquantel + corticoïdes (neurocysticercose active) ; chirurgie pour les formes oculaires/ventriculaires"
+      },
+      "geographicDistribution": {
+        "en": "Latin America, Sub-Saharan Africa, Asia",
+        "fr": "Amérique latine, Afrique subsaharienne, Asie"
+      },
       "eosinophilia": false
     },
     {
@@ -335,14 +695,35 @@
       "lessonId": 9,
       "names": { "en": "Coenurosis (Taenia multiceps larva)", "fr": "Cénurose" },
       "category": "helminth",
-      "class": "Cestode (larval)",
-      "morphology": "Coenurus: larger cyst than cysticercus, contains multiple protoscolices (invaginated scolices) budding from germinal membrane",
-      "transmission": "Fecal-oral ingestion of Taenia multiceps eggs from dog feces (dogs = definitive host, sheep/humans = intermediate)",
-      "lifecycle": "Egg ingested → oncosphere migrates → coenurus develops (mainly CNS, subcutaneous tissue)",
-      "clinicalManifestations": ["Cerebral coenurosis: increased intracranial pressure, seizures", "Subcutaneous nodules", "Ocular involvement"],
-      "diagnosis": "Imaging (CT/MRI), histopathology after excision",
-      "treatment": "Surgical excision (definitive), albendazole as adjunct",
-      "geographicDistribution": "Sheep-raising regions of Africa",
+      "class": { "en": "Cestode (larval)", "fr": "Cestode (forme larvaire)" },
+      "morphology": {
+        "en": "Coenurus: larger cyst than cysticercus, contains multiple protoscolices (invaginated scolices) budding from germinal membrane",
+        "fr": "Cénure : kyste plus volumineux que le cysticerque, contenant de multiples protoscolex bourgeonnant de la membrane germinative"
+      },
+      "transmission": {
+        "en": "Fecal-oral ingestion of Taenia multiceps eggs from dog feces (dogs = definitive host, sheep/humans = intermediate)",
+        "fr": "Ingestion féco-orale d'œufs de Taenia multiceps présents dans les fèces de chien (chien = hôte définitif, mouton/homme = intermédiaire)"
+      },
+      "lifecycle": {
+        "en": "Egg ingested → oncosphere migrates → coenurus develops (mainly CNS, subcutaneous tissue)",
+        "fr": "Œuf ingéré → migration de l'oncosphère → développement du cénure (surtout SNC, tissu sous-cutané)"
+      },
+      "clinicalManifestations": {
+        "en": ["Cerebral coenurosis: increased intracranial pressure, seizures", "Subcutaneous nodules", "Ocular involvement"],
+        "fr": ["Cénurose cérébrale : hypertension intracrânienne, crises convulsives", "Nodules sous-cutanés", "Atteinte oculaire"]
+      },
+      "diagnosis": {
+        "en": "Imaging (CT/MRI), histopathology after excision",
+        "fr": "Imagerie (TDM/IRM), histopathologie après exérèse"
+      },
+      "treatment": {
+        "en": "Surgical excision (definitive), albendazole as adjunct",
+        "fr": "Exérèse chirurgicale (définitive), albendazole en complément"
+      },
+      "geographicDistribution": {
+        "en": "Sheep-raising regions of Africa",
+        "fr": "Régions d'élevage ovin d'Afrique"
+      },
       "eosinophilia": true
     },
     {
@@ -350,14 +731,35 @@
       "lessonId": 9,
       "names": { "en": "Sparganosis (Spirometra larva)", "fr": "Sparganose" },
       "category": "helminth",
-      "class": "Cestode (larval)",
-      "morphology": "Sparganum: ribbon-like migrating larva (plerocercoid of Spirometra spp.)",
-      "transmission": "Ingestion of infected copepods (drinking water), undercooked frog/snake meat, or traditional poultice application of infected flesh to wounds/eyes",
-      "lifecycle": "Copepod → frog/snake/bird (paratenic hosts) → definitive host (cat/dog) OR accidental human infection via ingestion/skin contact",
-      "clinicalManifestations": ["Migratory subcutaneous nodule/swelling", "Ocular sparganosis (periorbital swelling, can cause blindness if untreated)"],
-      "diagnosis": "Surgical excision + histopathology, serology where available",
-      "treatment": "Surgical removal of larva (definitive); praziquantel of uncertain efficacy",
-      "geographicDistribution": "East/Southeast Asia (traditional poultice practices increase risk)",
+      "class": { "en": "Cestode (larval)", "fr": "Cestode (forme larvaire)" },
+      "morphology": {
+        "en": "Sparganum: ribbon-like migrating larva (plerocercoid of Spirometra spp.)",
+        "fr": "Sparganum : larve migratrice rubanée (plérocercoïde de Spirometra spp.)"
+      },
+      "transmission": {
+        "en": "Ingestion of infected copepods (drinking water), undercooked frog/snake meat, or traditional poultice application of infected flesh to wounds/eyes",
+        "fr": "Ingestion de copépodes infestés (eau de boisson), viande de grenouille/serpent peu cuite, ou application traditionnelle de cataplasme de chair infestée sur plaies/yeux"
+      },
+      "lifecycle": {
+        "en": "Copepod → frog/snake/bird (paratenic hosts) → definitive host (cat/dog) OR accidental human infection via ingestion/skin contact",
+        "fr": "Copépode → grenouille/serpent/oiseau (hôtes paraténiques) → hôte définitif (chat/chien) OU infestation humaine accidentelle par ingestion/contact cutané"
+      },
+      "clinicalManifestations": {
+        "en": ["Migratory subcutaneous nodule/swelling", "Ocular sparganosis (periorbital swelling, can cause blindness if untreated)"],
+        "fr": ["Nodule/tuméfaction sous-cutanée migratrice", "Sparganose oculaire (tuméfaction périorbitaire, peut entraîner la cécité si non traitée)"]
+      },
+      "diagnosis": {
+        "en": "Surgical excision + histopathology, serology where available",
+        "fr": "Exérèse chirurgicale + histopathologie, sérologie si disponible"
+      },
+      "treatment": {
+        "en": "Surgical removal of larva (definitive); praziquantel of uncertain efficacy",
+        "fr": "Extraction chirurgicale de la larve (définitive) ; efficacité du praziquantel incertaine"
+      },
+      "geographicDistribution": {
+        "en": "East/Southeast Asia (traditional poultice practices increase risk)",
+        "fr": "Asie de l'Est/du Sud-Est (les pratiques traditionnelles de cataplasme augmentent le risque)"
+      },
       "eosinophilia": true
     },
     {
@@ -365,14 +767,32 @@
       "lessonId": 10,
       "names": { "en": "Schistosoma mansoni", "fr": "Schistosoma mansoni" },
       "category": "helminth",
-      "class": "Trematode (blood fluke)",
-      "morphology": "Adult worms in copula (male grooves around female), eggs large lateral spine",
-      "transmission": "Skin penetration by cercariae released from freshwater snails (Biomphalaria)",
-      "lifecycle": "Egg in feces → miracidium hatches in water → infects snail → cercariae released → penetrate human skin → migrate to portal/mesenteric veins → adults produce eggs",
-      "clinicalManifestations": ["Swimmer's itch (cercarial penetration)", "Katayama fever (acute)", "Chronic: intestinal/hepatosplenic disease, periportal (Symmers) fibrosis, portal hypertension"],
-      "diagnosis": "Stool microscopy for lateral-spined eggs, serology, rectal biopsy",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Sub-Saharan Africa, South America (Brazil), Caribbean, Middle East",
+      "class": { "en": "Trematode (blood fluke)", "fr": "Trématode (bilharzie)" },
+      "morphology": {
+        "en": "Adult worms in copula (male grooves around female), eggs large lateral spine",
+        "fr": "Vers adultes accouplés (canal gynécophore mâle enserrant la femelle), œufs à volumineux éperon latéral"
+      },
+      "transmission": {
+        "en": "Skin penetration by cercariae released from freshwater snails (Biomphalaria)",
+        "fr": "Pénétration cutanée par les cercaires émises par des mollusques d'eau douce (Biomphalaria)"
+      },
+      "lifecycle": {
+        "en": "Egg in feces → miracidium hatches in water → infects snail → cercariae released → penetrate human skin → migrate to portal/mesenteric veins → adults produce eggs",
+        "fr": "Œuf dans les selles → éclosion du miracidium dans l'eau → infestation du mollusque → émission de cercaires → pénétration cutanée chez l'homme → migration vers les veines portes/mésentériques → les adultes produisent des œufs"
+      },
+      "clinicalManifestations": {
+        "en": ["Swimmer's itch (cercarial penetration)", "Katayama fever (acute)", "Chronic: intestinal/hepatosplenic disease, periportal (Symmers) fibrosis, portal hypertension"],
+        "fr": ["Dermatite des nageurs (pénétration cercarienne)", "Fièvre de Katayama (phase aiguë)", "Chronique : atteinte intestinale/hépatosplénique, fibrose périportale (de Symmers), hypertension portale"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for lateral-spined eggs, serology, rectal biopsy",
+        "fr": "Microscopie des selles (œufs à éperon latéral), sérologie, biopsie rectale"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "Sub-Saharan Africa, South America (Brazil), Caribbean, Middle East",
+        "fr": "Afrique subsaharienne, Amérique du Sud (Brésil), Caraïbes, Moyen-Orient"
+      },
       "eosinophilia": true
     },
     {
@@ -380,14 +800,29 @@
       "lessonId": 10,
       "names": { "en": "Schistosoma haematobium", "fr": "Schistosoma haematobium" },
       "category": "helminth",
-      "class": "Trematode (blood fluke)",
-      "morphology": "Eggs with terminal spine, adults reside in vesical/pelvic venous plexus",
-      "transmission": "Skin penetration by cercariae from Bulinus snails in freshwater",
-      "lifecycle": "Same general schistosome cycle but adults migrate to bladder venous plexus",
-      "clinicalManifestations": ["Terminal hematuria (classic sign)", "Bladder wall fibrosis/calcification", "Increased risk of squamous cell bladder carcinoma", "Female genital schistosomiasis"],
-      "diagnosis": "Urine microscopy for terminal-spined eggs (collect midday), cystoscopy",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Africa, Middle East",
+      "class": { "en": "Trematode (blood fluke)", "fr": "Trématode (bilharzie)" },
+      "morphology": {
+        "en": "Eggs with terminal spine, adults reside in vesical/pelvic venous plexus",
+        "fr": "Œufs à éperon terminal, adultes localisés dans le plexus veineux vésical/pelvien"
+      },
+      "transmission": {
+        "en": "Skin penetration by cercariae from Bulinus snails in freshwater",
+        "fr": "Pénétration cutanée par les cercaires émises par des mollusques Bulinus en eau douce"
+      },
+      "lifecycle": {
+        "en": "Same general schistosome cycle but adults migrate to bladder venous plexus",
+        "fr": "Cycle bilharzien général identique mais les adultes migrent vers le plexus veineux vésical"
+      },
+      "clinicalManifestations": {
+        "en": ["Terminal hematuria (classic sign)", "Bladder wall fibrosis/calcification", "Increased risk of squamous cell bladder carcinoma", "Female genital schistosomiasis"],
+        "fr": ["Hématurie terminale (signe classique)", "Fibrose/calcification de la paroi vésicale", "Risque accru de carcinome épidermoïde de vessie", "Bilharziose génitale féminine"]
+      },
+      "diagnosis": {
+        "en": "Urine microscopy for terminal-spined eggs (collect midday), cystoscopy",
+        "fr": "Microscopie urinaire (œufs à éperon terminal, recueil vers midi), cystoscopie"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": { "en": "Africa, Middle East", "fr": "Afrique, Moyen-Orient" },
       "eosinophilia": true
     },
     {
@@ -395,14 +830,29 @@
       "lessonId": 10,
       "names": { "en": "Schistosoma japonicum", "fr": "Schistosoma japonicum" },
       "category": "helminth",
-      "class": "Trematode (blood fluke)",
-      "morphology": "Eggs round with small lateral knob (rudimentary spine), produces most eggs per day of all schistosomes",
-      "transmission": "Skin penetration by cercariae from Oncomelania snails",
-      "lifecycle": "Same schistosome cycle, adults in mesenteric veins; zoonotic reservoir (cattle, dogs, pigs) important",
-      "clinicalManifestations": ["Most severe intestinal/hepatosplenic disease of the schistosomes due to high egg output", "Katayama fever more severe"],
-      "diagnosis": "Stool microscopy, serology",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "China, Philippines, Indonesia",
+      "class": { "en": "Trematode (blood fluke)", "fr": "Trématode (bilharzie)" },
+      "morphology": {
+        "en": "Eggs round with small lateral knob (rudimentary spine), produces most eggs per day of all schistosomes",
+        "fr": "Œufs ronds à petit bouton latéral (éperon rudimentaire), production journalière d'œufs la plus élevée des bilharzies"
+      },
+      "transmission": {
+        "en": "Skin penetration by cercariae from Oncomelania snails",
+        "fr": "Pénétration cutanée par les cercaires émises par des mollusques Oncomelania"
+      },
+      "lifecycle": {
+        "en": "Same schistosome cycle, adults in mesenteric veins; zoonotic reservoir (cattle, dogs, pigs) important",
+        "fr": "Cycle bilharzien identique, adultes dans les veines mésentériques ; réservoir zoonotique important (bovins, chiens, porcs)"
+      },
+      "clinicalManifestations": {
+        "en": ["Most severe intestinal/hepatosplenic disease of the schistosomes due to high egg output", "Katayama fever more severe"],
+        "fr": ["Atteinte intestinale/hépatosplénique la plus sévère des bilharzies du fait de la ponte élevée", "Fièvre de Katayama plus sévère"]
+      },
+      "diagnosis": { "en": "Stool microscopy, serology", "fr": "Microscopie des selles, sérologie" },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "China, Philippines, Indonesia",
+        "fr": "Chine, Philippines, Indonésie"
+      },
       "eosinophilia": true
     },
     {
@@ -410,14 +860,35 @@
       "lessonId": 11,
       "names": { "en": "Fasciola hepatica", "fr": "Fasciola hepatica (grande douve du foie)" },
       "category": "helminth",
-      "class": "Trematode (liver fluke)",
-      "morphology": "Large leaf-shaped fluke (2-3cm), operculated eggs",
-      "transmission": "Ingestion of metacercariae on aquatic vegetation (watercress) or contaminated water",
-      "lifecycle": "Egg → miracidium → snail (Lymnaea) → cercariae → encyst as metacercariae on vegetation → ingested → migrate through gut wall/liver parenchyma → bile ducts",
-      "clinicalManifestations": ["Acute (hepatic migration): fever, RUQ pain, hepatomegaly, marked eosinophilia", "Chronic (biliary phase): cholangitis, biliary obstruction"],
-      "diagnosis": "Stool microscopy (eggs, may be delayed/negative in acute phase), serology (more useful acutely), imaging",
-      "treatment": "Triclabendazole (drug of choice, praziquantel NOT effective)",
-      "geographicDistribution": "Worldwide, sheep/cattle-raising areas (Andes, Europe, Middle East)",
+      "class": { "en": "Trematode (liver fluke)", "fr": "Trématode (douve hépatique)" },
+      "morphology": {
+        "en": "Large leaf-shaped fluke (2-3cm), operculated eggs",
+        "fr": "Grande douve foliacée (2-3cm), œufs operculés"
+      },
+      "transmission": {
+        "en": "Ingestion of metacercariae on aquatic vegetation (watercress) or contaminated water",
+        "fr": "Ingestion de métacercaires sur végétaux aquatiques (cresson) ou eau contaminée"
+      },
+      "lifecycle": {
+        "en": "Egg → miracidium → snail (Lymnaea) → cercariae → encyst as metacercariae on vegetation → ingested → migrate through gut wall/liver parenchyma → bile ducts",
+        "fr": "Œuf → miracidium → mollusque (Lymnaea) → cercaires → enkystement en métacercaires sur les végétaux → ingestion → migration à travers la paroi intestinale/le parenchyme hépatique → voies biliaires"
+      },
+      "clinicalManifestations": {
+        "en": ["Acute (hepatic migration): fever, RUQ pain, hepatomegaly, marked eosinophilia", "Chronic (biliary phase): cholangitis, biliary obstruction"],
+        "fr": ["Phase aiguë (migration hépatique) : fièvre, douleur de l'hypochondre droit, hépatomégalie, hyperéosinophilie marquée", "Phase chronique (biliaire) : angiocholite, obstruction biliaire"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy (eggs, may be delayed/negative in acute phase), serology (more useful acutely), imaging",
+        "fr": "Microscopie des selles (œufs, pouvant être retardés/négatifs en phase aiguë), sérologie (plus utile en phase aiguë), imagerie"
+      },
+      "treatment": {
+        "en": "Triclabendazole (drug of choice, praziquantel NOT effective)",
+        "fr": "Triclabendazole (traitement de choix, le praziquantel n'est PAS efficace)"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, sheep/cattle-raising areas (Andes, Europe, Middle East)",
+        "fr": "Mondiale, régions d'élevage ovin/bovin (Andes, Europe, Moyen-Orient)"
+      },
       "eosinophilia": true
     },
     {
@@ -425,14 +896,32 @@
       "lessonId": 11,
       "names": { "en": "Opisthorchis viverrini / felineus", "fr": "Opisthorchis spp." },
       "category": "helminth",
-      "class": "Trematode (liver fluke)",
-      "morphology": "Small flukes (7-12mm) in bile ducts, operculated eggs with shoulder",
-      "transmission": "Ingestion of undercooked/raw freshwater fish containing metacercariae",
-      "lifecycle": "Egg → snail → cercariae → fish (metacercariae in muscle) → human ingestion → adults migrate to bile ducts",
-      "clinicalManifestations": ["Cholangitis, cholelithiasis", "Chronic infection strongly associated with cholangiocarcinoma"],
-      "diagnosis": "Stool microscopy for eggs, imaging",
-      "treatment": "Praziquantel",
-      "geographicDistribution": "Southeast Asia (Opisthorchis viverrini), Eastern Europe/Russia (O. felineus)",
+      "class": { "en": "Trematode (liver fluke)", "fr": "Trématode (douve hépatique)" },
+      "morphology": {
+        "en": "Small flukes (7-12mm) in bile ducts, operculated eggs with shoulder",
+        "fr": "Petites douves (7-12mm) dans les voies biliaires, œufs operculés avec épaulement"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked/raw freshwater fish containing metacercariae",
+        "fr": "Ingestion de poisson d'eau douce cru/peu cuit contenant des métacercaires"
+      },
+      "lifecycle": {
+        "en": "Egg → snail → cercariae → fish (metacercariae in muscle) → human ingestion → adults migrate to bile ducts",
+        "fr": "Œuf → mollusque → cercaires → poisson (métacercaires musculaires) → ingestion humaine → migration des adultes vers les voies biliaires"
+      },
+      "clinicalManifestations": {
+        "en": ["Cholangitis, cholelithiasis", "Chronic infection strongly associated with cholangiocarcinoma"],
+        "fr": ["Angiocholite, lithiase biliaire", "Infection chronique fortement associée au cholangiocarcinome"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for eggs, imaging",
+        "fr": "Microscopie des selles, imagerie"
+      },
+      "treatment": { "en": "Praziquantel", "fr": "Praziquantel" },
+      "geographicDistribution": {
+        "en": "Southeast Asia (Opisthorchis viverrini), Eastern Europe/Russia (O. felineus)",
+        "fr": "Asie du Sud-Est (Opisthorchis viverrini), Europe de l'Est/Russie (O. felineus)"
+      },
       "eosinophilia": true
     },
     {
@@ -440,14 +929,35 @@
       "lessonId": 11,
       "names": { "en": "Paragonimus westermani", "fr": "Paragonimus westermani (douve du poumon)" },
       "category": "helminth",
-      "class": "Trematode (lung fluke)",
-      "morphology": "Thick, reddish-brown fluke, thick-shelled operculated eggs",
-      "transmission": "Ingestion of undercooked freshwater crab/crayfish containing metacercariae",
-      "lifecycle": "Egg → snail → cercariae → crab/crayfish (metacercariae) → ingested → migrate through diaphragm to lungs → adult pairs in cystic cavities",
-      "clinicalManifestations": ["Chronic cough with rusty/blood-tinged sputum (mimics TB)", "Chest pain, hemoptysis", "Can cause ectopic (cerebral) disease"],
-      "diagnosis": "Sputum/stool microscopy for eggs, imaging (nodular/cystic lung lesions), serology",
-      "treatment": "Praziquantel or triclabendazole",
-      "geographicDistribution": "East/Southeast Asia, West Africa, parts of Latin America",
+      "class": { "en": "Trematode (lung fluke)", "fr": "Trématode (douve pulmonaire)" },
+      "morphology": {
+        "en": "Thick, reddish-brown fluke, thick-shelled operculated eggs",
+        "fr": "Douve épaisse brun-rougeâtre, œufs operculés à coque épaisse"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked freshwater crab/crayfish containing metacercariae",
+        "fr": "Ingestion de crabe/écrevisse d'eau douce peu cuits contenant des métacercaires"
+      },
+      "lifecycle": {
+        "en": "Egg → snail → cercariae → crab/crayfish (metacercariae) → ingested → migrate through diaphragm to lungs → adult pairs in cystic cavities",
+        "fr": "Œuf → mollusque → cercaires → crabe/écrevisse (métacercaires) → ingestion → migration à travers le diaphragme vers les poumons → couples adultes dans des cavités kystiques"
+      },
+      "clinicalManifestations": {
+        "en": ["Chronic cough with rusty/blood-tinged sputum (mimics TB)", "Chest pain, hemoptysis", "Can cause ectopic (cerebral) disease"],
+        "fr": ["Toux chronique avec crachats rouillés/hémoptoïques (mime la tuberculose)", "Douleur thoracique, hémoptysie", "Peut causer une atteinte ectopique (cérébrale)"]
+      },
+      "diagnosis": {
+        "en": "Sputum/stool microscopy for eggs, imaging (nodular/cystic lung lesions), serology",
+        "fr": "Microscopie des crachats/selles (œufs), imagerie (lésions pulmonaires nodulaires/kystiques), sérologie"
+      },
+      "treatment": {
+        "en": "Praziquantel or triclabendazole",
+        "fr": "Praziquantel ou triclabendazole"
+      },
+      "geographicDistribution": {
+        "en": "East/Southeast Asia, West Africa, parts of Latin America",
+        "fr": "Asie de l'Est/du Sud-Est, Afrique de l'Ouest, certaines régions d'Amérique latine"
+      },
       "eosinophilia": true
     },
     {
@@ -455,14 +965,35 @@
       "lessonId": 12,
       "names": { "en": "Enterobius vermicularis", "fr": "Oxyure (Enterobius vermicularis)" },
       "category": "helminth",
-      "class": "Nematode (per-os transmission)",
-      "morphology": "Small white worm (1cm), female migrates to perianal region at night to lay eggs, flattened eggs",
-      "transmission": "Fecal-oral, autoinfection, fomites (highly contagious), retro-infection",
-      "lifecycle": "Eggs ingested/inhaled → hatch in duodenum → mature in colon → gravid female migrates to perianal skin at night to deposit eggs → eggs become infective within hours",
-      "clinicalManifestations": ["Perianal/perineal pruritus (especially nocturnal)", "Sleep disturbance, irritability in children", "Rarely vulvovaginitis"],
-      "diagnosis": "Scotch tape test (cellophane tape applied to perianal skin in morning)",
-      "treatment": "Albendazole or mebendazole (treat whole household, repeat dose in 2 weeks)",
-      "geographicDistribution": "Worldwide, most common helminth infection in developed countries",
+      "class": { "en": "Nematode (per-os transmission)", "fr": "Nématode (transmission per os)" },
+      "morphology": {
+        "en": "Small white worm (1cm), female migrates to perianal region at night to lay eggs, flattened eggs",
+        "fr": "Petit ver blanc (1cm), la femelle migre vers la région périanale la nuit pour pondre, œufs aplatis"
+      },
+      "transmission": {
+        "en": "Fecal-oral, autoinfection, fomites (highly contagious), retro-infection",
+        "fr": "Féco-orale, auto-infestation, fomites (très contagieux), rétro-infestation"
+      },
+      "lifecycle": {
+        "en": "Eggs ingested/inhaled → hatch in duodenum → mature in colon → gravid female migrates to perianal skin at night to deposit eggs → eggs become infective within hours",
+        "fr": "Œufs ingérés/inhalés → éclosion dans le duodénum → maturation dans le côlon → la femelle gravide migre vers la peau périanale la nuit pour pondre → les œufs deviennent infestants en quelques heures"
+      },
+      "clinicalManifestations": {
+        "en": ["Perianal/perineal pruritus (especially nocturnal)", "Sleep disturbance, irritability in children", "Rarely vulvovaginitis"],
+        "fr": ["Prurit périanal/périnéal (surtout nocturne)", "Troubles du sommeil, irritabilité chez l'enfant", "Rarement vulvovaginite"]
+      },
+      "diagnosis": {
+        "en": "Scotch tape test (cellophane tape applied to perianal skin in morning)",
+        "fr": "Test de la cellophane adhésive (scotch-test) appliqué le matin sur la peau périanale"
+      },
+      "treatment": {
+        "en": "Albendazole or mebendazole (treat whole household, repeat dose in 2 weeks)",
+        "fr": "Albendazole ou mébendazole (traiter tout le foyer, seconde dose à 2 semaines)"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, most common helminth infection in developed countries",
+        "fr": "Mondiale, helminthiase la plus fréquente dans les pays développés"
+      },
       "eosinophilia": false
     },
     {
@@ -470,14 +1001,32 @@
       "lessonId": 12,
       "names": { "en": "Trichuris trichiura", "fr": "Trichocéphale (Trichuris trichiura)" },
       "category": "helminth",
-      "class": "Nematode (per-os transmission)",
-      "morphology": "Whip-shaped worm, barrel-shaped eggs with bipolar plugs",
-      "transmission": "Fecal-oral, ingestion of embryonated eggs from soil (geohelminth)",
-      "lifecycle": "Eggs embryonate in soil (2-4 weeks) → ingested → larvae hatch in small intestine → migrate to cecum/colon → whipping anterior end embeds in mucosa",
-      "clinicalManifestations": ["Light infection: asymptomatic", "Heavy infection: bloody diarrhea, rectal prolapse (children), Trichuris dysentery syndrome"],
-      "diagnosis": "Stool microscopy for bipolar-plugged eggs",
-      "treatment": "Albendazole or mebendazole",
-      "geographicDistribution": "Tropics/subtropics with poor sanitation",
+      "class": { "en": "Nematode (per-os transmission)", "fr": "Nématode (transmission per os)" },
+      "morphology": {
+        "en": "Whip-shaped worm, barrel-shaped eggs with bipolar plugs",
+        "fr": "Ver en forme de fouet, œufs en tonnelet à bouchons bipolaires"
+      },
+      "transmission": {
+        "en": "Fecal-oral, ingestion of embryonated eggs from soil (geohelminth)",
+        "fr": "Féco-orale, ingestion d'œufs embryonnés telluriques (géohelminthe)"
+      },
+      "lifecycle": {
+        "en": "Eggs embryonate in soil (2-4 weeks) → ingested → larvae hatch in small intestine → migrate to cecum/colon → whipping anterior end embeds in mucosa",
+        "fr": "Embryonnement des œufs dans le sol (2-4 semaines) → ingestion → éclosion des larves dans l'intestin grêle → migration vers le cæcum/côlon → l'extrémité antérieure fine s'enchâsse dans la muqueuse"
+      },
+      "clinicalManifestations": {
+        "en": ["Light infection: asymptomatic", "Heavy infection: bloody diarrhea, rectal prolapse (children), Trichuris dysentery syndrome"],
+        "fr": ["Infestation légère : asymptomatique", "Infestation massive : diarrhée sanglante, prolapsus rectal (enfant), syndrome dysentérique trichocéphalien"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for bipolar-plugged eggs",
+        "fr": "Microscopie des selles — œufs à bouchons bipolaires"
+      },
+      "treatment": { "en": "Albendazole or mebendazole", "fr": "Albendazole ou mébendazole" },
+      "geographicDistribution": {
+        "en": "Tropics/subtropics with poor sanitation",
+        "fr": "Zones tropicales/subtropicales à assainissement précaire"
+      },
       "eosinophilia": true
     },
     {
@@ -485,14 +1034,32 @@
       "lessonId": 12,
       "names": { "en": "Ascaris lumbricoides", "fr": "Ascaris lumbricoides" },
       "category": "helminth",
-      "class": "Nematode (per-os transmission)",
-      "morphology": "Largest intestinal nematode (up to 35cm female), thick mammillated (bumpy) shell eggs",
-      "transmission": "Fecal-oral, ingestion of embryonated eggs from contaminated soil/food (geohelminth)",
-      "lifecycle": "Eggs embryonate in soil → ingested → larvae hatch, penetrate gut wall → migrate via bloodstream to lungs (Löffler pneumonia) → coughed up, swallowed → mature to adult in small intestine",
-      "clinicalManifestations": ["Löffler syndrome (pulmonary phase): cough, wheezing, eosinophilia", "Intestinal phase: abdominal pain, malnutrition (children)", "Heavy infection: intestinal obstruction, biliary/pancreatic duct obstruction"],
-      "diagnosis": "Stool microscopy for mammillated eggs, imaging for obstruction, worm visible on imaging/passed in stool",
-      "treatment": "Albendazole or mebendazole",
-      "geographicDistribution": "Worldwide, especially tropics with poor sanitation — most common human helminth infection",
+      "class": { "en": "Nematode (per-os transmission)", "fr": "Nématode (transmission per os)" },
+      "morphology": {
+        "en": "Largest intestinal nematode (up to 35cm female), thick mammillated (bumpy) shell eggs",
+        "fr": "Plus grand nématode intestinal (jusqu'à 35cm chez la femelle), œufs à coque mamelonnée épaisse"
+      },
+      "transmission": {
+        "en": "Fecal-oral, ingestion of embryonated eggs from contaminated soil/food (geohelminth)",
+        "fr": "Féco-orale, ingestion d'œufs embryonnés à partir du sol/d'aliments contaminés (géohelminthe)"
+      },
+      "lifecycle": {
+        "en": "Eggs embryonate in soil → ingested → larvae hatch, penetrate gut wall → migrate via bloodstream to lungs (Löffler pneumonia) → coughed up, swallowed → mature to adult in small intestine",
+        "fr": "Embryonnement des œufs dans le sol → ingestion → éclosion des larves, traversée de la paroi intestinale → migration sanguine vers les poumons (syndrome de Löffler) → toux, déglutition → maturation en adulte dans l'intestin grêle"
+      },
+      "clinicalManifestations": {
+        "en": ["Löffler syndrome (pulmonary phase): cough, wheezing, eosinophilia", "Intestinal phase: abdominal pain, malnutrition (children)", "Heavy infection: intestinal obstruction, biliary/pancreatic duct obstruction"],
+        "fr": ["Syndrome de Löffler (phase pulmonaire) : toux, sibilants, hyperéosinophilie", "Phase intestinale : douleurs abdominales, malnutrition (enfant)", "Infestation massive : occlusion intestinale, obstruction des voies biliaires/pancréatiques"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for mammillated eggs, imaging for obstruction, worm visible on imaging/passed in stool",
+        "fr": "Microscopie des selles (œufs mamelonnés), imagerie en cas d'occlusion, ver visible à l'imagerie/émis dans les selles"
+      },
+      "treatment": { "en": "Albendazole or mebendazole", "fr": "Albendazole ou mébendazole" },
+      "geographicDistribution": {
+        "en": "Worldwide, especially tropics with poor sanitation — most common human helminth infection",
+        "fr": "Mondiale, surtout zones tropicales à assainissement précaire — helminthiase humaine la plus fréquente"
+      },
       "eosinophilia": true
     },
     {
@@ -500,14 +1067,35 @@
       "lessonId": 12,
       "names": { "en": "Trichinella spiralis", "fr": "Trichine (Trichinella spiralis)" },
       "category": "helminth",
-      "class": "Nematode (per-os transmission)",
-      "morphology": "Adult worms tiny in intestine; larvae encyst in striated muscle (coiled, 'nurse cell')",
-      "transmission": "Ingestion of undercooked meat (pork, wild boar, bear) containing encysted larvae",
-      "lifecycle": "Larvae released in stomach → mature to adults in intestine → produce new larvae → migrate via bloodstream to striated muscle → encyst",
-      "clinicalManifestations": ["Intestinal phase: diarrhea, abdominal pain", "Muscular invasion phase: myalgia, periorbital edema, fever, marked eosinophilia", "Severe: myocarditis, encephalitis"],
-      "diagnosis": "Serology, muscle biopsy, marked eosinophilia + elevated CK",
-      "treatment": "Albendazole/mebendazole + corticosteroids for severe symptoms",
-      "geographicDistribution": "Worldwide, wherever undercooked pork/game meat is consumed",
+      "class": { "en": "Nematode (per-os transmission)", "fr": "Nématode (transmission per os)" },
+      "morphology": {
+        "en": "Adult worms tiny in intestine; larvae encyst in striated muscle (coiled, 'nurse cell')",
+        "fr": "Vers adultes minuscules dans l'intestin ; larves enkystées dans le muscle strié (enroulées, 'cellule nourricière')"
+      },
+      "transmission": {
+        "en": "Ingestion of undercooked meat (pork, wild boar, bear) containing encysted larvae",
+        "fr": "Ingestion de viande peu cuite (porc, sanglier, ours) contenant des larves enkystées"
+      },
+      "lifecycle": {
+        "en": "Larvae released in stomach → mature to adults in intestine → produce new larvae → migrate via bloodstream to striated muscle → encyst",
+        "fr": "Libération des larves dans l'estomac → maturation en adultes dans l'intestin → production de nouvelles larves → migration sanguine vers le muscle strié → enkystement"
+      },
+      "clinicalManifestations": {
+        "en": ["Intestinal phase: diarrhea, abdominal pain", "Muscular invasion phase: myalgia, periorbital edema, fever, marked eosinophilia", "Severe: myocarditis, encephalitis"],
+        "fr": ["Phase intestinale : diarrhée, douleurs abdominales", "Phase d'invasion musculaire : myalgies, œdème périorbitaire, fièvre, hyperéosinophilie marquée", "Formes sévères : myocardite, encéphalite"]
+      },
+      "diagnosis": {
+        "en": "Serology, muscle biopsy, marked eosinophilia + elevated CK",
+        "fr": "Sérologie, biopsie musculaire, hyperéosinophilie marquée + élévation des CPK"
+      },
+      "treatment": {
+        "en": "Albendazole/mebendazole + corticosteroids for severe symptoms",
+        "fr": "Albendazole/mébendazole + corticoïdes dans les formes sévères"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, wherever undercooked pork/game meat is consumed",
+        "fr": "Mondiale, partout où la viande de porc/gibier peu cuite est consommée"
+      },
       "eosinophilia": true
     },
     {
@@ -515,14 +1103,35 @@
       "lessonId": 12,
       "names": { "en": "Dracunculus medinensis", "fr": "Dracunculus medinensis (ver de Guinée)" },
       "category": "helminth",
-      "class": "Nematode (per-os transmission)",
-      "morphology": "Adult female extremely long (up to 1m), emerges through skin blister",
-      "transmission": "Ingestion of copepods (Cyclops) containing infective larvae in drinking water",
-      "lifecycle": "Copepod ingested → larvae released → penetrate gut wall → mature, mate → gravid female migrates to subcutaneous tissue (usually lower limb) → forms blister → releases larvae into water on contact",
-      "clinicalManifestations": ["Painful blister/ulcer with protruding worm", "Secondary bacterial infection", "Near eradication globally (Carter Center program)"],
-      "diagnosis": "Clinical (visible worm), no lab test typically needed",
-      "treatment": "Slow manual extraction (wrapping worm around stick over days-weeks), wound care; no effective drug",
-      "geographicDistribution": "Near-eradicated; remaining foci in Chad, South Sudan, Ethiopia, Mali",
+      "class": { "en": "Nematode (per-os transmission)", "fr": "Nématode (transmission per os)" },
+      "morphology": {
+        "en": "Adult female extremely long (up to 1m), emerges through skin blister",
+        "fr": "Femelle adulte extrêmement longue (jusqu'à 1m), émergeant par une phlyctène cutanée"
+      },
+      "transmission": {
+        "en": "Ingestion of copepods (Cyclops) containing infective larvae in drinking water",
+        "fr": "Ingestion de copépodes (Cyclops) porteurs de larves infestantes dans l'eau de boisson"
+      },
+      "lifecycle": {
+        "en": "Copepod ingested → larvae released → penetrate gut wall → mature, mate → gravid female migrates to subcutaneous tissue (usually lower limb) → forms blister → releases larvae into water on contact",
+        "fr": "Copépode ingéré → libération des larves → traversée de la paroi intestinale → maturation, accouplement → la femelle gravide migre vers le tissu sous-cutané (souvent membre inférieur) → formation d'une phlyctène → libération de larves dans l'eau au contact"
+      },
+      "clinicalManifestations": {
+        "en": ["Painful blister/ulcer with protruding worm", "Secondary bacterial infection", "Near eradication globally (Carter Center program)"],
+        "fr": ["Phlyctène/ulcère douloureux avec ver visible", "Surinfection bactérienne", "Quasi-éradication mondiale (programme du Carter Center)"]
+      },
+      "diagnosis": {
+        "en": "Clinical (visible worm), no lab test typically needed",
+        "fr": "Clinique (ver visible), aucun examen de laboratoire généralement nécessaire"
+      },
+      "treatment": {
+        "en": "Slow manual extraction (wrapping worm around stick over days-weeks), wound care; no effective drug",
+        "fr": "Extraction manuelle progressive (enroulement du ver sur un bâtonnet sur plusieurs jours/semaines), soins de plaie ; aucun médicament efficace"
+      },
+      "geographicDistribution": {
+        "en": "Near-eradicated; remaining foci in Chad, South Sudan, Ethiopia, Mali",
+        "fr": "Quasi-éradiquée ; foyers résiduels au Tchad, Soudan du Sud, Éthiopie, Mali"
+      },
       "eosinophilia": false
     },
     {
@@ -530,14 +1139,35 @@
       "lessonId": 13,
       "names": { "en": "Ancylostoma duodenale", "fr": "Ankylostome (Ancylostoma duodenale)" },
       "category": "helminth",
-      "class": "Nematode (transcutaneous transmission)",
-      "morphology": "Hookworm with cutting plates in buccal capsule, thin-shelled oval eggs",
-      "transmission": "Skin penetration by filariform larvae from contaminated soil (also can be oral)",
-      "lifecycle": "Eggs in soil → rhabditiform → filariform (infective) larvae → penetrate skin → bloodstream → lungs → coughed up, swallowed → attach to small intestine mucosa, blood-feeding",
-      "clinicalManifestations": ["Ground itch (larval penetration)", "Löffler-like pulmonary symptoms (migration)", "Iron-deficiency anemia, protein loss (chronic blood loss from attachment sites)"],
-      "diagnosis": "Stool microscopy for eggs, occult blood in stool, anemia workup",
-      "treatment": "Albendazole or mebendazole + iron supplementation",
-      "geographicDistribution": "Worldwide tropics/subtropics, historically Southern Europe/Mediterranean",
+      "class": { "en": "Nematode (transcutaneous transmission)", "fr": "Nématode (transmission transcutanée)" },
+      "morphology": {
+        "en": "Hookworm with cutting plates in buccal capsule, thin-shelled oval eggs",
+        "fr": "Ankylostome à plaques tranchantes dans la capsule buccale, œufs ovales à coque fine"
+      },
+      "transmission": {
+        "en": "Skin penetration by filariform larvae from contaminated soil (also can be oral)",
+        "fr": "Pénétration cutanée par les larves filariformes du sol contaminé (voie orale aussi possible)"
+      },
+      "lifecycle": {
+        "en": "Eggs in soil → rhabditiform → filariform (infective) larvae → penetrate skin → bloodstream → lungs → coughed up, swallowed → attach to small intestine mucosa, blood-feeding",
+        "fr": "Œufs dans le sol → larve rhabditoïde → larve filariforme (infestante) → pénétration cutanée → sang → poumons → toux, déglutition → fixation à la muqueuse de l'intestin grêle, hématophagie"
+      },
+      "clinicalManifestations": {
+        "en": ["Ground itch (larval penetration)", "Löffler-like pulmonary symptoms (migration)", "Iron-deficiency anemia, protein loss (chronic blood loss from attachment sites)"],
+        "fr": ["Dermatite prurigineuse au point de pénétration", "Symptômes pulmonaires type Löffler (migration)", "Anémie ferriprive, déperdition protéique (saignement chronique aux points de fixation)"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for eggs, occult blood in stool, anemia workup",
+        "fr": "Microscopie des selles (œufs), recherche de sang occulte dans les selles, bilan d'anémie"
+      },
+      "treatment": {
+        "en": "Albendazole or mebendazole + iron supplementation",
+        "fr": "Albendazole ou mébendazole + supplémentation en fer"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide tropics/subtropics, historically Southern Europe/Mediterranean",
+        "fr": "Zones tropicales/subtropicales mondiales, historiquement Europe du Sud/Méditerranée"
+      },
       "eosinophilia": true
     },
     {
@@ -545,14 +1175,32 @@
       "lessonId": 13,
       "names": { "en": "Necator americanus", "fr": "Necator americanus" },
       "category": "helminth",
-      "class": "Nematode (transcutaneous transmission)",
-      "morphology": "Hookworm with cutting plates (not teeth like Ancylostoma), similar eggs",
-      "transmission": "Skin penetration by filariform larvae (strictly percutaneous, unlike A. duodenale)",
-      "lifecycle": "Same as A. duodenale",
-      "clinicalManifestations": ["Same as A. duodenale but generally lower blood loss per worm"],
-      "diagnosis": "Stool microscopy (eggs indistinguishable from A. duodenale, larval culture needed to differentiate species)",
-      "treatment": "Albendazole or mebendazole + iron supplementation",
-      "geographicDistribution": "Americas, Sub-Saharan Africa, Asia, Pacific — most common hookworm worldwide",
+      "class": { "en": "Nematode (transcutaneous transmission)", "fr": "Nématode (transmission transcutanée)" },
+      "morphology": {
+        "en": "Hookworm with cutting plates (not teeth like Ancylostoma), similar eggs",
+        "fr": "Ankylostome à plaques tranchantes (pas de dents comme Ancylostoma), œufs similaires"
+      },
+      "transmission": {
+        "en": "Skin penetration by filariform larvae (strictly percutaneous, unlike A. duodenale)",
+        "fr": "Pénétration cutanée par les larves filariformes (strictement transcutanée, contrairement à A. duodenale)"
+      },
+      "lifecycle": { "en": "Same as A. duodenale", "fr": "Identique à A. duodenale" },
+      "clinicalManifestations": {
+        "en": ["Same as A. duodenale but generally lower blood loss per worm"],
+        "fr": ["Identique à A. duodenale mais perte sanguine par ver généralement moindre"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy (eggs indistinguishable from A. duodenale, larval culture needed to differentiate species)",
+        "fr": "Microscopie des selles (œufs indiscernables d'A. duodenale, coproculture nécessaire pour différencier les espèces)"
+      },
+      "treatment": {
+        "en": "Albendazole or mebendazole + iron supplementation",
+        "fr": "Albendazole ou mébendazole + supplémentation en fer"
+      },
+      "geographicDistribution": {
+        "en": "Americas, Sub-Saharan Africa, Asia, Pacific — most common hookworm worldwide",
+        "fr": "Amériques, Afrique subsaharienne, Asie, Pacifique — ankylostome le plus fréquent au monde"
+      },
       "eosinophilia": true
     },
     {
@@ -560,14 +1208,32 @@
       "lessonId": 13,
       "names": { "en": "Strongyloides stercoralis", "fr": "Anguillule (Strongyloides stercoralis)" },
       "category": "helminth",
-      "class": "Nematode (transcutaneous transmission)",
-      "morphology": "Only helminth capable of completing entire lifecycle within human host (autoinfection); larvae, not eggs, typically found in stool",
-      "transmission": "Skin penetration by filariform larvae from soil; autoinfection cycle",
-      "lifecycle": "Filariform larvae penetrate skin → lungs → trachea → swallowed → mature in intestine → can autoinfect (larvae reinfect host internally) — allows lifelong persistence",
-      "clinicalManifestations": ["Often asymptomatic for decades", "Larva currens (rapidly migrating serpiginous rash)", "Hyperinfection/disseminated strongyloidiasis in immunosuppressed (esp. corticosteroids, HTLV-1) — can be fatal, gram-negative sepsis from bowel translocation"],
-      "diagnosis": "Stool microscopy for larvae (multiple samples/agar plate culture for sensitivity), serology, screening before immunosuppression",
-      "treatment": "Ivermectin (drug of choice)",
-      "geographicDistribution": "Tropics/subtropics worldwide",
+      "class": { "en": "Nematode (transcutaneous transmission)", "fr": "Nématode (transmission transcutanée)" },
+      "morphology": {
+        "en": "Only helminth capable of completing entire lifecycle within human host (autoinfection); larvae, not eggs, typically found in stool",
+        "fr": "Seul helminthe capable de compléter tout son cycle chez l'hôte humain (auto-infestation) ; ce sont des larves, non des œufs, généralement retrouvées dans les selles"
+      },
+      "transmission": {
+        "en": "Skin penetration by filariform larvae from soil; autoinfection cycle",
+        "fr": "Pénétration cutanée par les larves filariformes du sol ; cycle d'auto-infestation"
+      },
+      "lifecycle": {
+        "en": "Filariform larvae penetrate skin → lungs → trachea → swallowed → mature in intestine → can autoinfect (larvae reinfect host internally) — allows lifelong persistence",
+        "fr": "Les larves filariformes pénètrent la peau → poumons → trachée → déglutition → maturation intestinale → auto-infestation possible (les larves réinfestent l'hôte en interne) — permet une persistance à vie"
+      },
+      "clinicalManifestations": {
+        "en": ["Often asymptomatic for decades", "Larva currens (rapidly migrating serpiginous rash)", "Hyperinfection/disseminated strongyloidiasis in immunosuppressed (esp. corticosteroids, HTLV-1) — can be fatal, gram-negative sepsis from bowel translocation"],
+        "fr": ["Souvent asymptomatique pendant des décennies", "Larva currens (éruption serpigineuse à migration rapide)", "Hyperinfestation/anguillulose disséminée chez l'immunodéprimé (surtout corticoïdes, HTLV-1) — peut être fatale, sepsis à Gram négatif par translocation intestinale"]
+      },
+      "diagnosis": {
+        "en": "Stool microscopy for larvae (multiple samples/agar plate culture for sensitivity), serology, screening before immunosuppression",
+        "fr": "Microscopie des selles (larves, examens répétés/culture sur gélose pour la sensibilité), sérologie, dépistage avant immunosuppression"
+      },
+      "treatment": { "en": "Ivermectin (drug of choice)", "fr": "Ivermectine (traitement de choix)" },
+      "geographicDistribution": {
+        "en": "Tropics/subtropics worldwide",
+        "fr": "Zones tropicales/subtropicales mondiales"
+      },
       "eosinophilia": true
     },
     {
@@ -575,14 +1241,35 @@
       "lessonId": 14,
       "names": { "en": "Wuchereria bancrofti", "fr": "Wuchereria bancrofti" },
       "category": "helminth",
-      "class": "Filaria",
-      "morphology": "Thread-like adult worms in lymphatics; sheathed microfilariae in blood with nocturnal periodicity",
-      "transmission": "Culex, Anopheles, or Aedes mosquito bite",
-      "lifecycle": "Mosquito injects L3 larvae → migrate to lymphatics → mature to adults → produce microfilariae → circulate in blood (nocturnal periodicity, matching vector biting time) → ingested by mosquito",
-      "clinicalManifestations": ["Asymptomatic microfilaremia (most common)", "Lymphangitis, lymphadenitis (acute)", "Lymphedema, elephantiasis, hydrocele (chronic)", "Tropical pulmonary eosinophilia"],
-      "diagnosis": "Nocturnal blood smear (thick smear) for microfilariae, antigen detection (ICT card test), ultrasound (filarial dance sign)",
-      "treatment": "Diethylcarbamazine (DEC) — avoid in areas co-endemic with onchocerciasis/loiasis; ivermectin + albendazole for mass drug administration",
-      "geographicDistribution": "Sub-Saharan Africa, South Asia, Pacific Islands",
+      "class": { "en": "Filaria", "fr": "Filaire" },
+      "morphology": {
+        "en": "Thread-like adult worms in lymphatics; sheathed microfilariae in blood with nocturnal periodicity",
+        "fr": "Vers adultes filiformes dans les lymphatiques ; microfilaires gainées dans le sang à périodicité nocturne"
+      },
+      "transmission": {
+        "en": "Culex, Anopheles, or Aedes mosquito bite",
+        "fr": "Piqûre de moustique Culex, Anopheles ou Aedes"
+      },
+      "lifecycle": {
+        "en": "Mosquito injects L3 larvae → migrate to lymphatics → mature to adults → produce microfilariae → circulate in blood (nocturnal periodicity, matching vector biting time) → ingested by mosquito",
+        "fr": "Le moustique injecte les larves L3 → migration vers les lymphatiques → maturation en adultes → production de microfilaires → circulation sanguine (périodicité nocturne, synchrone de la piqûre du vecteur) → ingestion par le moustique"
+      },
+      "clinicalManifestations": {
+        "en": ["Asymptomatic microfilaremia (most common)", "Lymphangitis, lymphadenitis (acute)", "Lymphedema, elephantiasis, hydrocele (chronic)", "Tropical pulmonary eosinophilia"],
+        "fr": ["Microfilarémie asymptomatique (la plus fréquente)", "Lymphangite, adénite lymphatique (phase aiguë)", "Lymphœdème, éléphantiasis, hydrocèle (phase chronique)", "Éosinophilie pulmonaire tropicale"]
+      },
+      "diagnosis": {
+        "en": "Nocturnal blood smear (thick smear) for microfilariae, antigen detection (ICT card test), ultrasound (filarial dance sign)",
+        "fr": "Frottis sanguin nocturne (goutte épaisse) pour microfilaires, détection antigénique (test ICT), échographie (signe de la danse filarienne)"
+      },
+      "treatment": {
+        "en": "Diethylcarbamazine (DEC) — avoid in areas co-endemic with onchocerciasis/loiasis; ivermectin + albendazole for mass drug administration",
+        "fr": "Diéthylcarbamazine (DEC) — à éviter en zone de co-endémie avec onchocercose/loase ; ivermectine + albendazole pour les campagnes de traitement de masse"
+      },
+      "geographicDistribution": {
+        "en": "Sub-Saharan Africa, South Asia, Pacific Islands",
+        "fr": "Afrique subsaharienne, Asie du Sud, îles du Pacifique"
+      },
       "eosinophilia": true
     },
     {
@@ -590,14 +1277,29 @@
       "lessonId": 14,
       "names": { "en": "Brugia malayi / timori", "fr": "Brugia malayi" },
       "category": "helminth",
-      "class": "Filaria",
-      "morphology": "Similar to W. bancrofti but smaller, sheathed microfilariae with characteristic nuclei pattern",
-      "transmission": "Mansonia, Anopheles mosquito bite",
-      "lifecycle": "Same general filarial cycle as W. bancrofti, nocturnal periodicity",
-      "clinicalManifestations": ["Lymphatic filariasis, typically affecting limbs below knee/elbow (more localized than W. bancrofti)"],
-      "diagnosis": "Nocturnal blood smear, PCR",
-      "treatment": "Diethylcarbamazine (DEC)",
-      "geographicDistribution": "South and Southeast Asia",
+      "class": { "en": "Filaria", "fr": "Filaire" },
+      "morphology": {
+        "en": "Similar to W. bancrofti but smaller, sheathed microfilariae with characteristic nuclei pattern",
+        "fr": "Similaire à W. bancrofti mais plus petite, microfilaires gainées à disposition nucléaire caractéristique"
+      },
+      "transmission": {
+        "en": "Mansonia, Anopheles mosquito bite",
+        "fr": "Piqûre de moustique Mansonia, Anopheles"
+      },
+      "lifecycle": {
+        "en": "Same general filarial cycle as W. bancrofti, nocturnal periodicity",
+        "fr": "Cycle filarien général identique à W. bancrofti, périodicité nocturne"
+      },
+      "clinicalManifestations": {
+        "en": ["Lymphatic filariasis, typically affecting limbs below knee/elbow (more localized than W. bancrofti)"],
+        "fr": ["Filariose lymphatique, touchant typiquement les membres sous le genou/coude (plus localisée que W. bancrofti)"]
+      },
+      "diagnosis": { "en": "Nocturnal blood smear, PCR", "fr": "Frottis sanguin nocturne, PCR" },
+      "treatment": { "en": "Diethylcarbamazine (DEC)", "fr": "Diéthylcarbamazine (DEC)" },
+      "geographicDistribution": {
+        "en": "South and Southeast Asia",
+        "fr": "Asie du Sud et du Sud-Est"
+      },
       "eosinophilia": true
     },
     {
@@ -605,14 +1307,32 @@
       "lessonId": 14,
       "names": { "en": "Loa loa", "fr": "Loa loa" },
       "category": "helminth",
-      "class": "Filaria",
-      "morphology": "Adult worm migrates visibly under skin/conjunctiva; unsheathed microfilariae with diurnal periodicity",
-      "transmission": "Chrysops (deer/mango fly) bite",
-      "lifecycle": "Fly injects L3 larvae → mature to adults migrating through subcutaneous tissue → microfilariae in blood with diurnal periodicity (matches fly's daytime biting)",
-      "clinicalManifestations": ["Calabar swellings (transient angioedema)", "Eye worm — visible migration across conjunctiva", "Risk of severe encephalopathy with ivermectin if high microfilarial load"],
-      "diagnosis": "Daytime blood smear for microfilariae, visual identification of adult worm in eye",
-      "treatment": "Diethylcarbamazine (DEC); caution with ivermectin if co-infected/high loads due to encephalopathy risk",
-      "geographicDistribution": "Central and West Africa rainforest belt",
+      "class": { "en": "Filaria", "fr": "Filaire" },
+      "morphology": {
+        "en": "Adult worm migrates visibly under skin/conjunctiva; unsheathed microfilariae with diurnal periodicity",
+        "fr": "Ver adulte à migration visible sous la peau/conjonctive ; microfilaires non gainées à périodicité diurne"
+      },
+      "transmission": { "en": "Chrysops (deer/mango fly) bite", "fr": "Piqûre de taon (Chrysops)" },
+      "lifecycle": {
+        "en": "Fly injects L3 larvae → mature to adults migrating through subcutaneous tissue → microfilariae in blood with diurnal periodicity (matches fly's daytime biting)",
+        "fr": "Le taon injecte les larves L3 → maturation en adultes migrant dans le tissu sous-cutané → microfilaires sanguines à périodicité diurne (synchrone de la piqûre diurne du taon)"
+      },
+      "clinicalManifestations": {
+        "en": ["Calabar swellings (transient angioedema)", "Eye worm — visible migration across conjunctiva", "Risk of severe encephalopathy with ivermectin if high microfilarial load"],
+        "fr": ["Œdèmes de Calabar (angio-œdème transitoire)", "Ver de l'œil — migration visible à travers la conjonctive", "Risque d'encéphalopathie sévère sous ivermectine si forte charge microfilarienne"]
+      },
+      "diagnosis": {
+        "en": "Daytime blood smear for microfilariae, visual identification of adult worm in eye",
+        "fr": "Frottis sanguin diurne pour microfilaires, identification visuelle du ver adulte dans l'œil"
+      },
+      "treatment": {
+        "en": "Diethylcarbamazine (DEC); caution with ivermectin if co-infected/high loads due to encephalopathy risk",
+        "fr": "Diéthylcarbamazine (DEC) ; prudence avec l'ivermectine en cas de co-infection/forte charge du fait du risque d'encéphalopathie"
+      },
+      "geographicDistribution": {
+        "en": "Central and West Africa rainforest belt",
+        "fr": "Ceinture forestière d'Afrique centrale et de l'Ouest"
+      },
       "eosinophilia": true
     },
     {
@@ -620,14 +1340,35 @@
       "lessonId": 14,
       "names": { "en": "Onchocerca volvulus", "fr": "Onchocerca volvulus" },
       "category": "helminth",
-      "class": "Filaria",
-      "morphology": "Adults in subcutaneous nodules; unsheathed microfilariae found in skin (not blood)",
-      "transmission": "Simulium (black fly) bite near fast-flowing rivers",
-      "lifecycle": "Black fly injects L3 larvae → mature into adults in subcutaneous nodules → microfilariae migrate through skin and eyes",
-      "clinicalManifestations": ["'River blindness' — keratitis, chorioretinitis, blindness", "Subcutaneous nodules (onchocercomas)", "Severe pruritus, skin depigmentation ('leopard skin')"],
-      "diagnosis": "Skin snip microscopy for microfilariae, slit-lamp exam (microfilariae in cornea/anterior chamber), nodule palpation/biopsy",
-      "treatment": "Ivermectin (repeated dosing, kills microfilariae not adults); doxycycline (targets Wolbachia endosymbiont, weakens/sterilizes adults)",
-      "geographicDistribution": "Sub-Saharan Africa (riverine areas), small foci in Yemen, Latin America",
+      "class": { "en": "Filaria", "fr": "Filaire" },
+      "morphology": {
+        "en": "Adults in subcutaneous nodules; unsheathed microfilariae found in skin (not blood)",
+        "fr": "Adultes dans des nodules sous-cutanés ; microfilaires non gainées retrouvées dans la peau (non dans le sang)"
+      },
+      "transmission": {
+        "en": "Simulium (black fly) bite near fast-flowing rivers",
+        "fr": "Piqûre de simulie (mouche noire) près des cours d'eau rapides"
+      },
+      "lifecycle": {
+        "en": "Black fly injects L3 larvae → mature into adults in subcutaneous nodules → microfilariae migrate through skin and eyes",
+        "fr": "La simulie injecte les larves L3 → maturation en adultes dans des nodules sous-cutanés → migration des microfilaires à travers la peau et les yeux"
+      },
+      "clinicalManifestations": {
+        "en": ["'River blindness' — keratitis, chorioretinitis, blindness", "Subcutaneous nodules (onchocercomas)", "Severe pruritus, skin depigmentation ('leopard skin')"],
+        "fr": ["'Cécité des rivières' — kératite, choriorétinite, cécité", "Nodules sous-cutanés (onchocercomes)", "Prurit sévère, dépigmentation cutanée ('peau léopard')"]
+      },
+      "diagnosis": {
+        "en": "Skin snip microscopy for microfilariae, slit-lamp exam (microfilariae in cornea/anterior chamber), nodule palpation/biopsy",
+        "fr": "Microscopie de biopsie cutanée exsangue pour microfilaires, examen à la lampe à fente (microfilaires cornéennes/chambre antérieure), palpation/biopsie des nodules"
+      },
+      "treatment": {
+        "en": "Ivermectin (repeated dosing, kills microfilariae not adults); doxycycline (targets Wolbachia endosymbiont, weakens/sterilizes adults)",
+        "fr": "Ivermectine (doses répétées, tue les microfilaires mais pas les adultes) ; doxycycline (cible l'endosymbiote Wolbachia, affaiblit/stérilise les adultes)"
+      },
+      "geographicDistribution": {
+        "en": "Sub-Saharan Africa (riverine areas), small foci in Yemen, Latin America",
+        "fr": "Afrique subsaharienne (zones riveraines), petits foyers au Yémen, en Amérique latine"
+      },
       "eosinophilia": true
     },
     {
@@ -635,29 +1376,65 @@
       "lessonId": 14,
       "names": { "en": "Mansonella spp. (perstans/streptocerca/ozzardi)", "fr": "Mansonella spp." },
       "category": "helminth",
-      "class": "Filaria",
-      "morphology": "Small filariae; M. perstans/ozzardi unsheathed microfilariae in blood, M. streptocerca in skin",
-      "transmission": "Culicoides (biting midge) bite",
-      "lifecycle": "Midge injects L3 larvae → adults develop in body cavities/subcutaneous tissue → microfilariae in blood or skin depending on species",
-      "clinicalManifestations": ["Often asymptomatic", "Pruritus, arthralgia, occasional angioedema-like swellings"],
-      "diagnosis": "Blood smear (perstans/ozzardi) or skin snip (streptocerca) for microfilariae",
-      "treatment": "Doxycycline (M. perstans, targets Wolbachia) or DEC/ivermectin depending on species",
-      "geographicDistribution": "Sub-Saharan Africa (perstans/streptocerca), Central/South America Caribbean (ozzardi)",
+      "class": { "en": "Filaria", "fr": "Filaire" },
+      "morphology": {
+        "en": "Small filariae; M. perstans/ozzardi unsheathed microfilariae in blood, M. streptocerca in skin",
+        "fr": "Petites filaires ; microfilaires non gainées de M. perstans/ozzardi dans le sang, M. streptocerca dans la peau"
+      },
+      "transmission": { "en": "Culicoides (biting midge) bite", "fr": "Piqûre de moucheron (Culicoides)" },
+      "lifecycle": {
+        "en": "Midge injects L3 larvae → adults develop in body cavities/subcutaneous tissue → microfilariae in blood or skin depending on species",
+        "fr": "Le moucheron injecte les larves L3 → développement des adultes dans les cavités corporelles/tissu sous-cutané → microfilaires sanguines ou cutanées selon l'espèce"
+      },
+      "clinicalManifestations": {
+        "en": ["Often asymptomatic", "Pruritus, arthralgia, occasional angioedema-like swellings"],
+        "fr": ["Souvent asymptomatique", "Prurit, arthralgies, œdèmes occasionnels de type angio-œdème"]
+      },
+      "diagnosis": {
+        "en": "Blood smear (perstans/ozzardi) or skin snip (streptocerca) for microfilariae",
+        "fr": "Frottis sanguin (perstans/ozzardi) ou biopsie cutanée exsangue (streptocerca) pour microfilaires"
+      },
+      "treatment": {
+        "en": "Doxycycline (M. perstans, targets Wolbachia) or DEC/ivermectin depending on species",
+        "fr": "Doxycycline (M. perstans, cible Wolbachia) ou DEC/ivermectine selon l'espèce"
+      },
+      "geographicDistribution": {
+        "en": "Sub-Saharan Africa (perstans/streptocerca), Central/South America Caribbean (ozzardi)",
+        "fr": "Afrique subsaharienne (perstans/streptocerca), Amérique centrale/du Sud, Caraïbes (ozzardi)"
+      },
       "eosinophilia": true
-    },
-        {
+      },
+          {
       "id": "medical-entomology-overview",
       "lessonId": 15,
       "names": { "en": "Medical Entomology Overview", "fr": "Notions d'entomologie médicale" },
       "category": "entomology",
-      "class": "Arthropod vectors",
-      "morphology": "Covers key vector groups: mosquitoes (Anopheles, Culex, Aedes), flies (Glossina, Simulium, Phlebotomus, Chrysops, Culicoides), ticks, mites, lice, fleas, triatomine bugs",
-      "transmission": "Vectors transmit pathogens via bite (inoculation), feces contamination, or mechanical carriage",
-      "lifecycle": "Varies by vector; most arthropods of medical importance undergo egg-larva-pupa-adult (holometabolous) or egg-nymph-adult (hemimetabolous) development",
-      "clinicalManifestations": ["Direct effects: bites, allergic reactions, myiasis, scabies, pediculosis", "Indirect: vector-borne disease transmission"],
-      "diagnosis": "Vector identification (morphology, geographic distribution), entomological surveillance",
-      "treatment": "Vector control (insecticides, bed nets, environmental management), personal protection (repellents)",
-      "geographicDistribution": "Varies by vector species",
+      "class": { "en": "Arthropod vectors", "fr": "Vecteurs arthropodes" },
+      "morphology": {
+        "en": "Covers key vector groups: mosquitoes (Anopheles, Culex, Aedes), flies (Glossina, Simulium, Phlebotomus, Chrysops, Culicoides), ticks, mites, lice, fleas, triatomine bugs",
+        "fr": "Couvre les principaux groupes de vecteurs : moustiques (Anopheles, Culex, Aedes), mouches (Glossina, Simulium, Phlebotomus, Chrysops, Culicoides), tiques, acariens, poux, puces, triatomes"
+      },
+      "transmission": {
+        "en": "Vectors transmit pathogens via bite (inoculation), feces contamination, or mechanical carriage",
+        "fr": "Les vecteurs transmettent les agents pathogènes par piqûre (inoculation), contamination fécale, ou transport mécanique"
+      },
+      "lifecycle": {
+        "en": "Varies by vector; most arthropods of medical importance undergo egg-larva-pupa-adult (holometabolous) or egg-nymph-adult (hemimetabolous) development",
+        "fr": "Variable selon le vecteur ; la plupart des arthropodes d'intérêt médical suivent un développement œuf-larve-nymphe-adulte (holométabole) ou œuf-nymphe-adulte (hémimétabole)"
+      },
+      "clinicalManifestations": {
+        "en": ["Direct effects: bites, allergic reactions, myiasis, scabies, pediculosis", "Indirect: vector-borne disease transmission"],
+        "fr": ["Effets directs : piqûres, réactions allergiques, myiase, gale, pédiculose", "Effets indirects : transmission de maladies vectorielles"]
+      },
+      "diagnosis": {
+        "en": "Vector identification (morphology, geographic distribution), entomological surveillance",
+        "fr": "Identification du vecteur (morphologie, répartition géographique), surveillance entomologique"
+      },
+      "treatment": {
+        "en": "Vector control (insecticides, bed nets, environmental management), personal protection (repellents)",
+        "fr": "Lutte antivectorielle (insecticides, moustiquaires, gestion environnementale), protection individuelle (répulsifs)"
+      },
+      "geographicDistribution": { "en": "Varies by vector species", "fr": "Variable selon l'espèce vectrice" },
       "eosinophilia": false
     },
     {
@@ -665,14 +1442,32 @@
       "lessonId": 16,
       "names": { "en": "Candida albicans / non-albicans spp.", "fr": "Candida spp." },
       "category": "fungal",
-      "class": "Yeast (opportunistic)",
-      "morphology": "Budding yeast, pseudohyphae/true hyphae (C. albicans), germ tube positive (C. albicans specific test)",
-      "transmission": "Endogenous (normal commensal flora overgrowth); rarely person-to-person (neonatal, sexual)",
-      "lifecycle": "Commensal of skin/mucosa/GI tract; becomes pathogenic with disrupted flora, immunosuppression, or mucosal barrier breach",
-      "clinicalManifestations": ["Oral thrush, vulvovaginal candidiasis, cutaneous candidiasis (intertrigo, diaper rash)", "Esophageal candidiasis (AIDS-defining)", "Invasive candidiasis/candidemia in critically ill/immunosuppressed"],
-      "diagnosis": "Direct exam (KOH mount showing pseudohyphae), culture on Sabouraud agar, germ tube test, blood cultures for invasive disease",
-      "treatment": "Topical/oral azoles (fluconazole) for mucocutaneous; echinocandins or amphotericin B for invasive disease",
-      "geographicDistribution": "Worldwide",
+      "class": { "en": "Yeast (opportunistic)", "fr": "Levure (opportuniste)" },
+      "morphology": {
+        "en": "Budding yeast, pseudohyphae/true hyphae (C. albicans), germ tube positive (C. albicans specific test)",
+        "fr": "Levure bourgeonnante, pseudofilaments/filaments vrais (C. albicans), test du tube germinatif positif (spécifique à C. albicans)"
+      },
+      "transmission": {
+        "en": "Endogenous (normal commensal flora overgrowth); rarely person-to-person (neonatal, sexual)",
+        "fr": "Endogène (prolifération de la flore commensale normale) ; rarement interhumaine (néonatale, sexuelle)"
+      },
+      "lifecycle": {
+        "en": "Commensal of skin/mucosa/GI tract; becomes pathogenic with disrupted flora, immunosuppression, or mucosal barrier breach",
+        "fr": "Commensale de la peau/muqueuses/tube digestif ; devient pathogène en cas de déséquilibre de la flore, d'immunosuppression, ou de rupture de la barrière muqueuse"
+      },
+      "clinicalManifestations": {
+        "en": ["Oral thrush, vulvovaginal candidiasis, cutaneous candidiasis (intertrigo, diaper rash)", "Esophageal candidiasis (AIDS-defining)", "Invasive candidiasis/candidemia in critically ill/immunosuppressed"],
+        "fr": ["Muguet buccal, candidose vulvovaginale, candidose cutanée (intertrigo, érythème fessier)", "Candidose œsophagienne (classant SIDA)", "Candidose invasive/candidémie chez le patient grave/immunodéprimé"]
+      },
+      "diagnosis": {
+        "en": "Direct exam (KOH mount showing pseudohyphae), culture on Sabouraud agar, germ tube test, blood cultures for invasive disease",
+        "fr": "Examen direct (montage au KOH montrant des pseudofilaments), culture sur gélose de Sabouraud, test du tube germinatif, hémocultures pour les formes invasives"
+      },
+      "treatment": {
+        "en": "Topical/oral azoles (fluconazole) for mucocutaneous; echinocandins or amphotericin B for invasive disease",
+        "fr": "Azolés topiques/oraux (fluconazole) pour les formes muco-cutanées ; échinocandines ou amphotéricine B pour les formes invasives"
+      },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
       "eosinophilia": false
     },
     {
@@ -680,14 +1475,35 @@
       "lessonId": 17,
       "names": { "en": "Malassezia spp.", "fr": "Malassezia spp." },
       "category": "fungal",
-      "class": "Lipophilic yeast",
-      "morphology": "Round/oval yeast requiring lipid supplementation for culture ('spaghetti and meatballs' appearance on KOH with short hyphae)",
-      "transmission": "Endogenous skin commensal, overgrowth-driven disease",
-      "lifecycle": "Normal skin flora (sebaceous areas); disease occurs with heat, humidity, sebum changes, immunosuppression",
-      "clinicalManifestations": ["Pityriasis versicolor: hypo/hyperpigmented scaly patches on trunk", "Seborrheic dermatitis: scaly erythematous plaques on scalp/face", "Malassezia folliculitis"],
-      "diagnosis": "KOH direct exam (short hyphae + spores), Wood's lamp (yellow-green fluorescence in versicolor), culture requires lipid-supplemented media",
-      "treatment": "Topical antifungals (ketoconazole shampoo/cream, selenium sulfide); oral itraconazole for extensive disease",
-      "geographicDistribution": "Worldwide, more common in hot/humid climates",
+      "class": { "en": "Lipophilic yeast", "fr": "Levure lipophile" },
+      "morphology": {
+        "en": "Round/oval yeast requiring lipid supplementation for culture ('spaghetti and meatballs' appearance on KOH with short hyphae)",
+        "fr": "Levure ronde/ovale nécessitant un apport lipidique pour la culture (aspect 'spaghetti et boulettes' au KOH avec filaments courts)"
+      },
+      "transmission": {
+        "en": "Endogenous skin commensal, overgrowth-driven disease",
+        "fr": "Commensale cutanée endogène, maladie liée à une prolifération"
+      },
+      "lifecycle": {
+        "en": "Normal skin flora (sebaceous areas); disease occurs with heat, humidity, sebum changes, immunosuppression",
+        "fr": "Flore cutanée normale (zones séborrhéiques) ; la maladie survient avec chaleur, humidité, modifications du sébum, immunosuppression"
+      },
+      "clinicalManifestations": {
+        "en": ["Pityriasis versicolor: hypo/hyperpigmented scaly patches on trunk", "Seborrheic dermatitis: scaly erythematous plaques on scalp/face", "Malassezia folliculitis"],
+        "fr": ["Pityriasis versicolor : plaques squameuses hypo/hyperpigmentées du tronc", "Dermite séborrhéique : plaques érythémato-squameuses du cuir chevelu/visage", "Folliculite à Malassezia"]
+      },
+      "diagnosis": {
+        "en": "KOH direct exam (short hyphae + spores), Wood's lamp (yellow-green fluorescence in versicolor), culture requires lipid-supplemented media",
+        "fr": "Examen direct au KOH (filaments courts + spores), lampe de Wood (fluorescence jaune-vert dans le versicolor), culture nécessitant un milieu enrichi en lipides"
+      },
+      "treatment": {
+        "en": "Topical antifungals (ketoconazole shampoo/cream, selenium sulfide); oral itraconazole for extensive disease",
+        "fr": "Antifongiques topiques (shampooing/crème au kétoconazole, sulfure de sélénium) ; itraconazole oral pour les formes étendues"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, more common in hot/humid climates",
+        "fr": "Mondiale, plus fréquente en climat chaud/humide"
+      },
       "eosinophilia": false
     },
     {
@@ -695,14 +1511,35 @@
       "lessonId": 18,
       "names": { "en": "Cryptococcus neoformans / gattii", "fr": "Cryptococcus neoformans" },
       "category": "fungal",
-      "class": "Encapsulated yeast",
-      "morphology": "Round yeast with thick polysaccharide capsule, visible by India ink preparation (halo effect)",
-      "transmission": "Inhalation of desiccated yeast/spores from soil contaminated with bird droppings (neoformans) or eucalyptus trees (gattii)",
-      "lifecycle": "Inhaled into lungs → primary pulmonary infection (often subclinical) → hematogenous dissemination, especially to CNS (neurotropism)",
-      "clinicalManifestations": ["Cryptococcal meningoencephalitis (major AIDS-defining illness)", "Pulmonary cryptococcosis", "Skin/bone involvement (disseminated disease)"],
-      "diagnosis": "India ink stain of CSF, cryptococcal antigen (CrAg) test (blood/CSF, highly sensitive), culture on Sabouraud agar",
-      "treatment": "Liposomal amphotericin B + flucytosine (induction) → fluconazole (consolidation/maintenance)",
-      "geographicDistribution": "Worldwide (neoformans); gattii in tropical/subtropical regions (Australia, Pacific Northwest)",
+      "class": { "en": "Encapsulated yeast", "fr": "Levure encapsulée" },
+      "morphology": {
+        "en": "Round yeast with thick polysaccharide capsule, visible by India ink preparation (halo effect)",
+        "fr": "Levure ronde à capsule polysaccharidique épaisse, visible à l'encre de Chine (aspect en halo)"
+      },
+      "transmission": {
+        "en": "Inhalation of desiccated yeast/spores from soil contaminated with bird droppings (neoformans) or eucalyptus trees (gattii)",
+        "fr": "Inhalation de levures/spores desséchées à partir de sol souillé par des fientes d'oiseaux (neoformans) ou d'eucalyptus (gattii)"
+      },
+      "lifecycle": {
+        "en": "Inhaled into lungs → primary pulmonary infection (often subclinical) → hematogenous dissemination, especially to CNS (neurotropism)",
+        "fr": "Inhalation pulmonaire → infection pulmonaire primaire (souvent infraclinique) → dissémination hématogène, surtout vers le SNC (neurotropisme)"
+      },
+      "clinicalManifestations": {
+        "en": ["Cryptococcal meningoencephalitis (major AIDS-defining illness)", "Pulmonary cryptococcosis", "Skin/bone involvement (disseminated disease)"],
+        "fr": ["Méningoencéphalite à cryptocoque (maladie classant SIDA majeure)", "Cryptococcose pulmonaire", "Atteinte cutanée/osseuse (forme disséminée)"]
+      },
+      "diagnosis": {
+        "en": "India ink stain of CSF, cryptococcal antigen (CrAg) test (blood/CSF, highly sensitive), culture on Sabouraud agar",
+        "fr": "Coloration à l'encre de Chine du LCR, test de l'antigène cryptococcique (CrAg) (sang/LCR, très sensible), culture sur gélose de Sabouraud"
+      },
+      "treatment": {
+        "en": "Liposomal amphotericin B + flucytosine (induction) → fluconazole (consolidation/maintenance)",
+        "fr": "Amphotéricine B liposomale + flucytosine (induction) → fluconazole (consolidation/entretien)"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide (neoformans); gattii in tropical/subtropical regions (Australia, Pacific Northwest)",
+        "fr": "Mondiale (neoformans) ; gattii en zones tropicales/subtropicales (Australie, Nord-Ouest Pacifique)"
+      },
       "eosinophilia": false
     },
     {
@@ -710,14 +1547,35 @@
       "lessonId": 19,
       "names": { "en": "Microsporidia spp. (Enterocytozoon bieneusi, Encephalitozoon spp.)", "fr": "Microsporidies" },
       "category": "fungal",
-      "class": "Obligate intracellular fungi (opportunistic)",
-      "morphology": "Very small spores (1-3 μm) with polar tubule for host cell invasion",
-      "transmission": "Fecal-oral, ingestion/inhalation of spores, possibly zoonotic/waterborne",
-      "lifecycle": "Spore injects sporoplasm into host cell via polar tubule → intracellular replication → new spores released upon cell rupture",
-      "clinicalManifestations": ["Chronic diarrhea in AIDS patients (E. bieneusi most common)", "Disseminated disease: keratoconjunctivitis, myositis, encephalitis (Encephalitozoon)"],
-      "diagnosis": "Modified trichrome stain (Weber-green) of stool, electron microscopy, PCR",
-      "treatment": "Albendazole (Encephalitozoon); fumagillin or ART immune reconstitution (E. bieneusi, less responsive to albendazole)",
-      "geographicDistribution": "Worldwide, mainly in immunocompromised patients",
+      "class": { "en": "Obligate intracellular fungi (opportunistic)", "fr": "Champignons intracellulaires obligatoires (opportunistes)" },
+      "morphology": {
+        "en": "Very small spores (1-3 μm) with polar tubule for host cell invasion",
+        "fr": "Spores très petites (1-3 μm) à tube polaire permettant l'invasion cellulaire"
+      },
+      "transmission": {
+        "en": "Fecal-oral, ingestion/inhalation of spores, possibly zoonotic/waterborne",
+        "fr": "Féco-orale, ingestion/inhalation de spores, possiblement zoonotique/hydrique"
+      },
+      "lifecycle": {
+        "en": "Spore injects sporoplasm into host cell via polar tubule → intracellular replication → new spores released upon cell rupture",
+        "fr": "La spore injecte le sporoplasme dans la cellule hôte via le tube polaire → réplication intracellulaire → libération de nouvelles spores à la rupture cellulaire"
+      },
+      "clinicalManifestations": {
+        "en": ["Chronic diarrhea in AIDS patients (E. bieneusi most common)", "Disseminated disease: keratoconjunctivitis, myositis, encephalitis (Encephalitozoon)"],
+        "fr": ["Diarrhée chronique chez le patient SIDA (E. bieneusi le plus fréquent)", "Forme disséminée : kératoconjonctivite, myosite, encéphalite (Encephalitozoon)"]
+      },
+      "diagnosis": {
+        "en": "Modified trichrome stain (Weber-green) of stool, electron microscopy, PCR",
+        "fr": "Coloration trichrome modifiée (Weber-green) des selles, microscopie électronique, PCR"
+      },
+      "treatment": {
+        "en": "Albendazole (Encephalitozoon); fumagillin or ART immune reconstitution (E. bieneusi, less responsive to albendazole)",
+        "fr": "Albendazole (Encephalitozoon) ; fumagilline ou restauration immunitaire par ARV (E. bieneusi, moins sensible à l'albendazole)"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, mainly in immunocompromised patients",
+        "fr": "Mondiale, surtout chez le patient immunodéprimé"
+      },
       "eosinophilia": false
     },
     {
@@ -725,14 +1583,32 @@
       "lessonId": 20,
       "names": { "en": "Pneumocystis jirovecii", "fr": "Pneumocystis jirovecii" },
       "category": "fungal",
-      "class": "Atypical fungus (opportunistic)",
-      "morphology": "Cyst (5-8 μm, cup-shaped) and trophic forms; cannot be cultured routinely",
-      "transmission": "Airborne person-to-person (respiratory droplets); most humans colonized/exposed in childhood",
-      "lifecycle": "Extracellular in alveoli; disease occurs upon immunosuppression (CD4 <200 in HIV) allowing proliferation",
-      "clinicalManifestations": ["Pneumocystis pneumonia (PCP/PJP): insidious dyspnea, dry cough, fever in immunosuppressed", "Diffuse bilateral interstitial infiltrates, elevated LDH"],
-      "diagnosis": "Bronchoalveolar lavage (BAL) with methenamine silver stain or immunofluorescence, PCR",
-      "treatment": "Trimethoprim-sulfamethoxazole (TMP-SMX) first line; prophylaxis in HIV with CD4 <200",
-      "geographicDistribution": "Worldwide",
+      "class": { "en": "Atypical fungus (opportunistic)", "fr": "Champignon atypique (opportuniste)" },
+      "morphology": {
+        "en": "Cyst (5-8 μm, cup-shaped) and trophic forms; cannot be cultured routinely",
+        "fr": "Kyste (5-8 μm, en forme de coupe) et formes trophiques ; non cultivable en routine"
+      },
+      "transmission": {
+        "en": "Airborne person-to-person (respiratory droplets); most humans colonized/exposed in childhood",
+        "fr": "Interhumaine aérienne (gouttelettes respiratoires) ; la plupart des humains sont colonisés/exposés dans l'enfance"
+      },
+      "lifecycle": {
+        "en": "Extracellular in alveoli; disease occurs upon immunosuppression (CD4 <200 in HIV) allowing proliferation",
+        "fr": "Extracellulaire dans les alvéoles ; la maladie survient lors de l'immunosuppression (CD4 <200 dans le VIH) permettant la prolifération"
+      },
+      "clinicalManifestations": {
+        "en": ["Pneumocystis pneumonia (PCP/PJP): insidious dyspnea, dry cough, fever in immunosuppressed", "Diffuse bilateral interstitial infiltrates, elevated LDH"],
+        "fr": ["Pneumocystose (PCP/PJP) : dyspnée insidieuse, toux sèche, fièvre chez l'immunodéprimé", "Infiltrats interstitiels bilatéraux diffus, LDH élevées"]
+      },
+      "diagnosis": {
+        "en": "Bronchoalveolar lavage (BAL) with methenamine silver stain or immunofluorescence, PCR",
+        "fr": "Lavage broncho-alvéolaire (LBA) avec coloration argentique (Gomori-Grocott) ou immunofluorescence, PCR"
+      },
+      "treatment": {
+        "en": "Trimethoprim-sulfamethoxazole (TMP-SMX) first line; prophylaxis in HIV with CD4 <200",
+        "fr": "Triméthoprime-sulfaméthoxazole (TMP-SMX) en première intention ; prophylaxie chez le patient VIH avec CD4 <200"
+      },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
       "eosinophilia": false
     },
     {
@@ -740,14 +1616,32 @@
       "lessonId": 21,
       "names": { "en": "Dermatophytes (Trichophyton, Microsporum, Epidermophyton)", "fr": "Dermatophytes" },
       "category": "fungal",
-      "class": "Keratinophilic fungi",
-      "morphology": "Septate hyphae invading keratin (skin, hair, nails); macroconidia shape differs by genus (spindle: Microsporum, cigar: Epidermophyton, various: Trichophyton)",
-      "transmission": "Direct contact (anthropophilic: human-to-human, zoophilic: animal-to-human, geophilic: soil-to-human), fomites",
-      "lifecycle": "Colonizes keratinized tissue only (no deep invasion in immunocompetent hosts), digests keratin for nutrition",
-      "clinicalManifestations": ["Tinea corporis (body), capitis (scalp), pedis (athlete's foot), cruris (groin), unguium (nails, onychomycosis)", "Annular, scaly, pruritic lesions with central clearing"],
-      "diagnosis": "KOH direct exam (septate branching hyphae), culture on Sabouraud agar, Wood's lamp (some Microsporum fluoresce)",
-      "treatment": "Topical antifungals (terbinafine, azoles) for skin; oral terbinafine/itraconazole for nails/scalp",
-      "geographicDistribution": "Worldwide",
+      "class": { "en": "Keratinophilic fungi", "fr": "Champignons kératinophiles" },
+      "morphology": {
+        "en": "Septate hyphae invading keratin (skin, hair, nails); macroconidia shape differs by genus (spindle: Microsporum, cigar: Epidermophyton, various: Trichophyton)",
+        "fr": "Filaments cloisonnés envahissant la kératine (peau, cheveux, ongles) ; forme des macroconidies variable selon le genre (fuselée : Microsporum, en cigare : Epidermophyton, variable : Trichophyton)"
+      },
+      "transmission": {
+        "en": "Direct contact (anthropophilic: human-to-human, zoophilic: animal-to-human, geophilic: soil-to-human), fomites",
+        "fr": "Contact direct (anthropophile : interhumain, zoophile : animal-homme, géophile : sol-homme), fomites"
+      },
+      "lifecycle": {
+        "en": "Colonizes keratinized tissue only (no deep invasion in immunocompetent hosts), digests keratin for nutrition",
+        "fr": "Colonise uniquement le tissu kératinisé (pas d'invasion profonde chez l'immunocompétent), digère la kératine pour se nourrir"
+      },
+      "clinicalManifestations": {
+        "en": ["Tinea corporis (body), capitis (scalp), pedis (athlete's foot), cruris (groin), unguium (nails, onychomycosis)", "Annular, scaly, pruritic lesions with central clearing"],
+        "fr": ["Herpès circiné (corps), teigne (cuir chevelu), pied d'athlète (pieds), tinea cruris (aine), onyxis (ongles, onychomycose)", "Lésions annulaires, squameuses, prurigineuses à guérison centrale"]
+      },
+      "diagnosis": {
+        "en": "KOH direct exam (septate branching hyphae), culture on Sabouraud agar, Wood's lamp (some Microsporum fluoresce)",
+        "fr": "Examen direct au KOH (filaments cloisonnés ramifiés), culture sur gélose de Sabouraud, lampe de Wood (certains Microsporum fluorescent)"
+      },
+      "treatment": {
+        "en": "Topical antifungals (terbinafine, azoles) for skin; oral terbinafine/itraconazole for nails/scalp",
+        "fr": "Antifongiques topiques (terbinafine, azolés) pour la peau ; terbinafine/itraconazole oral pour ongles/cuir chevelu"
+      },
+      "geographicDistribution": { "en": "Worldwide", "fr": "Mondiale" },
       "eosinophilia": false
     },
     {
@@ -755,14 +1649,35 @@
       "lessonId": 22,
       "names": { "en": "Aspergillus fumigatus / flavus / niger", "fr": "Aspergillus spp." },
       "category": "fungal",
-      "class": "Mold (opportunistic)",
-      "morphology": "Septate hyphae with acute-angle (45°) branching, conidiophores with characteristic conidial heads on culture",
-      "transmission": "Inhalation of airborne conidia (ubiquitous in environment, decaying matter)",
-      "lifecycle": "Inhaled conidia germinate in lungs; disease severity depends on host immune status and pre-existing lung disease",
-      "clinicalManifestations": ["Allergic bronchopulmonary aspergillosis (ABPA, in asthma/CF)", "Aspergilloma (fungus ball in pre-existing cavity)", "Invasive pulmonary aspergillosis (in neutropenic/immunosuppressed — angioinvasive, high mortality)"],
-      "diagnosis": "Galactomannan antigen (serum/BAL), culture, CT ('halo sign' early, 'air-crescent sign' later in invasive disease), histopathology (septate hyphae, acute branching)",
-      "treatment": "Voriconazole (invasive disease, first line); surgery for aspergilloma; corticosteroids + antifungal for ABPA",
-      "geographicDistribution": "Worldwide (ubiquitous environmental mold)",
+      "class": { "en": "Mold (opportunistic)", "fr": "Moisissure (opportuniste)" },
+      "morphology": {
+        "en": "Septate hyphae with acute-angle (45°) branching, conidiophores with characteristic conidial heads on culture",
+        "fr": "Filaments cloisonnés à ramification en angle aigu (45°), conidiophores à têtes conidiennes caractéristiques en culture"
+      },
+      "transmission": {
+        "en": "Inhalation of airborne conidia (ubiquitous in environment, decaying matter)",
+        "fr": "Inhalation de conidies aériennes (ubiquitaire dans l'environnement, matières en décomposition)"
+      },
+      "lifecycle": {
+        "en": "Inhaled conidia germinate in lungs; disease severity depends on host immune status and pre-existing lung disease",
+        "fr": "Les conidies inhalées germent dans les poumons ; la sévérité dépend du statut immunitaire de l'hôte et d'une pathologie pulmonaire préexistante"
+      },
+      "clinicalManifestations": {
+        "en": ["Allergic bronchopulmonary aspergillosis (ABPA, in asthma/CF)", "Aspergilloma (fungus ball in pre-existing cavity)", "Invasive pulmonary aspergillosis (in neutropenic/immunosuppressed — angioinvasive, high mortality)"],
+        "fr": ["Aspergillose bronchopulmonaire allergique (ABPA, dans l'asthme/mucoviscidose)", "Aspergillome (truffe aspergillaire dans une cavité préexistante)", "Aspergillose pulmonaire invasive (chez le neutropénique/immunodéprimé — angio-invasive, forte mortalité)"]
+      },
+      "diagnosis": {
+        "en": "Galactomannan antigen (serum/BAL), culture, CT ('halo sign' early, 'air-crescent sign' later in invasive disease), histopathology (septate hyphae, acute branching)",
+        "fr": "Antigène galactomannane (sérum/LBA), culture, TDM (signe du halo précoce, signe du croissant gazeux tardif dans la forme invasive), histopathologie (filaments cloisonnés, ramification en angle aigu)"
+      },
+      "treatment": {
+        "en": "Voriconazole (invasive disease, first line); surgery for aspergilloma; corticosteroids + antifungal for ABPA",
+        "fr": "Voriconazole (forme invasive, première intention) ; chirurgie pour l'aspergillome ; corticoïdes + antifongique pour l'ABPA"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide (ubiquitous environmental mold)",
+        "fr": "Mondiale (moisissure environnementale ubiquitaire)"
+      },
       "eosinophilia": true
     },
     {
@@ -770,14 +1685,35 @@
       "lessonId": 23,
       "names": { "en": "Mucorales (Rhizopus, Mucor, Lichtheimia) / Fusarium spp.", "fr": "Mucormycoses et Fusarioses" },
       "category": "fungal",
-      "class": "Mold (opportunistic, angioinvasive)",
-      "morphology": "Mucorales: broad, ribbon-like, non-septate (pauciseptate) hyphae with right-angle branching. Fusarium: septate hyphae, banana-shaped macroconidia on culture",
-      "transmission": "Inhalation of spores, direct inoculation (trauma/burns)",
-      "lifecycle": "Rapid angioinvasive growth causing tissue infarction and necrosis; strongly associated with uncontrolled diabetes (DKA) and neutropenia",
-      "clinicalManifestations": ["Rhino-orbito-cerebral mucormycosis (classic in DKA): black eschar, facial pain, orbital involvement", "Pulmonary/disseminated mucormycosis in neutropenic patients", "Fusarium: disseminated disease with skin lesions + positive blood cultures (unusual for molds) in neutropenic patients, keratitis"],
-      "diagnosis": "Histopathology (broad non-septate hyphae for Mucorales), culture, blood cultures often positive for Fusarium (unlike other molds)",
-      "treatment": "Aggressive surgical debridement + liposomal amphotericin B (Mucorales); voriconazole (Fusarium)",
-      "geographicDistribution": "Worldwide, increased incidence in uncontrolled diabetics and immunosuppressed (notable surge post-COVID in India)",
+      "class": { "en": "Mold (opportunistic, angioinvasive)", "fr": "Moisissure (opportuniste, angio-invasive)" },
+      "morphology": {
+        "en": "Mucorales: broad, ribbon-like, non-septate (pauciseptate) hyphae with right-angle branching. Fusarium: septate hyphae, banana-shaped macroconidia on culture",
+        "fr": "Mucorales : filaments larges, rubanés, non cloisonnés (pauciseptés) à ramification en angle droit. Fusarium : filaments cloisonnés, macroconidies en forme de banane en culture"
+      },
+      "transmission": {
+        "en": "Inhalation of spores, direct inoculation (trauma/burns)",
+        "fr": "Inhalation de spores, inoculation directe (traumatisme/brûlures)"
+      },
+      "lifecycle": {
+        "en": "Rapid angioinvasive growth causing tissue infarction and necrosis; strongly associated with uncontrolled diabetes (DKA) and neutropenia",
+        "fr": "Croissance angio-invasive rapide causant infarctus et nécrose tissulaire ; fortement associée au diabète déséquilibré (acidocétose) et à la neutropénie"
+      },
+      "clinicalManifestations": {
+        "en": ["Rhino-orbito-cerebral mucormycosis (classic in DKA): black eschar, facial pain, orbital involvement", "Pulmonary/disseminated mucormycosis in neutropenic patients", "Fusarium: disseminated disease with skin lesions + positive blood cultures (unusual for molds) in neutropenic patients, keratitis"],
+        "fr": ["Mucormycose rhino-orbito-cérébrale (classique en acidocétose) : escarre noirâtre, douleur faciale, atteinte orbitaire", "Mucormycose pulmonaire/disséminée chez le neutropénique", "Fusariose : forme disséminée avec lésions cutanées + hémocultures positives (inhabituel pour une moisissure) chez le neutropénique, kératite"]
+      },
+      "diagnosis": {
+        "en": "Histopathology (broad non-septate hyphae for Mucorales), culture, blood cultures often positive for Fusarium (unlike other molds)",
+        "fr": "Histopathologie (filaments larges non cloisonnés pour les Mucorales), culture, hémocultures souvent positives pour Fusarium (contrairement aux autres moisissures)"
+      },
+      "treatment": {
+        "en": "Aggressive surgical debridement + liposomal amphotericin B (Mucorales); voriconazole (Fusarium)",
+        "fr": "Débridement chirurgical agressif + amphotéricine B liposomale (Mucorales) ; voriconazole (Fusarium)"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, increased incidence in uncontrolled diabetics and immunosuppressed (notable surge post-COVID in India)",
+        "fr": "Mondiale, incidence accrue chez le diabétique déséquilibré et l'immunodéprimé (recrudescence notable post-COVID en Inde)"
+      },
       "eosinophilia": false
     },
     {
@@ -785,14 +1721,35 @@
       "lessonId": 24,
       "names": { "en": "Mycetoma agents / Sporothrix schenckii", "fr": "Mycétomes et Sporotrichose" },
       "category": "fungal",
-      "class": "Subcutaneous fungi (implantation mycoses)",
-      "morphology": "Mycetoma: grains/granules of fungal (eumycetoma) or bacterial (actinomycetoma) origin. Sporothrix: dimorphic — mold at room temp, cigar-shaped yeast at body temp",
-      "transmission": "Traumatic inoculation through skin (thorns, splinters, soil contact) — 'rose gardener's disease' for sporotrichosis",
-      "lifecycle": "Local implantation → chronic granulomatous inflammation; sporotrichosis can spread along lymphatics",
-      "clinicalManifestations": ["Mycetoma: triad of tumefaction, sinus tracts, and grain discharge, usually on foot ('Madura foot')", "Sporotrichosis: nodular lymphangitis — ascending chain of nodules/ulcers along lymphatic drainage from inoculation site"],
-      "diagnosis": "Grain examination/culture (mycetoma), culture at two temperatures for dimorphism (Sporothrix), histopathology",
-      "treatment": "Itraconazole (sporotrichosis, eumycetoma); surgery + antibiotics for actinomycetoma",
-      "geographicDistribution": "Mycetoma: 'mycetoma belt' (tropical Africa, India, Latin America). Sporotrichosis: worldwide, especially gardeners/agricultural workers",
+      "class": { "en": "Subcutaneous fungi (implantation mycoses)", "fr": "Champignons sous-cutanés (mycoses d'implantation)" },
+      "morphology": {
+        "en": "Mycetoma: grains/granules of fungal (eumycetoma) or bacterial (actinomycetoma) origin. Sporothrix: dimorphic — mold at room temp, cigar-shaped yeast at body temp",
+        "fr": "Mycétome : grains/granules d'origine fongique (eumycétome) ou bactérienne (actinomycétome). Sporothrix : dimorphique — moisissure à température ambiante, levure en cigare à température corporelle"
+      },
+      "transmission": {
+        "en": "Traumatic inoculation through skin (thorns, splinters, soil contact) — 'rose gardener's disease' for sporotrichosis",
+        "fr": "Inoculation traumatique cutanée (épines, échardes, contact avec le sol) — 'maladie du jardinier de roses' pour la sporotrichose"
+      },
+      "lifecycle": {
+        "en": "Local implantation → chronic granulomatous inflammation; sporotrichosis can spread along lymphatics",
+        "fr": "Implantation locale → inflammation granulomateuse chronique ; la sporotrichose peut se propager le long des lymphatiques"
+      },
+      "clinicalManifestations": {
+        "en": ["Mycetoma: triad of tumefaction, sinus tracts, and grain discharge, usually on foot ('Madura foot')", "Sporotrichosis: nodular lymphangitis — ascending chain of nodules/ulcers along lymphatic drainage from inoculation site"],
+        "fr": ["Mycétome : triade tuméfaction, fistules, écoulement de grains, généralement au pied (pied de Madura)", "Sporotrichose : lymphangite nodulaire — chaîne ascendante de nodules/ulcérations le long du drainage lymphatique depuis le point d'inoculation"]
+      },
+      "diagnosis": {
+        "en": "Grain examination/culture (mycetoma), culture at two temperatures for dimorphism (Sporothrix), histopathology",
+        "fr": "Examen/culture des grains (mycétome), culture à deux températures pour le dimorphisme (Sporothrix), histopathologie"
+      },
+      "treatment": {
+        "en": "Itraconazole (sporotrichosis, eumycetoma); surgery + antibiotics for actinomycetoma",
+        "fr": "Itraconazole (sporotrichose, eumycétome) ; chirurgie + antibiotiques pour l'actinomycétome"
+      },
+      "geographicDistribution": {
+        "en": "Mycetoma: 'mycetoma belt' (tropical Africa, India, Latin America). Sporotrichosis: worldwide, especially gardeners/agricultural workers",
+        "fr": "Mycétome : 'ceinture du mycétome' (Afrique tropicale, Inde, Amérique latine). Sporotrichose : mondiale, surtout jardiniers/agriculteurs"
+      },
       "eosinophilia": false
     },
     {
@@ -800,14 +1757,35 @@
       "lessonId": 25,
       "names": { "en": "Dimorphic fungi (Histoplasma, Blastomyces, Coccidioides, Paracoccidioides, Talaromyces)", "fr": "Champignons dimorphiques" },
       "category": "fungal",
-      "class": "Dimorphic (thermally dimorphic) fungi",
-      "morphology": "Mold form (environmental, 25°C) transitions to yeast/spherule form (tissue, 37°C) — Histoplasma (intracellular yeast), Blastomyces (broad-based budding yeast), Coccidioides (spherules with endospores), Paracoccidioides ('pilot's wheel' yeast), Talaromyces (fission yeast)",
-      "transmission": "Inhalation of spores from environment (soil, bird/bat droppings for Histoplasma, desert dust for Coccidioides)",
-      "lifecycle": "Inhaled spores convert to tissue form at body temperature → primary pulmonary infection → may disseminate, especially if immunocompromised",
-      "clinicalManifestations": ["Histoplasmosis: pulmonary disease, disseminated disease in AIDS (endemic Ohio/Mississippi River valleys)", "Blastomycosis: pulmonary/cutaneous verrucous lesions (Great Lakes/Southeastern US)", "Coccidioidomycosis: 'Valley fever', erythema nodosum (Southwestern US)", "Paracoccidioidomycosis: mucocutaneous ulcers (Latin America)", "Talaromycosis: disseminated disease in HIV, characteristic umbilicated skin lesions (Southeast Asia)"],
-      "diagnosis": "Urine/serum antigen (Histoplasma), culture requiring temperature shift, histopathology, serology",
-      "treatment": "Itraconazole (mild-moderate); amphotericin B (severe/disseminated/CNS)",
-      "geographicDistribution": "Geographically restricted per species (see clinical manifestations)",
+      "class": { "en": "Dimorphic (thermally dimorphic) fungi", "fr": "Champignons dimorphiques (thermodimorphiques)" },
+      "morphology": {
+        "en": "Mold form (environmental, 25°C) transitions to yeast/spherule form (tissue, 37°C) — Histoplasma (intracellular yeast), Blastomyces (broad-based budding yeast), Coccidioides (spherules with endospores), Paracoccidioides ('pilot's wheel' yeast), Talaromyces (fission yeast)",
+        "fr": "Forme moisissure (environnement, 25°C) se transformant en forme levure/sphérule (tissu, 37°C) — Histoplasma (levure intracellulaire), Blastomyces (levure à bourgeonnement à large base), Coccidioides (sphérules à endospores), Paracoccidioides (levure en 'roue de gouvernail'), Talaromyces (levure à fission)"
+      },
+      "transmission": {
+        "en": "Inhalation of spores from environment (soil, bird/bat droppings for Histoplasma, desert dust for Coccidioides)",
+        "fr": "Inhalation de spores environnementales (sol, fientes d'oiseaux/chauves-souris pour Histoplasma, poussière désertique pour Coccidioides)"
+      },
+      "lifecycle": {
+        "en": "Inhaled spores convert to tissue form at body temperature → primary pulmonary infection → may disseminate, especially if immunocompromised",
+        "fr": "Les spores inhalées se transforment en forme tissulaire à température corporelle → infection pulmonaire primaire → dissémination possible, surtout chez l'immunodéprimé"
+      },
+      "clinicalManifestations": {
+        "en": ["Histoplasmosis: pulmonary disease, disseminated disease in AIDS (endemic Ohio/Mississippi River valleys)", "Blastomycosis: pulmonary/cutaneous verrucous lesions (Great Lakes/Southeastern US)", "Coccidioidomycosis: 'Valley fever', erythema nodosum (Southwestern US)", "Paracoccidioidomycosis: mucocutaneous ulcers (Latin America)", "Talaromycosis: disseminated disease in HIV, characteristic umbilicated skin lesions (Southeast Asia)"],
+        "fr": ["Histoplasmose : atteinte pulmonaire, forme disséminée dans le SIDA (endémique dans les vallées de l'Ohio/Mississippi)", "Blastomycose : lésions pulmonaires/cutanées verruqueuses (Grands Lacs/Sud-Est des États-Unis)", "Coccidioïdomycose : 'fièvre de la vallée', érythème noueux (Sud-Ouest des États-Unis)", "Paracoccidioïdomycose : ulcérations muco-cutanées (Amérique latine)", "Talaromycose : forme disséminée dans le VIH, lésions cutanées ombiliquées caractéristiques (Asie du Sud-Est)"]
+      },
+      "diagnosis": {
+        "en": "Urine/serum antigen (Histoplasma), culture requiring temperature shift, histopathology, serology",
+        "fr": "Antigène urinaire/sérique (Histoplasma), culture nécessitant un changement de température, histopathologie, sérologie"
+      },
+      "treatment": {
+        "en": "Itraconazole (mild-moderate); amphotericin B (severe/disseminated/CNS)",
+        "fr": "Itraconazole (forme légère-modérée) ; amphotéricine B (forme sévère/disséminée/neurologique)"
+      },
+      "geographicDistribution": {
+        "en": "Geographically restricted per species (see clinical manifestations)",
+        "fr": "Répartition géographique restreinte selon l'espèce (voir manifestations cliniques)"
+      },
       "eosinophilia": false
     },
     {
@@ -815,15 +1793,36 @@
       "lessonId": 26,
       "names": { "en": "AIDS-associated opportunistic parasitoses", "fr": "SIDA et parasitoses opportunistes" },
       "category": "overview",
-      "class": "Multi-organism overview",
-      "morphology": "Composite topic covering Cryptosporidium, Isospora/Cystoisospora, Cyclospora, Toxoplasma, Microsporidia, Pneumocystis, Cryptococcus in the context of HIV/AIDS",
-      "transmission": "Varies by organism (see individual entries)",
-      "lifecycle": "Key concept: organisms that are self-limited in immunocompetent hosts become severe/chronic/disseminated once CD4 count falls below critical thresholds",
-      "clinicalManifestations": ["CD4 <200: PCP, disseminated histoplasmosis/coccidioidomycosis, cryptosporidiosis", "CD4 <100: toxoplasmic encephalitis, cryptococcal meningitis", "CD4 <50: disseminated MAC, CMV retinitis (non-parasitic reference point)"],
-      "diagnosis": "CD4 count correlates with risk profile; guides prophylaxis and differential diagnosis",
-      "treatment": "Organism-specific treatment + ART initiation/optimization + prophylaxis per CD4 threshold",
-      "geographicDistribution": "Worldwide, burden concentrated in high HIV-prevalence regions (Sub-Saharan Africa)",
+      "class": { "en": "Multi-organism overview", "fr": "Vue d'ensemble multi-organismes" },
+      "morphology": {
+        "en": "Composite topic covering Cryptosporidium, Isospora/Cystoisospora, Cyclospora, Toxoplasma, Microsporidia, Pneumocystis, Cryptococcus in the context of HIV/AIDS",
+        "fr": "Sujet transversal couvrant Cryptosporidium, Isospora/Cystoisospora, Cyclospora, Toxoplasma, Microsporidies, Pneumocystis, Cryptococcus dans le contexte du VIH/SIDA"
+      },
+      "transmission": {
+        "en": "Varies by organism (see individual entries)",
+        "fr": "Variable selon l'organisme (voir fiches individuelles)"
+      },
+      "lifecycle": {
+        "en": "Key concept: organisms that are self-limited in immunocompetent hosts become severe/chronic/disseminated once CD4 count falls below critical thresholds",
+        "fr": "Concept clé : les organismes spontanément résolutifs chez l'immunocompétent deviennent sévères/chroniques/disséminés lorsque le taux de CD4 chute sous des seuils critiques"
+      },
+      "clinicalManifestations": {
+        "en": ["CD4 <200: PCP, disseminated histoplasmosis/coccidioidomycosis, cryptosporidiosis", "CD4 <100: toxoplasmic encephalitis, cryptococcal meningitis", "CD4 <50: disseminated MAC, CMV retinitis (non-parasitic reference point)"],
+        "fr": ["CD4 <200 : pneumocystose, histoplasmose/coccidioïdomycose disséminées, cryptosporidiose", "CD4 <100 : encéphalite toxoplasmique, méningite à cryptocoque", "CD4 <50 : infection disséminée à MAC, rétinite à CMV (repère non parasitaire)"]
+      },
+      "diagnosis": {
+        "en": "CD4 count correlates with risk profile; guides prophylaxis and differential diagnosis",
+        "fr": "Le taux de CD4 corrèle avec le profil de risque ; guide la prophylaxie et le diagnostic différentiel"
+      },
+      "treatment": {
+        "en": "Organism-specific treatment + ART initiation/optimization + prophylaxis per CD4 threshold",
+        "fr": "Traitement spécifique de l'organisme + initiation/optimisation des ARV + prophylaxie selon le seuil de CD4"
+      },
+      "geographicDistribution": {
+        "en": "Worldwide, burden concentrated in high HIV-prevalence regions (Sub-Saharan Africa)",
+        "fr": "Mondiale, fardeau concentré dans les régions à forte prévalence du VIH (Afrique subsaharienne)"
+      },
       "eosinophilia": false
-    }
+      }
   ]
 }
