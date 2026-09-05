@@ -2,26 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    
+
     <!-- Viewport for mobile responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-    
+
     <!-- App metadata -->
     <meta name="theme-color" content="#00d9ff" />
     <meta name="description" content="Detective Lab - Guess the drug using pharmaceutical clues. Test your pharmacology knowledge with interactive games!" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Detective Lab" />
-    
+
+    <!-- Google Search Console verification -->
+    <meta name="google-site-verification" content="RFqraN0IVO2xkmH2mrx4Jg7b5wWT29anTBVmEbvw2VQ" />
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='75' font-size='80' text-anchor='middle'>🔬</text></svg>" />
-    
+
     <!-- Apple touch icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230a0e27' width='180' height='180'/><text x='90' y='120' font-size='120' text-anchor='middle'>🔬</text></svg>" />
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +34,7 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    
+
     <!-- Register Service Worker for PWA + Offline Support -->
     <script>
       if ('serviceWorker' in navigator) {
