@@ -1,7 +1,9 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
+import BackButton from './BackButton';
+import Breadcrumb from './Breadcrumb';
 
-const ModeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+const ModeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, theme, selectedSubject, onGoHome }) => {
   const modes = [
     {
       id: 'blind',
@@ -44,11 +46,11 @@ const ModeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, th
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <div style={styles.leftGroup}>
+          <BackButton onClick={onBack} />
+          <Logo variant="horizontal" theme={theme} />
+        </div>
         <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>
@@ -56,6 +58,8 @@ const ModeSelector = ({ onSelectMode, onBack, currentLang, userName, onStats, th
       </div>
 
       <div style={styles.content}>
+        <Breadcrumb currentLang={currentLang} subjectId={selectedSubject} onHomeClick={onGoHome} />
+
         <h1 style={styles.title}>
           {currentLang === 'en' ? 'Select Game Mode' : 'Sélectionner le Mode de Jeu'}
         </h1>
@@ -106,6 +110,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: '10px'
   },
+  leftGroup: { display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' },
   rightGroup: {
     display: 'flex',
     gap: '10px',
@@ -118,7 +123,10 @@ const styles = {
   },
   title: {
     textAlign: 'center',
-    marginBottom: '40px'
+    marginBottom: '40px',
+    color: '#FFFFFF',
+    fontFamily: "'Ubuntu', sans-serif",
+    fontWeight: '700'
   },
   modeGrid: {
     display: 'grid',

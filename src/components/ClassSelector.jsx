@@ -1,7 +1,8 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
+import BackButton from './BackButton';
 
-const ClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+const ClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats, theme }) => {
   const categories = [
     { id: 'cardiovascular', enName: 'Cardiovascular', frName: 'Cardiovasculaire', icon: '❤️' },
     { id: 'nervous', enName: 'Nervous System', frName: 'Système Nerveux', icon: '🧠' },
@@ -16,11 +17,11 @@ const ClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats, 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <div style={styles.leftGroup}>
+          <BackButton onClick={onBack} />
+          <Logo variant="horizontal" theme={theme} />
+        </div>
         <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>
@@ -68,6 +69,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: '10px'
   },
+  leftGroup: { display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' },
   rightGroup: {
     display: 'flex',
     gap: '10px',
@@ -80,7 +82,9 @@ const styles = {
   },
   title: {
     textAlign: 'center',
-    marginBottom: '40px'
+    marginBottom: '40px',
+    fontFamily: "'Ubuntu', sans-serif",
+    fontWeight: '700'
   },
   classGrid: {
     display: 'grid',

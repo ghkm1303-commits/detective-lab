@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
 import { submitFeatureRequest } from '../utils/feedback';
 import './LandingPage.css';
 
-const LandingPage = ({ currentLang, theme, onThemeChange, onLogin, onSignup, onViewPricing }) => {
+const LandingPage = ({ currentLang, theme, onLogin, onSignup, onViewPricing }) => {
   const t = (en, fr) => (currentLang === 'en' ? en : fr);
 
   const [feedbackName, setFeedbackName] = useState('');
@@ -31,7 +30,6 @@ const LandingPage = ({ currentLang, theme, onThemeChange, onLogin, onSignup, onV
       <header className="landing-header">
         <Logo variant="horizontal" theme={theme} />
         <div className="landing-header-actions">
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button className="landing-btn-ghost" onClick={onLogin}>
             {t('Login', 'Connexion')}
           </button>
@@ -90,7 +88,6 @@ const LandingPage = ({ currentLang, theme, onThemeChange, onLogin, onSignup, onV
         </button>
       </section>
 
-      {/* ---- NOUVEAU : Suggestion de fonctionnalité ---- */}
       <section className="landing-feedback">
         <h2>{t('Suggest a Feature', 'Propose une Fonctionnalité')}</h2>
         <p>
@@ -139,7 +136,6 @@ const LandingPage = ({ currentLang, theme, onThemeChange, onLogin, onSignup, onV
         )}
       </section>
 
-      {/* ---- NOUVEAU : Footer ---- */}
       <footer className="landing-footer">
         <p>© {new Date().getFullYear()} Detective Lab</p>
         <div className="landing-footer-legal">

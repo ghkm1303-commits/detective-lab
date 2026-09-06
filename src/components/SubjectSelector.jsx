@@ -1,17 +1,9 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
+import BackButton from './BackButton';
 
-const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onStats, theme }) => {
   const subjects = [
-    {
-      id: 'pharmacology_old',
-      icon: '💊',
-      enTitle: 'Medications',
-      frTitle: 'Médicaments',
-      available: true,
-      enDesc: 'Drug classification and mechanisms',
-      frDesc: 'Classification et mécanismes des médicaments'
-    },
     {
       id: 'pharmacology_new',
       icon: '🧪',
@@ -44,11 +36,11 @@ const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onSta
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <div style={styles.leftGroup}>
+          <BackButton onClick={onBack} />
+          <Logo variant="horizontal" theme={theme} />
+        </div>
         <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>
@@ -56,7 +48,6 @@ const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onSta
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.title}>🔬 Detective Lab</h1>
         <h2 style={styles.subtitle}>
           {currentLang === 'en' ? 'Select Subject' : 'Sélectionnez le Sujet'}
         </h2>
@@ -96,10 +87,13 @@ const styles = {
     marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid var(--border-teal)',
     flexWrap: 'wrap', gap: '10px'
   },
+  leftGroup: { display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' },
   rightGroup: { display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' },
   content: { maxWidth: '1000px', margin: '0 auto', textAlign: 'center' },
-  title: { fontSize: '48px', margin: '0 0 10px 0' },
-  subtitle: { fontSize: '28px', color: 'var(--text-primary)', margin: '0 0 40px 0' },
+  subtitle: {
+    fontSize: '28px', color: '#FFFFFF', margin: '0 0 40px 0',
+    fontFamily: "'Ubuntu', sans-serif", fontWeight: '700'
+  },
   subjectsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' },
   subjectCard: {
     padding: '30px 20px', background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',

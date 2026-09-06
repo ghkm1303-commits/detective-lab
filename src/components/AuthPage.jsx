@@ -6,7 +6,6 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import { auth } from '../firebase-config';
-import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
 import './AuthPage.css';
 
@@ -20,19 +19,7 @@ const AuthPage = ({ onAuthSuccess, initialMode = 'login', onBack }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [theme, setTheme] = useState('dark');
-
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem('detective-lab-theme') || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }, []);
-
-  const handleThemeChange = (newTheme) => {
-    setTheme(newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('detective-lab-theme', newTheme);
-  };
+  const theme = 'dark'; // Thème clair désactivé temporairement
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,7 +68,6 @@ const AuthPage = ({ onAuthSuccess, initialMode = 'login', onBack }) => {
             </svg>
           </button>
         ) : <div />}
-        <ThemeToggle theme={theme} onThemeChange={handleThemeChange} />
       </div>
 
       <div className="auth-content">

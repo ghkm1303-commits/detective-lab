@@ -7,10 +7,7 @@ import Dashboard from './components/Dashboard';
 import SubjectSelector from './components/SubjectSelector';
 import StatsPanel from './components/StatsPanel';
 import ModeSelector from './components/ModeSelector';
-import ClassSelector from './components/ClassSelector';
-import MainGame from './components/MainGame';
 import PracticeMode from './components/PracticeMode';
-import DrugDirectory from './components/DrugDirectory';
 import ResultScreen from './components/ResultScreen';
 import ParasiteClassSelector from './components/ParasiteClassSelector';
 import ParasiteGame from './components/ParasiteGame';
@@ -18,11 +15,9 @@ import ParasiteDirectory from './components/ParasiteDirectory';
 import PharmaClassSelector from './components/PharmaClassSelector';
 import PharmaGame from './components/PharmaGame';
 import PharmaDirectory from './components/PharmaDirectory';
-import drugsData from './data/drugs.json';
 import parasitesData from './data/parasites.json';
 import pharmaV2Data from './data/pharmacology_drugs_v2.json';
 import './App.css';
-import CloudAssistant from './components/CloudAssistant';
 import Logo from './components/Logo';
 
 export default function App() {
@@ -32,19 +27,17 @@ export default function App() {
   const [currentLang, setCurrentLang] = useState('en');
   const [theme, setTheme] = useState('dark');
   const [screen, setScreen] = useState('subjectSelector');
-  const [authMode, setAuthMode] = useState(null); // null = landing, 'login' | 'signup' = AuthPage
-  const [drugs, setDrugs] = useState([]);
+  const [authMode, setAuthMode] = useState(null);
   const [parasites] = useState(parasitesData.organisms);
   const [pharmaV2Drugs] = useState(pharmaV2Data.drugs);
   const [selectedClass, setSelectedClass] = useState(null);
   const [gameMode, setGameMode] = useState(null);
   const [gameResult, setGameResult] = useState(null);
-  const [selectedSubject, setSelectedSubject] = useState('pharmacology_old');
+  const [selectedSubject, setSelectedSubject] = useState('pharmacology_new');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('detective-lab-theme') || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    setTheme('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
 
   const handleThemeChange = (newTheme) => {
@@ -63,21 +56,6 @@ export default function App() {
       setLoading(false);
     });
     return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('drugs');
-      if (stored) {
-        setDrugs(JSON.parse(stored));
-      } else {
-        setDrugs(drugsData.drugs);
-        localStorage.setItem('drugs', JSON.stringify(drugsData.drugs));
-      }
-    } catch (error) {
-      console.error('Error loading drugs:', error);
-      setDrugs(drugsData.drugs);
-    }
   }, []);
 
   if (loading) {
@@ -196,31 +174,12 @@ export default function App() {
           currentLang={currentLang} userName={userName}
           onStats={() => setScreen('stats')} theme={theme}
           onThemeChange={handleThemeChange}
+          selectedSubject={selectedSubject}
+          onGoHome={() => setScreen('subjectSelector')}
         />
       )}
 
-      {/* ---- OLD Pharmacology (renamed "Médicaments") ---- */}
-      {screen === 'classSelector' && selectedSubject === 'pharmacology_old' && (
-        <ClassSelector
-          onSelectClass={handleClassSelect} onBack={handleBackFromClassSelector}
-          currentLang={currentLang} userName={userName} onStats={() => setScreen('stats')}
-          theme={theme} onThemeChange={handleThemeChange}
-        />
-      )}
-      {screen === 'mainGame' && selectedSubject === 'pharmacology_old' && (
-        <MainGame
-          drugs={drugs} selectedClass={selectedClass} gameMode={gameMode}
-          onGameEnd={handleGameEnd} onBack={handleBackToMode} currentLang={currentLang} theme={theme}
-        />
-      )}
-      {screen === 'drugDirectory' && selectedSubject === 'pharmacology_old' && (
-        <DrugDirectory
-          drugs={drugs} onBack={handleBackToMode} currentLang={currentLang}
-          userName={userName} onStats={() => setScreen('stats')} theme={theme} onThemeChange={handleThemeChange}
-        />
-      )}
-
-      {/* ---- NEW Pharmacology (full domain-based curriculum) ---- */}
+      {/* ---- Pharmacology (full domain-based curriculum) ---- */}
       {screen === 'classSelector' && selectedSubject === 'pharmacology_new' && (
         <PharmaClassSelector
           onSelectClass={handleClassSelect} onBack={handleBackFromClassSelector}
@@ -271,12 +230,11 @@ export default function App() {
 
       {screen === 'result' && (
         <ResultScreen
-          result={gameResult} drugs={drugs} onPlayAgain={handlePlayAgain}
+          result={gameResult} onPlayAgain={handlePlayAgain}
           onBackToMode={handleBackToMode} currentLang={currentLang} theme={theme}
           onThemeChange={handleThemeChange} userName={userName} subject={selectedSubject}
         />
       )}
-    <CloudAssistant currentLang={currentLang} screen={screen} userName={userName} />
     </div>
   );
 }

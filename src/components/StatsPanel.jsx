@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase-config';
-import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
+import Logo from './Logo';
+import BackButton from './BackButton';
 
-const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, currentLang = 'en', onLanguageChange }) => {
+const StatsPanel = ({ user, userName, onBack, onLogout, theme, currentLang = 'en', onLanguageChange }) => {
   const [stats, setStats] = useState(() => {
     try {
       const saved = localStorage.getItem(`stats_${user.uid}`);
@@ -43,7 +44,6 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, cu
       games: 'games',
       recentGames: '🎮 Recent Games',
       logout: '🚪 Logout',
-      back: '← Back',
       xpToNextLevel: 'XP to next level',
       premium: 'Premium',
       active: 'Active'
@@ -61,7 +61,6 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, cu
       games: 'jeux',
       recentGames: '🎮 Jeux Récents',
       logout: '🚪 Déconnexion',
-      back: '← Retour',
       xpToNextLevel: 'XP jusqu\'au prochain niveau',
       premium: 'Premium',
       active: 'Actif'
@@ -73,12 +72,12 @@ const StatsPanel = ({ user, userName, onBack, onLogout, theme, onThemeChange, cu
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
-          {t.back}
-        </button>
+        <div style={styles.leftGroup}>
+          <BackButton onClick={onBack} />
+          <Logo variant="horizontal" theme={theme} />
+        </div>
         <div style={styles.rightGroup}>
           <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button style={styles.logoutButton} onClick={handleLogout}>
             {t.logout}
           </button>
@@ -188,17 +187,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: '10px'
   },
-  backButton: {
-    padding: '8px 16px',
-    background: 'rgba(184, 154, 90, 0.1)',
-    border: '2px solid #B89A5A',
-    color: 'var(--text-primary)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
-  },
+  leftGroup: { display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' },
   rightGroup: {
     display: 'flex',
     gap: '10px',
@@ -225,7 +214,8 @@ const styles = {
     marginBottom: '30px',
     color: '#B89A5A',
     fontSize: '32px',
-    fontFamily: "'Playfair Display', serif"
+    fontFamily: "'Ubuntu', sans-serif",
+    fontWeight: '700'
   },
   topGrid: {
     display: 'grid',

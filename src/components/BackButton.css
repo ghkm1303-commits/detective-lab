@@ -1,0 +1,20 @@
+.bb-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-teal, #167C80);
+  background: var(--bg-card, #1a1f2e);
+  color: var(--text-primary, #F2EFE6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.bb-back-btn:hover {
+  background: var(--bg-hover, #232838);
+  border-color: var(--accent-emerald, #2F7D5B);
+  transform: translateX(-2px);
+}

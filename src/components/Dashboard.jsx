@@ -1,14 +1,12 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
 
-const Dashboard = ({ user, userName, onLogout, onContinue, theme, onThemeChange, currentLang }) => {
+const Dashboard = ({ user, userName, onLogout, onContinue, theme, currentLang }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <div></div>
+        <Logo variant="horizontal" theme={theme} />
         <div style={styles.headerActions}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button style={styles.logoutBtn} onClick={onLogout}>
             🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
           </button>
@@ -16,9 +14,6 @@ const Dashboard = ({ user, userName, onLogout, onContinue, theme, onThemeChange,
       </div>
 
       <div style={styles.content}>
-        <div style={styles.logoWrapper}>
-          <Logo variant="stacked" theme={theme} />
-        </div>
         <p style={styles.subtitle}>
           {currentLang === 'en' 
             ? `Welcome back, ${userName}!` 
@@ -73,13 +68,12 @@ const styles = {
     justifyContent: 'center',
     textAlign: 'center'
   },
-  logoWrapper: {
-    marginBottom: '20px'
-  },
   subtitle: {
     color: 'var(--text-secondary)',
     fontSize: '20px',
-    marginBottom: '40px'
+    marginBottom: '40px',
+    fontFamily: "'Ubuntu', sans-serif",
+    fontWeight: '600'
   },
   continueBtn: {
     padding: '16px 40px',

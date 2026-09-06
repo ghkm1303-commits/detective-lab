@@ -1,0 +1,32 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.breadcrumb-home {
+  background: transparent;
+  border: none;
+  color: var(--accent-gold, #B89A5A);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+.breadcrumb-home:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-sep {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.breadcrumb-current {
+  color: #FFFFFF;
+  font-weight: 700;
+}
