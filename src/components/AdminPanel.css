@@ -1,0 +1,128 @@
+.admin-container {
+  min-height: 100vh;
+  padding: 15px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-teal);
+}
+
+.admin-left-group {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.admin-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.admin-title {
+  color: #FFFFFF;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1.5px solid var(--border-teal, #167C80);
+  color: var(--text-primary);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.admin-tab-active {
+  background: var(--accent-gold, #B89A5A);
+  color: var(--bg-obsidian, #0B0D0D);
+  border-color: var(--accent-gold, #B89A5A);
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-card {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+  border: 1px solid rgba(184, 154, 90, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  border-left: 3px solid var(--accent-emerald, #2F7D5B);
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-card-name {
+  color: var(--accent-gold, #B89A5A);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.admin-card-date {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.admin-card-message {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.admin-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 30px 0;
+}
+
+.admin-error {
+  text-align: center;
+  color: #E63946;
+  font-size: 13px;
+}
+.admin-approve-btn {
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, var(--accent-emerald, #2F7D5B), var(--accent-teal, #167C80));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+.admin-approve-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

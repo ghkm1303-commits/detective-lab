@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
+import BackButton from './BackButton';
 
-const SubscriptionPage = ({ onSubmitPayment, currentLang, theme, onThemeChange, userName }) => {
+const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [step, setStep] = useState('choose'); // 'choose' | 'instructions'
+  const [submitting, setSubmitting] = useState(false);
 
   const plans = [
     {
@@ -38,17 +40,30 @@ const SubscriptionPage = ({ onSubmitPayment, currentLang, theme, onThemeChange, 
     name: 'Ghada K.'
   };
 
+  const handleConfirmClick = async () => {
+    if (!chosenPlan || submitting) return;
+    setSubmitting(true);
+    try {
+      await onSubmitPayment(chosenPlan);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (step === 'instructions' && chosenPlan) {
     return (
       <div style={styles.container}>
         <div style={styles.header}>
-          <button className="back-button" onClick={() => setStep('choose')}>
-            ← {currentLang === 'en' ? 'Back' : 'Retour'}
+          <BackButton onClick={() => setStep('choose')} />
+          <button style={styles.logoutBtn} onClick={onLogout}>
+            🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
           </button>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
         </div>
 
         <div style={styles.content}>
+          <div style={styles.logoWrapper}>
+            <Logo variant="stacked" theme="dark" />
+          </div>
           <h1 style={styles.title}>💳 {currentLang === 'en' ? 'Payment Instructions' : 'Instructions de Paiement'}</h1>
 
           <div style={styles.summaryCard}>
@@ -90,10 +105,13 @@ const SubscriptionPage = ({ onSubmitPayment, currentLang, theme, onThemeChange, 
           </div>
 
           <button
-            style={styles.confirmButton}
-            onClick={() => onSubmitPayment(chosenPlan)}
+            style={{ ...styles.confirmButton, opacity: submitting ? 0.7 : 1 }}
+            onClick={handleConfirmClick}
+            disabled={submitting}
           >
-            {currentLang === 'en' ? "✓ I've Sent the Payment" : "✓ J'ai Envoyé le Paiement"}
+            {submitting
+              ? (currentLang === 'en' ? 'Sending...' : 'Envoi...')
+              : (currentLang === 'en' ? "✓ I've Sent the Payment" : "✓ J'ai Envoyé le Paiement")}
           </button>
 
           <p style={styles.note}>
@@ -110,11 +128,15 @@ const SubscriptionPage = ({ onSubmitPayment, currentLang, theme, onThemeChange, 
     <div style={styles.container}>
       <div style={styles.header}>
         <div></div>
-        <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
+        <button style={styles.logoutBtn} onClick={onLogout}>
+          🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
+        </button>
       </div>
 
       <div style={styles.content}>
-        <h1 style={styles.title}>🔬 Detective Lab</h1>
+        <div style={styles.logoWrapper}>
+          <Logo variant="stacked" theme="dark" />
+        </div>
         <p style={styles.welcome}>
           {currentLang === 'en' ? `Welcome, ${userName}!` : `Bienvenue, ${userName}!`}
         </p>
@@ -171,12 +193,24 @@ const styles = {
   container: { minHeight: '100vh', padding: '15px' },
   header: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid var(--border-teal)'
+    marginBottom: '10px', paddingBottom: '15px'
+  },
+  logoutBtn: {
+    padding: '8px 16px',
+    background: 'rgba(230, 57, 70, 0.1)',
+    border: '2px solid #E63946',
+    color: '#FF6B7A',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: '600'
   },
   content: { maxWidth: '700px', margin: '0 auto', textAlign: 'center' },
-  title: { fontSize: '38px', margin: '0 0 5px 0' },
-  welcome: { color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 30px 0' },
-  subtitle: { fontSize: '22px', color: 'var(--text-primary)', margin: '0 0 30px 0' },
+  logoWrapper: { display: 'flex', justifyContent: 'center', marginBottom: '20px' },
+  title: { fontSize: '28px', margin: '0 0 20px 0', color: '#FFFFFF', fontFamily: "'Ubuntu', sans-serif", fontWeight: '700' },
+  welcome: { color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 20px 0' },
+  subtitle: { fontSize: '22px', color: '#FFFFFF', margin: '0 0 30px 0', fontFamily: "'Ubuntu', sans-serif", fontWeight: '700' },
   plansGrid: {
     display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: '20px', marginBottom: '30px'

@@ -1,12 +1,18 @@
 import React from 'react';
 import Logo from './Logo';
+import { isAdmin } from '../utils/admin';
 
-const Dashboard = ({ user, userName, onLogout, onContinue, theme, currentLang }) => {
+const Dashboard = ({ user, userName, onLogout, onContinue, onGoAdmin, theme, currentLang }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
         <Logo variant="horizontal" theme={theme} />
         <div style={styles.headerActions}>
+          {isAdmin(user) && (
+            <button style={styles.adminBtn} onClick={onGoAdmin}>
+              🛠️ Admin
+            </button>
+          )}
           <button style={styles.logoutBtn} onClick={onLogout}>
             🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
           </button>
@@ -48,6 +54,17 @@ const styles = {
     gap: '15px',
     alignItems: 'center',
     flexWrap: 'wrap'
+  },
+  adminBtn: {
+    padding: '8px 16px',
+    background: 'rgba(184, 154, 90, 0.1)',
+    border: '2px solid #B89A5A',
+    color: '#B89A5A',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: '600'
   },
   logoutBtn: {
     padding: '8px 16px',

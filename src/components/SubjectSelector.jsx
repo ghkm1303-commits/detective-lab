@@ -1,38 +1,28 @@
 import React from 'react';
 import Logo from './Logo';
 import BackButton from './BackButton';
+import Breadcrumb from './Breadcrumb';
 
-const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onStats, theme }) => {
-  const subjects = [
-    {
-      id: 'pharmacology_new',
-      icon: '🧪',
-      enTitle: 'Pharmacology',
-      frTitle: 'Pharmacologie',
-      available: true,
-      enDesc: 'Full pharmacology curriculum by domain',
-      frDesc: 'Programme complet de pharmacologie par domaine'
-    },
-    {
-      id: 'parasitology',
-      icon: '🦠',
-      enTitle: 'Parasitology',
-      frTitle: 'Parasitologie',
-      available: true,
-      enDesc: 'Parasitic infections',
-      frDesc: 'Infections parasitaires'
-    },
-    {
-      id: 'pharmacognosy',
-      icon: '🌿',
-      enTitle: 'Pharmacognosy',
-      frTitle: 'Pharmacognosie',
-      available: false,
-      enDesc: 'Natural compounds and plants',
-      frDesc: 'Composés naturels et plantes'
-    }
-  ];
+const YEAR_LABELS = {
+  year1: { en: '1st Year', fr: '1ère Année' },
+  year2: { en: '2nd Year', fr: '2ème Année' },
+  year3: { en: '3rd Year', fr: '3ème Année' },
+  year4: { en: '4th Year', fr: '4ème Année' },
+  year5: { en: '5th Year', fr: '5ème Année' }
+};
 
+// Liste unique de tous les modules affichés sur une seule page (toutes années confondues)
+// Seule Parasitologie est jouable pour l'instant ; les autres sont "Bientôt Disponible"
+const ALL_SUBJECTS = [
+  { id: 'parasitology', year: 'year4', icon: '🦠', enTitle: 'Parasitology - Mycology', frTitle: 'Parasitologie - Mycologie', available: true, enDesc: 'Parasitic and fungal infections', frDesc: 'Infections parasitaires et fongiques' },
+  { id: 'microbiologie_medicale', year: 'year4', icon: '🧫', enTitle: 'Medical Microbiology', frTitle: 'Microbiologie médicale', available: false, enDesc: 'Coming soon', frDesc: 'Bientôt disponible' },
+  { id: 'botanique_pharmaceutique', year: 'year2', icon: '🌿', enTitle: 'Pharmaceutical Botany', frTitle: 'Botanique pharmaceutique', available: false, enDesc: 'Coming soon', frDesc: 'Bientôt disponible' },
+  { id: 'pharmacognosy', year: 'year3', icon: '🌾', enTitle: 'Pharmacognosy', frTitle: 'Pharmacognosie', available: false, enDesc: 'Coming soon', frDesc: 'Bientôt disponible' },
+  { id: 'chimie_therapeutique', year: 'year3', icon: '💊', enTitle: 'Therapeutic Chemistry', frTitle: 'Chimie Thérapeutique', available: false, enDesc: 'Coming soon', frDesc: 'Bientôt disponible' },
+  { id: 'pharmacology_new', year: 'year3', icon: '🧪', enTitle: 'Pharmacology', frTitle: 'Pharmacologie', available: false, enDesc: 'Coming soon', frDesc: 'Bientôt disponible' }
+];
+
+const SubjectSelector = ({ onSelectSubject, onBack, onGoHome, currentLang, userName, onStats, theme }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
@@ -48,32 +38,44 @@ const SubjectSelector = ({ onSelectSubject, onBack, currentLang, userName, onSta
       </div>
 
       <div style={styles.content}>
+        <Breadcrumb
+          currentLang={currentLang}
+          onHomeClick={onGoHome}
+          trail={[{ label: currentLang === 'en' ? 'Modules' : 'Modules' }]}
+        />
+
         <h2 style={styles.subtitle}>
-          {currentLang === 'en' ? 'Select Subject' : 'Sélectionnez le Sujet'}
+          {currentLang === 'en' ? 'Select a Module' : 'Sélectionnez un Module'}
         </h2>
         <div style={styles.subjectsGrid}>
-          {subjects.map(subject => (
-            <button
-              key={subject.id}
-              className={!subject.available ? 'mode-card-disabled' : ''}
-              style={styles.subjectCard}
-              onClick={() => subject.available && onSelectSubject(subject.id)}
-              disabled={!subject.available}
-            >
-              <div style={styles.subjectIcon}>{subject.icon}</div>
-              <h3 style={styles.subjectName}>
-                {currentLang === 'en' ? subject.enTitle : subject.frTitle}
-              </h3>
-              {!subject.available && (
-                <div style={styles.comingSoon}>
-                  {currentLang === 'en' ? 'Coming Soon' : 'Bientôt Disponible'}
-                </div>
-              )}
-              <p style={styles.subjectDesc}>
-                {currentLang === 'en' ? subject.enDesc : subject.frDesc}
-              </p>
-            </button>
-          ))}
+          {ALL_SUBJECTS.map(subject => {
+            const yearLabel = YEAR_LABELS[subject.year]
+              ? (currentLang === 'en' ? YEAR_LABELS[subject.year].en : YEAR_LABELS[subject.year].fr)
+              : '';
+            return (
+              <button
+                key={subject.id}
+                className={!subject.available ? 'mode-card-disabled' : ''}
+                style={styles.subjectCard}
+                onClick={() => subject.available && onSelectSubject(subject.id)}
+                disabled={!subject.available}
+              >
+                <div style={styles.subjectIcon}>{subject.icon}</div>
+                <h3 style={styles.subjectName}>
+                  {currentLang === 'en' ? subject.enTitle : subject.frTitle}
+                </h3>
+                <p style={styles.yearLabel}>{yearLabel}</p>
+                {!subject.available && (
+                  <div style={styles.comingSoon}>
+                    {currentLang === 'en' ? 'Coming Soon' : 'Bientôt Disponible'}
+                  </div>
+                )}
+                <p style={styles.subjectDesc}>
+                  {currentLang === 'en' ? subject.enDesc : subject.frDesc}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -101,7 +103,8 @@ const styles = {
     fontFamily: 'inherit', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative'
   },
   subjectIcon: { fontSize: '56px', marginBottom: '15px' },
-  subjectName: { fontSize: '18px', fontWeight: '700', color: 'var(--accent-gold)', margin: '0 0 10px 0' },
+  subjectName: { fontSize: '18px', fontWeight: '700', color: 'var(--accent-gold)', margin: '0 0 4px 0' },
+  yearLabel: { fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 10px 0', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' },
   comingSoon: {
     display: 'inline-block', background: 'var(--accent-teal)', color: 'white', padding: '4px 12px',
     borderRadius: '20px', fontSize: '10px', fontWeight: '700', marginBottom: '10px'

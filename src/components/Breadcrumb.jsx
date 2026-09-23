@@ -1,28 +1,24 @@
 import React from 'react';
 import './Breadcrumb.css';
 
-const SUBJECT_LABELS = {
-  pharmacology_new: { en: 'Pharmacology', fr: 'Pharmacologie' },
-  parasitology: { en: 'Parasitology', fr: 'Parasitologie' },
-  pharmacognosy: { en: 'Pharmacognosy', fr: 'Pharmacognosie' }
-};
-
-function Breadcrumb({ currentLang, subjectId, onHomeClick }) {
-  const subjectLabel = SUBJECT_LABELS[subjectId]
-    ? (currentLang === 'en' ? SUBJECT_LABELS[subjectId].en : SUBJECT_LABELS[subjectId].fr)
-    : null;
-
+function Breadcrumb({ currentLang, onHomeClick, trail = [] }) {
   return (
     <div className="breadcrumb">
       <button className="breadcrumb-home" onClick={onHomeClick}>
         {currentLang === 'en' ? 'Home' : 'Accueil'}
       </button>
-      {subjectLabel && (
-        <>
+      {trail.map((item, idx) => (
+        <React.Fragment key={idx}>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-current">{subjectLabel}</span>
-        </>
-      )}
+          {item.onClick ? (
+            <button className="breadcrumb-home" onClick={item.onClick}>
+              {item.label}
+            </button>
+          ) : (
+            <span className="breadcrumb-current">{item.label}</span>
+          )}
+        </React.Fragment>
+      ))}
     </div>
   );
 }

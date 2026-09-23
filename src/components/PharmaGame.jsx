@@ -3,22 +3,29 @@ import { checkGuess } from '../utils/gameLogic';
 
 const pickRandomDrug = (list) => list[Math.floor(Math.random() * list.length)];
 
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
 const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLang }) => {
   const [hiddenDrug, setHiddenDrug] = useState(null);
+  const [pool, setPool] = useState([]);
   const [allClues, setAllClues] = useState([]);
   const [revealedCluesCount, setRevealedCluesCount] = useState(1);
   const [guess, setGuess] = useState('');
   const [wrongGuesses, setWrongGuesses] = useState(0);
+  const [choices, setChoices] = useState(null);
 
   useEffect(() => {
-    let pool = drugs;
+    let filteredPool = drugs;
     if (selectedClass) {
-      pool = pool.filter(d => d.category === selectedClass);
+      filteredPool = filteredPool.filter(d => d.category === selectedClass);
     }
 
-    if (pool.length > 0) {
-      const drug = pickRandomDrug(pool);
+    if (filteredPool.length > 0) {
+      const drug = pickRandomDrug(filteredPool);
       setHiddenDrug(drug);
+      setPool(filteredPool);
+      setChoices(null);
+      setWrongGuesses(0);
 
       const clues = [
         `Indication: ${drug.indications.substring(0, 60)}`,
@@ -35,42 +42,57 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
     }
   }, [drugs, selectedClass, gameMode]);
 
+  const buildChoices = () => {
+    const others = pool.filter(d => d !== hiddenDrug);
+    const wrongOptions = shuffle(others).slice(0, 3).map(d =>
+      currentLang === 'en' ? d.names.en : d.names.fr
+    );
+    const correctOption = currentLang === 'en' ? hiddenDrug.names.en : hiddenDrug.names.fr;
+    setChoices(shuffle([correctOption, ...wrongOptions]));
+  };
+
+  const finishGame = (correct, cluesUsed) => {
+    const score = correct ? Math.max(100, 1000 - (cluesUsed * 100)) : 0;
+    const xpEarned = correct ? Math.max(score - 300, 0) : 0;
+    onGameEnd({
+      correct,
+      drugName: hiddenDrug.names.en,
+      drugClass: hiddenDrug.therapeuticClass,
+      score,
+      xpEarned,
+      cluesUsed
+    });
+  };
+
   const handleGuess = () => {
     if (!guess.trim() || !hiddenDrug) return;
 
     const isCorrect = checkGuess(guess, hiddenDrug);
 
     if (isCorrect) {
-      const score = Math.max(100, 1000 - (revealedCluesCount * 100));
-      const xpEarned = Math.max(score - 300, 0);
+      finishGame(true, revealedCluesCount);
+      return;
+    }
 
-      onGameEnd({
-        correct: true,
-        drugName: hiddenDrug.names.en,
-        drugClass: hiddenDrug.therapeuticClass,
-        score,
-        xpEarned,
-        cluesUsed: revealedCluesCount
-      });
+    const newWrongCount = wrongGuesses + 1;
+    setWrongGuesses(newWrongCount);
+    setGuess('');
+
+    if (revealedCluesCount < allClues.length) {
+      setRevealedCluesCount(revealedCluesCount + 1);
     } else {
-      setWrongGuesses(wrongGuesses + 1);
-      setGuess('');
+      // Tous les indices ont été révélés et la réponse est fausse → choix multiples
+      buildChoices();
     }
   };
 
-  const handleRevealClue = () => {
-    if (revealedCluesCount < allClues.length) setRevealedCluesCount(revealedCluesCount + 1);
+  const handleChoiceClick = (choice) => {
+    const isCorrect = checkGuess(choice, hiddenDrug);
+    finishGame(isCorrect, allClues.length);
   };
 
   const handleGiveUp = () => {
-    onGameEnd({
-      correct: false,
-      drugName: hiddenDrug.names.en,
-      drugClass: hiddenDrug.therapeuticClass,
-      score: 0,
-      xpEarned: 0,
-      cluesUsed: revealedCluesCount
-    });
+    finishGame(false, revealedCluesCount);
   };
 
   if (!hiddenDrug) {
@@ -93,30 +115,47 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
 
       <div style={styles.content}>
         <div style={styles.guessSection}>
-          <h3 style={styles.guessTitle}>
-            {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
-          </h3>
-          <input
-            type="text"
-            value={guess}
-            onChange={(e) => setGuess(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-            placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
-            style={styles.guessInput}
-          />
-          <button style={styles.submitButton} onClick={handleGuess}>
-            ✓ {currentLang === 'en' ? 'Submit' : 'Soumettre'}
-          </button>
-          {wrongGuesses > 0 && (
-            <p style={styles.errorMessage}>
-              {currentLang === 'en' ? `Wrong! (${wrongGuesses} incorrect)` : `Mauvaise réponse! (${wrongGuesses})`}
-            </p>
+          {choices ? (
+            <>
+              <h3 style={styles.guessTitle}>
+                {currentLang === 'en' ? 'Choose the correct drug:' : 'Choisissez le bon médicament:'}
+              </h3>
+              <div style={styles.choicesGrid}>
+                {choices.map((choice, idx) => (
+                  <button key={idx} style={styles.choiceButton} onClick={() => handleChoiceClick(choice)}>
+                    {choice}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 style={styles.guessTitle}>
+                {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
+              </h3>
+              <input
+                type="text"
+                value={guess}
+                onChange={(e) => setGuess(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
+                placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
+                style={styles.guessInput}
+              />
+              <button style={styles.submitButton} onClick={handleGuess}>
+                ✓ {currentLang === 'en' ? 'Submit' : 'Soumettre'}
+              </button>
+              {wrongGuesses > 0 && (
+                <p style={styles.errorMessage}>
+                  {currentLang === 'en' ? `Wrong! (${wrongGuesses} incorrect)` : `Mauvaise réponse! (${wrongGuesses})`}
+                </p>
+              )}
+            </>
           )}
         </div>
 
         <div style={styles.cluesSection}>
           <h3 style={styles.cluesTitle}>
-            {currentLang === 'en' ? 'Available Clues' : 'Indices Disponibles'} ({revealedCluesCount}/8)
+            {currentLang === 'en' ? 'Available Clues' : 'Indices Disponibles'} ({revealedCluesCount}/{allClues.length})
           </h3>
           <div style={styles.cluesGrid}>
             {revealedClues.map((clue, idx) => (
@@ -127,11 +166,6 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
             ))}
           </div>
           <div style={styles.clueButtonsSection}>
-            {revealedCluesCount < allClues.length && (
-              <button style={styles.revealButton} onClick={handleRevealClue}>
-                💡 {currentLang === 'en' ? 'Reveal Next Clue' : 'Révéler le Prochain Indice'}
-              </button>
-            )}
             <button style={styles.giveUpButton} onClick={handleGiveUp}>
               🚪 {currentLang === 'en' ? 'Give Up' : 'Abandonner'}
             </button>
@@ -177,6 +211,12 @@ const styles = {
     fontFamily: 'inherit', fontSize: '14px', fontWeight: '700'
   },
   errorMessage: { color: '#E63946', fontSize: '13px', marginTop: '10px' },
+  choicesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' },
+  choiceButton: {
+    padding: '14px', background: 'rgba(47, 125, 91, 0.08)', border: '2px solid var(--accent-emerald)',
+    color: 'var(--text-primary)', borderRadius: '8px', cursor: 'pointer',
+    fontFamily: 'inherit', fontSize: '14px', fontWeight: '600', transition: 'all 0.2s ease'
+  },
   cluesSection: { marginBottom: '30px' },
   cluesTitle: { color: '#B89A5A', fontSize: '18px', margin: '0 0 15px 0', fontFamily: "'Playfair Display', serif" },
   cluesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px', marginBottom: '20px' },
@@ -188,11 +228,6 @@ const styles = {
   clueNumber: { color: '#B89A5A', fontSize: '14px', fontWeight: '700', margin: '0 0 8px 0' },
   clueText: { color: 'var(--text-secondary)', fontSize: '13px', margin: '0' },
   clueButtonsSection: { display: 'flex', gap: '15px', flexWrap: 'wrap' },
-  revealButton: {
-    flex: 1, minWidth: '150px', padding: '12px', background: 'linear-gradient(135deg, #167C80, #2F7D5B)',
-    color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer',
-    fontFamily: 'inherit', fontSize: '13px', fontWeight: '700'
-  },
   giveUpButton: {
     flex: 1, minWidth: '150px', padding: '12px', background: 'rgba(230, 57, 70, 0.1)',
     border: '2px solid #E63946', color: '#FF6B7A', borderRadius: '6px', cursor: 'pointer',

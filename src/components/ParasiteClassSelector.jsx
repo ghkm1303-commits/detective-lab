@@ -1,7 +1,6 @@
 import React from 'react';
-import ThemeToggle from './ThemeToggle';
 
-const ParasiteClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+const ParasiteClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats }) => {
   const categories = [
     { id: 'protozoa', enName: 'Protozoa', frName: 'Protozoaires', icon: '🦠' },
     { id: 'helminth', enName: 'Helminths', frName: 'Helminthes', icon: '🪱' },
@@ -15,7 +14,6 @@ const ParasiteClassSelector = ({ onSelectClass, onBack, currentLang, userName, o
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>

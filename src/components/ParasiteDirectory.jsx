@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
 
-const ParasiteDirectory = ({ organisms, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
+const ParasiteDirectory = ({ organisms, onBack, currentLang, userName, onStats }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedOrganism, setSelectedOrganism] = useState(null);
   const lang = currentLang === 'fr' ? 'fr' : 'en';
@@ -25,7 +24,6 @@ const ParasiteDirectory = ({ organisms, onBack, currentLang, userName, onStats, 
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
         <div style={styles.rightGroup}>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           <button onClick={onStats} className="user-button">
             👤 {userName}
           </button>
