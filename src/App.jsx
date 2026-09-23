@@ -20,16 +20,10 @@ import PharmaGame from './components/PharmaGame';
 import PharmaDirectory from './components/PharmaDirectory';
 import parasitesData from './data/parasites.json';
 import pharmaV2Data from './data/pharmacology_drugs_v2.json';
-import chemistryData from './data/chemistry.json';
 import './App.css';
 import Logo from './components/Logo';
 import { isAdmin } from './utils/admin';
 import { getSubscriptionStatus, submitPaymentConfirmation } from './utils/subscription';
-import ChemistryHub from './components/ChemistryHub';
-import ChemistryModeChoice from './components/ChemistryModeChoice';
-import ChemistryLessonSelector from './components/ChemistryLessonSelector';
-import ChemistryArchive from './components/ChemistryArchive';
-import GameGuessing from './components/GameGuessing';
 
 // Abonnement désactivé temporairement pour le test avec les amis (idée du jeu à valider d'abord).
 // Remettre à true pour réactiver la vérification subStatus / SubscriptionPage / PendingConfirmationPage.
@@ -45,9 +39,6 @@ export default function App() {
   const [authMode, setAuthMode] = useState(null);
   const [parasites] = useState(parasitesData.organisms);
   const [pharmaV2Drugs] = useState(pharmaV2Data.drugs);
-  // Chimie Thérapeutique: targetType = 'group' | 'molecule', scope = 'all' | <lesson_id>
-  const [chemistryTargetType, setChemistryTargetType] = useState(null);
-  const [chemistryScope, setChemistryScope] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [gameMode, setGameMode] = useState(null);
   const [gameResult, setGameResult] = useState(null);
@@ -204,11 +195,7 @@ export default function App() {
       <SubjectSelector
         onSelectSubject={(subject) => {
           setSelectedSubject(subject);
-          if (subject === 'chimie_therapeutique') {
-            setScreen('chemistryHub');
-          } else {
-            setScreen('modeSelector');
-          }
+          setScreen('modeSelector');
         }}
         onBack={() => setScreen('dashboard')}
         onGoHome={() => setScreen('dashboard')}
@@ -269,53 +256,6 @@ export default function App() {
     setScreen(gameMode === 'focused' ? 'classSelector' : 'mainGame');
   };
 
-  // ---- Chimie Thérapeutique: navigation handlers ----
-  const handleChemistryHubSelect = (target) => {
-    // target: 'group' | 'molecule' | 'archive'
-    if (target === 'archive') {
-      setScreen('chemistryArchive');
-    } else {
-      setChemistryTargetType(target);
-      setScreen('chemistryModeChoice');
-    }
-  };
-
-  const handleChemistryModeChoice = (mode) => {
-    // mode: 'open' | 'targeted'
-    if (mode === 'open') {
-      setChemistryScope('all');
-      setGameMode(`chemistry_${chemistryTargetType}_open`);
-      setScreen('chemistryGuessing');
-    } else {
-      setScreen('chemistryLessonSelector');
-    }
-  };
-
-  const handleChemistryLessonSelect = (lessonId) => {
-    setChemistryScope(lessonId);
-    setGameMode(`chemistry_${chemistryTargetType}_targeted`);
-    setScreen('chemistryGuessing');
-  };
-
-  const handleChemistryGameEnd = (result) => {
-    saveGameStats(user.uid, result, gameMode);
-    setGameResult(result);
-    setScreen('result');
-  };
-
-  const handleChemistryBackToHub = () => {
-    setScreen('chemistryHub');
-    setChemistryTargetType(null);
-    setChemistryScope(null);
-    setGameMode(null);
-    setGameResult(null);
-  };
-
-  const handleChemistryPlayAgain = () => {
-    setGameResult(null);
-    setScreen(chemistryScope === 'all' ? 'chemistryModeChoice' : 'chemistryLessonSelector');
-  };
-
   return (
     <div className="app">
       {screen === 'modeSelector' && (
@@ -372,59 +312,6 @@ export default function App() {
         />
       )}
 
-      {/* ---- Chimie Thérapeutique (Hub -> Mode Choice -> [Lesson Selector] -> Guessing / Archive) ---- */}
-      {screen === 'chemistryHub' && selectedSubject === 'chimie_therapeutique' && (
-        <ChemistryHub
-          onSelectTarget={handleChemistryHubSelect}
-          onGoArchive={() => setScreen('chemistryArchive')}
-          onBack={() => setScreen('subjectSelector')}
-          onGoHome={() => setScreen('dashboard')}
-          currentLang={currentLang} userName={userName}
-          onStats={() => setScreen('stats')} theme={theme}
-        />
-      )}
-
-      {screen === 'chemistryModeChoice' && selectedSubject === 'chimie_therapeutique' && (
-        <ChemistryModeChoice
-          targetType={chemistryTargetType}
-          onSelectMode={handleChemistryModeChoice}
-          onBack={() => setScreen('chemistryHub')}
-          currentLang={currentLang} userName={userName}
-          onStats={() => setScreen('stats')} theme={theme}
-        />
-      )}
-
-      {screen === 'chemistryLessonSelector' && selectedSubject === 'chimie_therapeutique' && (
-        <ChemistryLessonSelector
-          data={chemistryData}
-          targetType={chemistryTargetType}
-          onSelectLesson={handleChemistryLessonSelect}
-          onBack={() => setScreen('chemistryModeChoice')}
-          currentLang={currentLang} userName={userName}
-          onStats={() => setScreen('stats')} theme={theme}
-        />
-      )}
-
-      {screen === 'chemistryGuessing' && selectedSubject === 'chimie_therapeutique' && (
-        <GameGuessing
-          data={chemistryData}
-          targetType={chemistryTargetType}
-          scope={chemistryScope}
-          onGameEnd={handleChemistryGameEnd}
-          onBack={() => setScreen(chemistryScope === 'all' ? 'chemistryModeChoice' : 'chemistryLessonSelector')}
-          currentLang={currentLang}
-        />
-      )}
-
-      {screen === 'chemistryArchive' && selectedSubject === 'chimie_therapeutique' && (
-        <ChemistryArchive
-          data={chemistryData}
-          onBack={() => setScreen('chemistryHub')}
-          currentLang={currentLang} userName={userName}
-          onStats={() => setScreen('stats')} theme={theme} onThemeChange={handleThemeChange}
-        />
-      )}
-
       {screen === 'practiceMode' && (
         <PracticeMode
           onBack={handleBackToMode} currentLang={currentLang} userName={userName}
@@ -435,8 +322,8 @@ export default function App() {
       {screen === 'result' && (
         <ResultScreen
           result={gameResult}
-          onPlayAgain={selectedSubject === 'chimie_therapeutique' ? handleChemistryPlayAgain : handlePlayAgain}
-          onBackToMode={selectedSubject === 'chimie_therapeutique' ? handleChemistryBackToHub : handleBackToMode}
+          onPlayAgain={handlePlayAgain}
+          onBackToMode={handleBackToMode}
           currentLang={currentLang} theme={theme}
           onThemeChange={handleThemeChange} userName={userName} subject={selectedSubject}
         />
@@ -453,7 +340,7 @@ function saveGameStats(userId, result, gameMode) {
     };
 
     const gameRecord = {
-      mode: gameMode === 'blind' ? 'blind' : (gameMode && gameMode.startsWith('chemistry_') ? gameMode : 'known'),
+      mode: gameMode === 'blind' ? 'blind' : 'known',
       score: result.score || 0,
       xpEarned: result.xpEarned || 0,
       drugName: result.drugName || 'Unknown',
