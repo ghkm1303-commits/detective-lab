@@ -1,64 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { checkGuess } from '../utils/gameLogic';
+import { checkGuess } from '../../utils/gameLogic';
+
+const pickRandomDrug = (list) => list[Math.floor(Math.random() * list.length)];
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
-const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
 
-// gameMode: 'therapeuticClass' | 'medication' | 'combined'
-const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, onBack, currentLang }) => {
-  const [questionType, setQuestionType] = useState(null); // 'class' | 'drug'
-  const [hiddenItem, setHiddenItem] = useState(null);
-  const [choicePool, setChoicePool] = useState([]);
+const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLang }) => {
+  const [hiddenDrug, setHiddenDrug] = useState(null);
+  const [pool, setPool] = useState([]);
   const [allClues, setAllClues] = useState([]);
   const [revealedCluesCount, setRevealedCluesCount] = useState(1);
   const [guess, setGuess] = useState('');
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [choices, setChoices] = useState(null);
 
-  const relevantClasses = selectedClassIds && selectedClassIds.length > 0
-    ? classes.filter(c => selectedClassIds.includes(c.id))
-    : classes;
-
-  const startRound = () => {
-    let type;
-    if (gameMode === 'therapeuticClass') type = 'class';
-    else if (gameMode === 'medication') type = 'drug';
-    else type = Math.random() < 0.5 ? 'class' : 'drug';
-
-    setChoices(null);
-    setWrongGuesses(0);
-    setQuestionType(type);
-
-    if (type === 'class') {
-      const pool = relevantClasses;
-      if (pool.length === 0) { setHiddenItem(null); return; }
-      const item = pickRandom(pool);
-      setHiddenItem(item);
-      setChoicePool(pool);
-      setAllClues(item.clues || []);
-    } else {
-      const relevantDrugs = drugs.filter(d => relevantClasses.some(c => c.id === d.classId));
-      if (relevantDrugs.length === 0) { setHiddenItem(null); return; }
-      const item = pickRandom(relevantDrugs);
-      const sameClassDrugs = drugs.filter(d => d.classId === item.classId);
-      setHiddenItem(item);
-      setChoicePool(sameClassDrugs);
-      setAllClues(item.clues || []);
-    }
-    setRevealedCluesCount(1);
-  };
-
   useEffect(() => {
-    startRound();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classes, drugs, gameMode, selectedClassIds]);
+    let filteredPool = drugs;
+    if (selectedClass) {
+      filteredPool = filteredPool.filter(d => d.category === selectedClass);
+    }
+
+    if (filteredPool.length > 0) {
+      const drug = pickRandomDrug(filteredPool);
+      setHiddenDrug(drug);
+      setPool(filteredPool);
+      setChoices(null);
+      setWrongGuesses(0);
+
+      const clues = [
+        `Indication: ${drug.indications.substring(0, 60)}`,
+        `Route: ${drug.route}`,
+        `Mechanism: ${drug.mechanism.substring(0, 70)}`,
+        `Class: ${drug.therapeuticClass}`,
+        `Side Effect: ${drug.sideEffects[0] || 'Unknown'}`,
+        `Metabolism: ${drug.metabolism}`,
+        `Elimination: ${drug.elimination}`,
+        `Half-life: ${drug.halfLife}`
+      ];
+      setAllClues(clues);
+      setRevealedCluesCount(1);
+    }
+  }, [drugs, selectedClass, gameMode]);
 
   const buildChoices = () => {
-    const others = choicePool.filter(x => x !== hiddenItem);
-    const wrongOptions = shuffle(others).slice(0, 3).map(x =>
-      currentLang === 'en' ? x.names.en : x.names.fr
+    const others = pool.filter(d => d !== hiddenDrug);
+    const wrongOptions = shuffle(others).slice(0, 3).map(d =>
+      currentLang === 'en' ? d.names.en : d.names.fr
     );
-    const correctOption = currentLang === 'en' ? hiddenItem.names.en : hiddenItem.names.fr;
+    const correctOption = currentLang === 'en' ? hiddenDrug.names.en : hiddenDrug.names.fr;
     setChoices(shuffle([correctOption, ...wrongOptions]));
   };
 
@@ -67,8 +56,8 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
     const xpEarned = correct ? Math.max(score - 300, 0) : 0;
     onGameEnd({
       correct,
-      drugName: hiddenItem.names.en,
-      drugClass: questionType === 'class' ? hiddenItem.names.en : hiddenItem.classId,
+      drugName: hiddenDrug.names.en,
+      drugClass: hiddenDrug.therapeuticClass,
       score,
       xpEarned,
       cluesUsed
@@ -76,26 +65,29 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
   };
 
   const handleGuess = () => {
-    if (!guess.trim() || !hiddenItem) return;
-    const isCorrect = checkGuess(guess, hiddenItem);
+    if (!guess.trim() || !hiddenDrug) return;
+
+    const isCorrect = checkGuess(guess, hiddenDrug);
 
     if (isCorrect) {
       finishGame(true, revealedCluesCount);
       return;
     }
 
-    setWrongGuesses(w => w + 1);
+    const newWrongCount = wrongGuesses + 1;
+    setWrongGuesses(newWrongCount);
     setGuess('');
 
     if (revealedCluesCount < allClues.length) {
       setRevealedCluesCount(revealedCluesCount + 1);
     } else {
+      // Tous les indices ont été révélés et la réponse est fausse → choix multiples
       buildChoices();
     }
   };
 
   const handleChoiceClick = (choice) => {
-    const isCorrect = checkGuess(choice, hiddenItem);
+    const isCorrect = checkGuess(choice, hiddenDrug);
     finishGame(isCorrect, allClues.length);
   };
 
@@ -103,28 +95,11 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
     finishGame(false, revealedCluesCount);
   };
 
-  if (!hiddenItem) {
-    return (
-      <div style={styles.loading}>
-        <button style={styles.backButton} onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
-        <p style={{ marginTop: '20px' }}>
-          {currentLang === 'en'
-            ? 'No data added yet for this selection.'
-            : "Aucune donnée n'a encore été ajoutée pour cette sélection."}
-        </p>
-      </div>
-    );
+  if (!hiddenDrug) {
+    return <div style={styles.loading}>{currentLang === 'en' ? 'Loading game...' : 'Chargement du jeu...'}</div>;
   }
 
   const revealedClues = allClues.slice(0, revealedCluesCount);
-  const questionLabel = questionType === 'class'
-    ? (currentLang === 'en' ? 'What therapeutic class is it?' : 'Quelle classe thérapeutique est-ce?')
-    : (currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?');
-  const chooseLabel = questionType === 'class'
-    ? (currentLang === 'en' ? 'Choose the correct class:' : 'Choisissez la bonne classe:')
-    : (currentLang === 'en' ? 'Choose the correct drug:' : 'Choisissez le bon médicament:');
 
   return (
     <div style={styles.container}>
@@ -132,9 +107,9 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
-        <h2 style={styles.gameTitle}>💊 Chimie Thérapeutique Lab</h2>
+        <h2 style={styles.gameTitle}>🧪 Pharmacology Lab</h2>
         <div style={styles.modeIndicator}>
-          {questionType === 'class' ? '🧬 Classe' : '💊 Médicament'}
+          {gameMode === 'blind' ? '🔍 Blind' : '📚 Focused'}
         </div>
       </div>
 
@@ -142,7 +117,9 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
         <div style={styles.guessSection}>
           {choices ? (
             <>
-              <h3 style={styles.guessTitle}>{chooseLabel}</h3>
+              <h3 style={styles.guessTitle}>
+                {currentLang === 'en' ? 'Choose the correct drug:' : 'Choisissez le bon médicament:'}
+              </h3>
               <div style={styles.choicesGrid}>
                 {choices.map((choice, idx) => (
                   <button key={idx} style={styles.choiceButton} onClick={() => handleChoiceClick(choice)}>
@@ -153,13 +130,15 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
             </>
           ) : (
             <>
-              <h3 style={styles.guessTitle}>{questionLabel}</h3>
+              <h3 style={styles.guessTitle}>
+                {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
+              </h3>
               <input
                 type="text"
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-                placeholder={currentLang === 'en' ? 'Type your answer...' : 'Tapez votre réponse...'}
+                placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
                 style={styles.guessInput}
               />
               <button style={styles.submitButton} onClick={handleGuess}>
@@ -199,7 +178,7 @@ const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, 
 
 const styles = {
   container: { minHeight: '100vh', padding: '15px', position: 'relative', zIndex: 10 },
-  loading: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontSize: '16px', padding: '20px', textAlign: 'center' },
+  loading: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontSize: '16px' },
   header: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid rgba(22, 124, 128, 0.2)',
@@ -256,4 +235,4 @@ const styles = {
   }
 };
 
-export default ChemistryGame;
+export default PharmaGame;

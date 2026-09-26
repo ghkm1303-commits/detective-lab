@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
+import ThemeToggle from '../ThemeToggle';
 
 const PharmaDirectory = ({ drugs, onBack, currentLang, userName, onStats, theme, onThemeChange }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);

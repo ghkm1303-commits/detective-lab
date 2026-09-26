@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { checkGuess } from '../utils/gameLogic';
+import { checkGuess } from '../../utils/gameLogic';
 
-const pickRandomDrug = (list) => list[Math.floor(Math.random() * list.length)];
+const pickRandomOrganism = (list) => list[Math.floor(Math.random() * list.length)];
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
-const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, currentLang }) => {
-  const [hiddenDrug, setHiddenDrug] = useState(null);
+const ParasiteGame = ({ organisms, selectedClass, selectedLessons, gameMode, onGameEnd, onBack, currentLang }) => {
+  const [hiddenOrganism, setHiddenOrganism] = useState(null);
   const [pool, setPool] = useState([]);
   const [allClues, setAllClues] = useState([]);
   const [revealedCluesCount, setRevealedCluesCount] = useState(1);
@@ -14,40 +14,57 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [choices, setChoices] = useState(null);
 
+  const lang = currentLang === 'fr' ? 'fr' : 'en';
+
   useEffect(() => {
-    let filteredPool = drugs;
-    if (selectedClass) {
-      filteredPool = filteredPool.filter(d => d.category === selectedClass);
+    let filteredPool;
+
+    if (selectedLessons && selectedLessons.length > 0) {
+      filteredPool = organisms.filter(o => selectedLessons.includes(o.lessonId));
+    } else {
+      filteredPool = organisms.filter(o => o.category !== 'entomology' && o.category !== 'overview');
+      if (selectedClass) {
+        filteredPool = filteredPool.filter(o => o.category === selectedClass);
+      }
     }
 
     if (filteredPool.length > 0) {
-      const drug = pickRandomDrug(filteredPool);
-      setHiddenDrug(drug);
+      const organism = pickRandomOrganism(filteredPool);
+      setHiddenOrganism(organism);
       setPool(filteredPool);
       setChoices(null);
       setWrongGuesses(0);
 
+      const clinicalLabel = currentLang === 'en' ? 'Clinical' : 'Clinique';
+      const transmissionLabel = currentLang === 'en' ? 'Transmission' : 'Transmission';
+      const lifecycleLabel = currentLang === 'en' ? 'Life cycle' : 'Cycle de vie';
+      const classLabel = currentLang === 'en' ? 'Class' : 'Classe';
+      const diagnosisLabel = currentLang === 'en' ? 'Diagnosis' : 'Diagnostic';
+      const treatmentLabel = currentLang === 'en' ? 'Treatment' : 'Traitement';
+      const geoLabel = currentLang === 'en' ? 'Geographic distribution' : 'Répartition géographique';
+      const eosinoLabel = currentLang === 'en' ? 'Eosinophilia' : 'Hyperéosinophilie';
+
       const clues = [
-        `Indication: ${drug.indications.substring(0, 60)}`,
-        `Route: ${drug.route}`,
-        `Mechanism: ${drug.mechanism.substring(0, 70)}`,
-        `Class: ${drug.therapeuticClass}`,
-        `Side Effect: ${drug.sideEffects[0] || 'Unknown'}`,
-        `Metabolism: ${drug.metabolism}`,
-        `Elimination: ${drug.elimination}`,
-        `Half-life: ${drug.halfLife}`
+        `${clinicalLabel}: ${organism.clinicalManifestations[lang][0]}`,
+        `${transmissionLabel}: ${organism.transmission[lang]}`,
+        `${lifecycleLabel}: ${organism.lifecycle[lang].substring(0, 70)}...`,
+        `${classLabel}: ${organism.class[lang]}`,
+        `${diagnosisLabel}: ${organism.diagnosis[lang].substring(0, 60)}...`,
+        `${treatmentLabel}: ${organism.treatment[lang].substring(0, 60)}...`,
+        `${geoLabel}: ${organism.geographicDistribution[lang]}`,
+        `${eosinoLabel}: ${organism.eosinophilia ? (currentLang === 'en' ? 'Yes' : 'Oui') : (currentLang === 'en' ? 'No' : 'Non')}`
       ];
       setAllClues(clues);
       setRevealedCluesCount(1);
     }
-  }, [drugs, selectedClass, gameMode]);
+  }, [organisms, selectedClass, selectedLessons, gameMode, currentLang]);
 
   const buildChoices = () => {
-    const others = pool.filter(d => d !== hiddenDrug);
-    const wrongOptions = shuffle(others).slice(0, 3).map(d =>
-      currentLang === 'en' ? d.names.en : d.names.fr
+    const others = pool.filter(o => o !== hiddenOrganism);
+    const wrongOptions = shuffle(others).slice(0, 3).map(o =>
+      currentLang === 'en' ? o.names.en : o.names.fr
     );
-    const correctOption = currentLang === 'en' ? hiddenDrug.names.en : hiddenDrug.names.fr;
+    const correctOption = currentLang === 'en' ? hiddenOrganism.names.en : hiddenOrganism.names.fr;
     setChoices(shuffle([correctOption, ...wrongOptions]));
   };
 
@@ -56,8 +73,8 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
     const xpEarned = correct ? Math.max(score - 300, 0) : 0;
     onGameEnd({
       correct,
-      drugName: hiddenDrug.names.en,
-      drugClass: hiddenDrug.therapeuticClass,
+      drugName: hiddenOrganism.names.en,
+      drugClass: hiddenOrganism.class[lang],
       score,
       xpEarned,
       cluesUsed
@@ -65,9 +82,9 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
   };
 
   const handleGuess = () => {
-    if (!guess.trim() || !hiddenDrug) return;
+    if (!guess.trim() || !hiddenOrganism) return;
 
-    const isCorrect = checkGuess(guess, hiddenDrug);
+    const isCorrect = checkGuess(guess, hiddenOrganism);
 
     if (isCorrect) {
       finishGame(true, revealedCluesCount);
@@ -81,13 +98,12 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
     if (revealedCluesCount < allClues.length) {
       setRevealedCluesCount(revealedCluesCount + 1);
     } else {
-      // Tous les indices ont été révélés et la réponse est fausse → choix multiples
       buildChoices();
     }
   };
 
   const handleChoiceClick = (choice) => {
-    const isCorrect = checkGuess(choice, hiddenDrug);
+    const isCorrect = checkGuess(choice, hiddenOrganism);
     finishGame(isCorrect, allClues.length);
   };
 
@@ -95,11 +111,17 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
     finishGame(false, revealedCluesCount);
   };
 
-  if (!hiddenDrug) {
+  if (!hiddenOrganism) {
     return <div style={styles.loading}>{currentLang === 'en' ? 'Loading game...' : 'Chargement du jeu...'}</div>;
   }
 
   const revealedClues = allClues.slice(0, revealedCluesCount);
+
+  const modeLabel = gameMode === 'blind'
+    ? '🔍 Blind'
+    : gameMode === 'byLesson'
+      ? (currentLang === 'en' ? '📖 By Lesson' : '📖 Par Leçon')
+      : '📚 Focused';
 
   return (
     <div style={styles.container}>
@@ -107,9 +129,9 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
-        <h2 style={styles.gameTitle}>🧪 Pharmacology Lab</h2>
+        <h2 style={styles.gameTitle}>🦠 Parasitology Lab</h2>
         <div style={styles.modeIndicator}>
-          {gameMode === 'blind' ? '🔍 Blind' : '📚 Focused'}
+          {modeLabel}
         </div>
       </div>
 
@@ -118,7 +140,7 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
           {choices ? (
             <>
               <h3 style={styles.guessTitle}>
-                {currentLang === 'en' ? 'Choose the correct drug:' : 'Choisissez le bon médicament:'}
+                {currentLang === 'en' ? 'Choose the correct organism:' : 'Choisissez le bon organisme:'}
               </h3>
               <div style={styles.choicesGrid}>
                 {choices.map((choice, idx) => (
@@ -131,14 +153,14 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
           ) : (
             <>
               <h3 style={styles.guessTitle}>
-                {currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?'}
+                {currentLang === 'en' ? 'What organism is it?' : 'Quel organisme est-ce?'}
               </h3>
               <input
                 type="text"
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-                placeholder={currentLang === 'en' ? 'Enter drug name...' : 'Entrez le nom du médicament...'}
+                placeholder={currentLang === 'en' ? 'Enter organism name...' : "Entrez le nom de l'organisme..."}
                 style={styles.guessInput}
               />
               <button style={styles.submitButton} onClick={handleGuess}>
@@ -165,6 +187,7 @@ const PharmaGame = ({ drugs, selectedClass, gameMode, onGameEnd, onBack, current
               </div>
             ))}
           </div>
+
           <div style={styles.clueButtonsSection}>
             <button style={styles.giveUpButton} onClick={handleGiveUp}>
               🚪 {currentLang === 'en' ? 'Give Up' : 'Abandonner'}
@@ -235,4 +258,4 @@ const styles = {
   }
 };
 
-export default PharmaGame;
+export default ParasiteGame;

@@ -27,11 +27,15 @@ const ENTITY_LABELS = {
 // Matières qui ont un ClassSelector + Directory dédiés (donc Focused/Étude disponibles)
 const SUBJECTS_WITH_FOCUSED_AND_STUDY = ['pharmacology_new', 'parasitology'];
 
+// Matières qui ont un mode "par leçon" (LessonSelector dédié)
+const SUBJECTS_WITH_LESSON_MODE = ['parasitology'];
+
 const ModeSelector = ({ onSelectMode, onBack, onGoHome, onGoYear, currentLang, userName, onStats, theme, selectedYear, selectedSubject }) => {
   const entity = ENTITY_LABELS[selectedSubject] || ENTITY_LABELS.pharmacology_new;
   const entityWord = currentLang === 'en' ? entity.en : entity.fr;
   const entityPlural = currentLang === 'en' ? entity.enPlural : entity.frPlural;
   const hasFocusedAndStudy = SUBJECTS_WITH_FOCUSED_AND_STUDY.includes(selectedSubject);
+  const hasLessonMode = SUBJECTS_WITH_LESSON_MODE.includes(selectedSubject);
 
   const modes = [
     {
@@ -51,6 +55,15 @@ const ModeSelector = ({ onSelectMode, onBack, onGoHome, onGoYear, currentLang, u
       enDesc: hasFocusedAndStudy ? 'Choose a category first, then guess' : 'Coming soon for this subject',
       frDesc: hasFocusedAndStudy ? 'Choisissez une catégorie d\'abord, puis devinez' : 'Bientôt disponible pour cette matière',
       available: hasFocusedAndStudy
+    },
+    {
+      id: 'byLesson',
+      icon: '🗂️',
+      enName: 'Lesson Files',
+      frName: 'Dossiers par Leçon',
+      enDesc: hasLessonMode ? 'Pick one or several lessons and test yourself' : 'Coming soon for this subject',
+      frDesc: hasLessonMode ? 'Choisissez une ou plusieurs leçons et testez-vous' : 'Bientôt disponible pour cette matière',
+      available: hasLessonMode
     },
     {
       id: 'studyMode',

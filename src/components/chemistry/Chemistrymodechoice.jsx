@@ -1,7 +1,7 @@
 import React from 'react';
-import Logo from './Logo';
-import BackButton from './BackButton';
-import Breadcrumb from './Breadcrumb';
+import Logo from '../Logo';
+import BackButton from '../BackButton';
+import Breadcrumb from '../Breadcrumb';
 
 // Second step: given a targetType ('group' | 'molecule') already chosen on the Hub,
 // let the player pick Open Investigation (random, all lessons) or Targeted Search

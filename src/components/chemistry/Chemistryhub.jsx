@@ -1,7 +1,7 @@
 import React from 'react';
-import Logo from './Logo';
-import BackButton from './BackButton';
-import Breadcrumb from './Breadcrumb';
+import Logo from '../Logo';
+import BackButton from '../BackButton';
+import Breadcrumb from '../Breadcrumb';
 
 // Landing screen for the Chimie Thérapeutique subject.
 // Lets the player choose what they want to guess (structural group vs molecule)

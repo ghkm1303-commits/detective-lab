@@ -1,7 +1,7 @@
 import React from 'react';
-import Logo from './Logo';
-import BackButton from './BackButton';
-import Breadcrumb from './Breadcrumb';
+import Logo from '../Logo';
+import BackButton from '../BackButton';
+import Breadcrumb from '../Breadcrumb';
 
 // Lets the player pick a lesson (category) before a Targeted Search guessing round.
 const ChemistryLessonSelector = ({ data, targetType, onSelectLesson, onBack, currentLang, userName, onStats, theme }) => {

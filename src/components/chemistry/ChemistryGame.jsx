@@ -1,64 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { checkGuess } from '../utils/gameLogic';
-
-const pickRandomOrganism = (list) => list[Math.floor(Math.random() * list.length)];
+import { checkGuess } from '../../utils/gameLogic';
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
 
-const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, currentLang }) => {
-  const [hiddenOrganism, setHiddenOrganism] = useState(null);
-  const [pool, setPool] = useState([]);
+// gameMode: 'therapeuticClass' | 'medication' | 'combined'
+const ChemistryGame = ({ classes, drugs, gameMode, selectedClassIds, onGameEnd, onBack, currentLang }) => {
+  const [questionType, setQuestionType] = useState(null); // 'class' | 'drug'
+  const [hiddenItem, setHiddenItem] = useState(null);
+  const [choicePool, setChoicePool] = useState([]);
   const [allClues, setAllClues] = useState([]);
   const [revealedCluesCount, setRevealedCluesCount] = useState(1);
   const [guess, setGuess] = useState('');
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [choices, setChoices] = useState(null);
 
-  const lang = currentLang === 'fr' ? 'fr' : 'en';
+  const relevantClasses = selectedClassIds && selectedClassIds.length > 0
+    ? classes.filter(c => selectedClassIds.includes(c.id))
+    : classes;
+
+  const startRound = () => {
+    let type;
+    if (gameMode === 'therapeuticClass') type = 'class';
+    else if (gameMode === 'medication') type = 'drug';
+    else type = Math.random() < 0.5 ? 'class' : 'drug';
+
+    setChoices(null);
+    setWrongGuesses(0);
+    setQuestionType(type);
+
+    if (type === 'class') {
+      const pool = relevantClasses;
+      if (pool.length === 0) { setHiddenItem(null); return; }
+      const item = pickRandom(pool);
+      setHiddenItem(item);
+      setChoicePool(pool);
+      setAllClues(item.clues || []);
+    } else {
+      const relevantDrugs = drugs.filter(d => relevantClasses.some(c => c.id === d.classId));
+      if (relevantDrugs.length === 0) { setHiddenItem(null); return; }
+      const item = pickRandom(relevantDrugs);
+      const sameClassDrugs = drugs.filter(d => d.classId === item.classId);
+      setHiddenItem(item);
+      setChoicePool(sameClassDrugs);
+      setAllClues(item.clues || []);
+    }
+    setRevealedCluesCount(1);
+  };
 
   useEffect(() => {
-    let filteredPool = organisms.filter(o => o.category !== 'entomology' && o.category !== 'overview');
-    if (selectedClass) {
-      filteredPool = filteredPool.filter(o => o.category === selectedClass);
-    }
-
-    if (filteredPool.length > 0) {
-      const organism = pickRandomOrganism(filteredPool);
-      setHiddenOrganism(organism);
-      setPool(filteredPool);
-      setChoices(null);
-      setWrongGuesses(0);
-
-      const clinicalLabel = currentLang === 'en' ? 'Clinical' : 'Clinique';
-      const transmissionLabel = currentLang === 'en' ? 'Transmission' : 'Transmission';
-      const lifecycleLabel = currentLang === 'en' ? 'Life cycle' : 'Cycle de vie';
-      const classLabel = currentLang === 'en' ? 'Class' : 'Classe';
-      const diagnosisLabel = currentLang === 'en' ? 'Diagnosis' : 'Diagnostic';
-      const treatmentLabel = currentLang === 'en' ? 'Treatment' : 'Traitement';
-      const geoLabel = currentLang === 'en' ? 'Geographic distribution' : 'Répartition géographique';
-      const eosinoLabel = currentLang === 'en' ? 'Eosinophilia' : 'Hyperéosinophilie';
-
-      const clues = [
-        `${clinicalLabel}: ${organism.clinicalManifestations[lang][0]}`,
-        `${transmissionLabel}: ${organism.transmission[lang]}`,
-        `${lifecycleLabel}: ${organism.lifecycle[lang].substring(0, 70)}...`,
-        `${classLabel}: ${organism.class[lang]}`,
-        `${diagnosisLabel}: ${organism.diagnosis[lang].substring(0, 60)}...`,
-        `${treatmentLabel}: ${organism.treatment[lang].substring(0, 60)}...`,
-        `${geoLabel}: ${organism.geographicDistribution[lang]}`,
-        `${eosinoLabel}: ${organism.eosinophilia ? (currentLang === 'en' ? 'Yes' : 'Oui') : (currentLang === 'en' ? 'No' : 'Non')}`
-      ];
-      setAllClues(clues);
-      setRevealedCluesCount(1);
-    }
-  }, [organisms, selectedClass, gameMode, currentLang]);
+    startRound();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classes, drugs, gameMode, selectedClassIds]);
 
   const buildChoices = () => {
-    const others = pool.filter(o => o !== hiddenOrganism);
-    const wrongOptions = shuffle(others).slice(0, 3).map(o =>
-      currentLang === 'en' ? o.names.en : o.names.fr
+    const others = choicePool.filter(x => x !== hiddenItem);
+    const wrongOptions = shuffle(others).slice(0, 3).map(x =>
+      currentLang === 'en' ? x.names.en : x.names.fr
     );
-    const correctOption = currentLang === 'en' ? hiddenOrganism.names.en : hiddenOrganism.names.fr;
+    const correctOption = currentLang === 'en' ? hiddenItem.names.en : hiddenItem.names.fr;
     setChoices(shuffle([correctOption, ...wrongOptions]));
   };
 
@@ -67,8 +67,8 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
     const xpEarned = correct ? Math.max(score - 300, 0) : 0;
     onGameEnd({
       correct,
-      drugName: hiddenOrganism.names.en,
-      drugClass: hiddenOrganism.class[lang],
+      drugName: hiddenItem.names.en,
+      drugClass: questionType === 'class' ? hiddenItem.names.en : hiddenItem.classId,
       score,
       xpEarned,
       cluesUsed
@@ -76,17 +76,15 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
   };
 
   const handleGuess = () => {
-    if (!guess.trim() || !hiddenOrganism) return;
-
-    const isCorrect = checkGuess(guess, hiddenOrganism);
+    if (!guess.trim() || !hiddenItem) return;
+    const isCorrect = checkGuess(guess, hiddenItem);
 
     if (isCorrect) {
       finishGame(true, revealedCluesCount);
       return;
     }
 
-    const newWrongCount = wrongGuesses + 1;
-    setWrongGuesses(newWrongCount);
+    setWrongGuesses(w => w + 1);
     setGuess('');
 
     if (revealedCluesCount < allClues.length) {
@@ -97,7 +95,7 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
   };
 
   const handleChoiceClick = (choice) => {
-    const isCorrect = checkGuess(choice, hiddenOrganism);
+    const isCorrect = checkGuess(choice, hiddenItem);
     finishGame(isCorrect, allClues.length);
   };
 
@@ -105,11 +103,28 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
     finishGame(false, revealedCluesCount);
   };
 
-  if (!hiddenOrganism) {
-    return <div style={styles.loading}>{currentLang === 'en' ? 'Loading game...' : 'Chargement du jeu...'}</div>;
+  if (!hiddenItem) {
+    return (
+      <div style={styles.loading}>
+        <button style={styles.backButton} onClick={onBack}>
+          ← {currentLang === 'en' ? 'Back' : 'Retour'}
+        </button>
+        <p style={{ marginTop: '20px' }}>
+          {currentLang === 'en'
+            ? 'No data added yet for this selection.'
+            : "Aucune donnée n'a encore été ajoutée pour cette sélection."}
+        </p>
+      </div>
+    );
   }
 
   const revealedClues = allClues.slice(0, revealedCluesCount);
+  const questionLabel = questionType === 'class'
+    ? (currentLang === 'en' ? 'What therapeutic class is it?' : 'Quelle classe thérapeutique est-ce?')
+    : (currentLang === 'en' ? 'What drug is it?' : 'Quel médicament est-ce?');
+  const chooseLabel = questionType === 'class'
+    ? (currentLang === 'en' ? 'Choose the correct class:' : 'Choisissez la bonne classe:')
+    : (currentLang === 'en' ? 'Choose the correct drug:' : 'Choisissez le bon médicament:');
 
   return (
     <div style={styles.container}>
@@ -117,9 +132,9 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
         <button style={styles.backButton} onClick={onBack}>
           ← {currentLang === 'en' ? 'Back' : 'Retour'}
         </button>
-        <h2 style={styles.gameTitle}>🦠 Parasitology Lab</h2>
+        <h2 style={styles.gameTitle}>💊 Chimie Thérapeutique Lab</h2>
         <div style={styles.modeIndicator}>
-          {gameMode === 'blind' ? '🔍 Blind' : '📚 Focused'}
+          {questionType === 'class' ? '🧬 Classe' : '💊 Médicament'}
         </div>
       </div>
 
@@ -127,9 +142,7 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
         <div style={styles.guessSection}>
           {choices ? (
             <>
-              <h3 style={styles.guessTitle}>
-                {currentLang === 'en' ? 'Choose the correct organism:' : 'Choisissez le bon organisme:'}
-              </h3>
+              <h3 style={styles.guessTitle}>{chooseLabel}</h3>
               <div style={styles.choicesGrid}>
                 {choices.map((choice, idx) => (
                   <button key={idx} style={styles.choiceButton} onClick={() => handleChoiceClick(choice)}>
@@ -140,15 +153,13 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
             </>
           ) : (
             <>
-              <h3 style={styles.guessTitle}>
-                {currentLang === 'en' ? 'What organism is it?' : 'Quel organisme est-ce?'}
-              </h3>
+              <h3 style={styles.guessTitle}>{questionLabel}</h3>
               <input
                 type="text"
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-                placeholder={currentLang === 'en' ? 'Enter organism name...' : "Entrez le nom de l'organisme..."}
+                placeholder={currentLang === 'en' ? 'Type your answer...' : 'Tapez votre réponse...'}
                 style={styles.guessInput}
               />
               <button style={styles.submitButton} onClick={handleGuess}>
@@ -175,7 +186,6 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
               </div>
             ))}
           </div>
-
           <div style={styles.clueButtonsSection}>
             <button style={styles.giveUpButton} onClick={handleGiveUp}>
               🚪 {currentLang === 'en' ? 'Give Up' : 'Abandonner'}
@@ -189,7 +199,7 @@ const ParasiteGame = ({ organisms, selectedClass, gameMode, onGameEnd, onBack, c
 
 const styles = {
   container: { minHeight: '100vh', padding: '15px', position: 'relative', zIndex: 10 },
-  loading: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontSize: '16px' },
+  loading: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontSize: '16px', padding: '20px', textAlign: 'center' },
   header: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid rgba(22, 124, 128, 0.2)',
@@ -246,4 +256,4 @@ const styles = {
   }
 };
 
-export default ParasiteGame;
+export default ChemistryGame;

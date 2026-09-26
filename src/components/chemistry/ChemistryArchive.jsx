@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
+import ThemeToggle from '../ThemeToggle';
 
 // Reads the lesson-based chemistry.json schema:
 // { lessons: [ { id, order, name_fr, name_en, group_ids:[...] } ],

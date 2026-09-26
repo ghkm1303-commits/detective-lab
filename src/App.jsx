@@ -12,12 +12,13 @@ import StatsPanel from './components/StatsPanel';
 import ModeSelector from './components/ModeSelector';
 import PracticeMode from './components/PracticeMode';
 import ResultScreen from './components/ResultScreen';
-import ParasiteClassSelector from './components/ParasiteClassSelector';
-import ParasiteGame from './components/ParasiteGame';
-import ParasiteDirectory from './components/ParasiteDirectory';
-import PharmaClassSelector from './components/PharmaClassSelector';
-import PharmaGame from './components/PharmaGame';
-import PharmaDirectory from './components/PharmaDirectory';
+import ParasiteClassSelector from './components/parasitology/ParasiteClassSelector';
+import ParasiteGame from './components/parasitology/ParasiteGame';
+import ParasiteDirectory from './components/parasitology/ParasiteDirectory';
+import ParasiteLessonSelector from './components/parasitology/ParasiteLessonSelector';
+import PharmaClassSelector from './components/pharmacology/PharmaClassSelector';
+import PharmaGame from './components/pharmacology/PharmaGame';
+import PharmaDirectory from './components/pharmacology/PharmaDirectory';
 import parasitesData from './data/parasites.json';
 import pharmaV2Data from './data/pharmacology_drugs_v2.json';
 import './App.css';
@@ -40,6 +41,7 @@ export default function App() {
   const [parasites] = useState(parasitesData.organisms);
   const [pharmaV2Drugs] = useState(pharmaV2Data.drugs);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedLessons, setSelectedLessons] = useState([]);
   const [gameMode, setGameMode] = useState(null);
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -225,11 +227,20 @@ export default function App() {
       setScreen('classSelector');
     } else if (mode === 'studyMode') {
       setScreen('drugDirectory');
+    } else if (mode === 'byLesson') {
+      setGameMode('byLesson');
+      setSelectedClass(null);
+      setScreen('lessonSelector');
     }
   };
 
   const handleClassSelect = (className) => {
     setSelectedClass(className);
+    setScreen('mainGame');
+  };
+
+  const handleLessonsSelected = (lessonIds) => {
+    setSelectedLessons(lessonIds);
     setScreen('mainGame');
   };
 
@@ -242,6 +253,7 @@ export default function App() {
   const handleBackToMode = () => {
     setScreen('modeSelector');
     setSelectedClass(null);
+    setSelectedLessons([]);
     setGameMode(null);
     setGameResult(null);
   };
@@ -251,9 +263,20 @@ export default function App() {
     setGameMode(null);
   };
 
+  const handleBackFromLessonSelector = () => {
+    setScreen('modeSelector');
+    setGameMode(null);
+  };
+
   const handlePlayAgain = () => {
     setGameResult(null);
-    setScreen(gameMode === 'focused' ? 'classSelector' : 'mainGame');
+    if (gameMode === 'focused') {
+      setScreen('classSelector');
+    } else if (gameMode === 'byLesson') {
+      setScreen('lessonSelector');
+    } else {
+      setScreen('mainGame');
+    }
   };
 
   return (
@@ -299,9 +322,17 @@ export default function App() {
           theme={theme} onThemeChange={handleThemeChange}
         />
       )}
+      {screen === 'lessonSelector' && selectedSubject === 'parasitology' && (
+        <ParasiteLessonSelector
+          organisms={parasites}
+          onStart={handleLessonsSelected}
+          onBack={handleBackFromLessonSelector}
+          currentLang={currentLang} userName={userName} onStats={() => setScreen('stats')}
+        />
+      )}
       {screen === 'mainGame' && selectedSubject === 'parasitology' && (
         <ParasiteGame
-          organisms={parasites} selectedClass={selectedClass} gameMode={gameMode}
+          organisms={parasites} selectedClass={selectedClass} selectedLessons={selectedLessons} gameMode={gameMode}
           onGameEnd={handleGameEnd} onBack={handleBackToMode} currentLang={currentLang}
         />
       )}

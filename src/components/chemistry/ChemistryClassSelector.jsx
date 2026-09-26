@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Logo from './Logo';
-import BackButton from './BackButton';
-import Breadcrumb from './Breadcrumb';
+import Logo from '../Logo';
+import BackButton from '../BackButton';
+import Breadcrumb from '../Breadcrumb';
 
 const ChemistryClassSelector = ({ classes, multiSelect, onConfirm, onBack, onGoHome, currentLang, userName, onStats, theme }) => {
   const [selectedIds, setSelectedIds] = useState([]);
