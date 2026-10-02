@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import BackButton from './BackButton';
+import BackButton from '../BackButton';
 
 // Builds a pool of guessable targets from the new lesson-based schema.
 // targetType: 'group' -> guess the structural group ; 'molecule' -> guess the molecule (DCI)

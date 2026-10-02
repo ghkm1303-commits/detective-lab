@@ -1,69 +1,59 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase-config';
 
-export async function getSubscriptionStatus(uid) {
+// Statuts possibles : 'none' (aucune demande) | 'pending' | 'active' | 'denied' | 'error'
+export async function getAccessStatus(uid) {
   try {
-    const ref = doc(db, 'subscriptions', uid);
-    const snap = await getDoc(ref);
+    const snap = await getDoc(doc(db, 'subscriptions', uid));
     if (!snap.exists()) return { status: 'none' };
-
-    const data = snap.data();
-    const now = Date.now();
-
-    if (data.status === 'active' && data.expiresAt && data.expiresAt > now) {
-      return { status: 'active', expiresAt: data.expiresAt, plan: data.plan };
-    }
-    if (data.status === 'pending') {
-      return { status: 'pending', submittedAt: data.submittedAt, plan: data.plan };
-    }
-    return { status: 'none' };
+    const status = snap.data().status;
+    if (status === 'active' || status === 'denied') return { status };
+    return { status: 'pending' };
   } catch (error) {
-    console.error('Error checking subscription:', error);
-    return { status: 'none' };
+    console.error('Error checking access:', error);
+    return { status: 'error' };
   }
 }
 
-// Called when the player clicks "I've sent the payment"
-export async function submitPaymentConfirmation(uid, userName, plan) {
+// Appelée automatiquement quand un nouveau compte se connecte pour la première fois
+export async function requestAccess(uid, userName, email) {
   try {
-    const ref = doc(db, 'subscriptions', uid);
-    await setDoc(ref, {
+    await setDoc(doc(db, 'subscriptions', uid), {
       status: 'pending',
       userName,
-      plan: plan.id,
-      durationDays: plan.durationDays,
-      price: plan.price,
-      submittedAt: Date.now()
+      email,
+      requestedAt: Date.now()
     });
     return { success: true };
   } catch (error) {
-    console.error('Error submitting payment confirmation:', error);
+    console.error('Error requesting access:', error);
     return { success: false };
   }
 }
 
-// You call this MANUALLY (via Firebase console, editing the document directly,
-// or a small admin script) once you've verified the BaridiMob transfer.
-export async function approveSubscription(uid) {
+// Appelées depuis le panneau admin (réservées à ton compte par les règles Firestore)
+export async function grantAccess(uid) {
   try {
-    const ref = doc(db, 'subscriptions', uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return { success: false };
-
-    const data = snap.data();
-    const now = Date.now();
-    const durationMs = (data.durationDays || 30) * 24 * 60 * 60 * 1000;
-
-    await setDoc(ref, {
-      ...data,
+    await updateDoc(doc(db, 'subscriptions', uid), {
       status: 'active',
-      activatedAt: now,
-      expiresAt: now + durationMs
+      reviewedAt: Date.now()
     });
-
     return { success: true };
   } catch (error) {
-    console.error('Error approving subscription:', error);
+    console.error('Error granting access:', error);
+    return { success: false };
+  }
+}
+
+export async function denyAccess(uid) {
+  try {
+    await updateDoc(doc(db, 'subscriptions', uid), {
+      status: 'denied',
+      reviewedAt: Date.now()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error denying access:', error);
     return { success: false };
   }
 }

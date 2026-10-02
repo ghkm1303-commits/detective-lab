@@ -1,4 +1,5 @@
 import React from 'react';
+import BackButton from '../BackButton';
 
 const ParasiteClassSelector = ({ onSelectClass, onBack, currentLang, userName, onStats }) => {
   const categories = [
@@ -10,9 +11,7 @@ const ParasiteClassSelector = ({ onSelectClass, onBack, currentLang, userName, o
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <BackButton onClick={onBack} />
         <div style={styles.rightGroup}>
           <button onClick={onStats} className="user-button">
             👤 {userName}

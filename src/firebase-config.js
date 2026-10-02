@@ -20,7 +20,9 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize services used across the app
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Named database "default" (the one created in the console)
+export const db = getFirestore(app, '(default)');
 
 // Analytics (only works in the browser, not during server-side rendering)
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;

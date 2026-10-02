@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
 
-const PendingConfirmationPage = ({ userName, plan, onCheckAgain, onLogout, currentLang }) => {
+const PendingConfirmationPage = ({ userName, status, onCheckAgain, onLogout, currentLang }) => {
   const [checking, setChecking] = useState(false);
+  const denied = status === 'denied';
 
   const handleCheck = async () => {
     setChecking(true);
@@ -23,28 +24,38 @@ const PendingConfirmationPage = ({ userName, plan, onCheckAgain, onLogout, curre
       </div>
 
       <div style={styles.content}>
-        <div style={styles.iconCircle}>⏳</div>
+        <div style={styles.iconCircle}>{denied ? '🚫' : '⏳'}</div>
 
         <h1 style={styles.title}>
-          {currentLang === 'en' ? 'Payment Under Review' : 'Paiement en Cours de Vérification'}
+          {denied
+            ? (currentLang === 'en' ? 'Access Denied' : 'Accès Refusé')
+            : (currentLang === 'en' ? 'Waiting for Approval' : "En Attente d'Approbation")}
         </h1>
 
         <p style={styles.text}>
-          {currentLang === 'en'
-            ? `Thanks, ${userName}! We've received your confirmation for the ${plan || 'selected'} plan.`
-            : `Merci, ${userName} ! Nous avons bien reçu ta confirmation pour la formule ${plan || 'sélectionnée'}.`}
+          {denied
+            ? (currentLang === 'en'
+                ? `Sorry ${userName}, your access request was not approved.`
+                : `Désolé ${userName}, ta demande d'accès n'a pas été approuvée.`)
+            : (currentLang === 'en'
+                ? `Thanks for signing up, ${userName}! Your access request has been sent.`
+                : `Merci pour ton inscription, ${userName} ! Ta demande d'accès a bien été envoyée.`)}
         </p>
-        <p style={styles.text}>
-          {currentLang === 'en'
-            ? 'Your account will be activated within 24h after we verify your BaridiMob transfer.'
-            : 'Ton compte sera activé sous 24h après vérification de ton virement BaridiMob.'}
-        </p>
+        {!denied && (
+          <p style={styles.text}>
+            {currentLang === 'en'
+              ? 'You will be able to play as soon as it is approved.'
+              : 'Tu pourras jouer dès qu\'elle sera approuvée.'}
+          </p>
+        )}
 
-        <button style={styles.checkButton} onClick={handleCheck} disabled={checking}>
-          {checking
-            ? (currentLang === 'en' ? 'Checking...' : 'Vérification...')
-            : (currentLang === 'en' ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
-        </button>
+        {!denied && (
+          <button style={styles.checkButton} onClick={handleCheck} disabled={checking}>
+            {checking
+              ? (currentLang === 'en' ? 'Checking...' : 'Vérification...')
+              : (currentLang === 'en' ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
+          </button>
+        )}
       </div>
     </div>
   );

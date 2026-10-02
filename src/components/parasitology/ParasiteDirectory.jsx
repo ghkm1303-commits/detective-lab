@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import BackButton from '../BackButton';
 
 const ParasiteDirectory = ({ organisms, onBack, currentLang, userName, onStats }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -20,9 +21,7 @@ const ParasiteDirectory = ({ organisms, onBack, currentLang, userName, onStats }
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <BackButton onClick={onBack} />
         <div style={styles.rightGroup}>
           <button onClick={onStats} className="user-button">
             👤 {userName}

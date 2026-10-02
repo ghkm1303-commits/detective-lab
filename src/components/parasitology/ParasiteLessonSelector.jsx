@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import BackButton from '../BackButton';
 
 // Noms connus des leçons (confirmés par Ghada). Les leçons absentes de cette liste
 // (actuellement 16 à 26, Mycologie) auront un nom déduit automatiquement des données
@@ -79,9 +80,7 @@ const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang, userN
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button className="back-button" onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <BackButton onClick={onBack} />
         <div style={styles.rightGroup}>
           <button onClick={onStats} className="user-button">
             👤 {userName}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchFeatureRequests, fetchPendingSubscriptions } from '../utils/admin';
-import { approveSubscription } from '../utils/subscription';
+import { grantAccess, denyAccess } from '../utils/subscription';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import './AdminPanel.css';
@@ -11,7 +11,7 @@ const AdminPanel = ({ onBack, currentLang, theme }) => {
   const [pendingSubs, setPendingSubs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [approvingUid, setApprovingUid] = useState(null);
+  const [busyUid, setBusyUid] = useState(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -34,21 +34,34 @@ const AdminPanel = ({ onBack, currentLang, theme }) => {
     loadData();
   }, [loadData]);
 
-  const handleApprove = async (uid) => {
-    setApprovingUid(uid);
-    const result = await approveSubscription(uid);
+  const handleDecision = async (uid, decision) => {
+    setBusyUid(uid);
+    const result = decision === 'grant' ? await grantAccess(uid) : await denyAccess(uid);
     if (result.success) {
       setPendingSubs(prev => prev.filter(s => s.uid !== uid));
     } else {
-      alert(currentLang === 'en' ? 'Failed to approve subscription.' : "Échec de l'approbation de l'abonnement.");
+      alert(currentLang === 'en' ? 'Action failed. Please try again.' : "Échec de l'action. Réessaie.");
     }
-    setApprovingUid(null);
+    setBusyUid(null);
   };
 
   const formatDate = (value) => {
     if (!value) return '';
     if (value.toDate) return value.toDate().toLocaleString();
     return new Date(value).toLocaleString();
+  };
+
+  const denyButtonStyle = {
+    marginLeft: '10px',
+    padding: '8px 16px',
+    background: 'rgba(230, 57, 70, 0.1)',
+    border: '2px solid #E63946',
+    color: '#FF6B7A',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: '600'
   };
 
   return (
@@ -70,7 +83,7 @@ const AdminPanel = ({ onBack, currentLang, theme }) => {
             className={`admin-tab ${activeTab === 'subscriptions' ? 'admin-tab-active' : ''}`}
             onClick={() => setActiveTab('subscriptions')}
           >
-            {currentLang === 'en' ? 'Subscriptions' : 'Abonnements'} ({pendingSubs.length})
+            {currentLang === 'en' ? 'Access requests' : "Demandes d'accès"} ({pendingSubs.length})
           </button>
           <button
             className={`admin-tab ${activeTab === 'messages' ? 'admin-tab-active' : ''}`}
@@ -87,27 +100,34 @@ const AdminPanel = ({ onBack, currentLang, theme }) => {
           <div className="admin-list">
             {pendingSubs.length === 0 && (
               <p className="admin-empty">
-                {currentLang === 'en' ? 'No pending subscriptions.' : 'Aucun abonnement en attente.'}
+                {currentLang === 'en' ? 'No pending access requests.' : "Aucune demande d'accès en attente."}
               </p>
             )}
             {pendingSubs.map(sub => (
               <div key={sub.uid} className="admin-card">
                 <div className="admin-card-header">
                   <span className="admin-card-name">{sub.userName || 'Anonyme'}</span>
-                  <span className="admin-card-date">{formatDate(sub.submittedAt)}</span>
+                  <span className="admin-card-date">{formatDate(sub.requestedAt || sub.submittedAt)}</span>
                 </div>
-                <p className="admin-card-message">
-                  {currentLang === 'en' ? 'Plan' : 'Formule'}: <strong>{sub.plan}</strong> — {sub.price}
-                </p>
-                <button
-                  className="admin-approve-btn"
-                  onClick={() => handleApprove(sub.uid)}
-                  disabled={approvingUid === sub.uid}
-                >
-                  {approvingUid === sub.uid
-                    ? (currentLang === 'en' ? 'Approving...' : 'Approbation...')
-                    : `✓ ${currentLang === 'en' ? 'Approve' : 'Approuver'}`}
-                </button>
+                <p className="admin-card-message">{sub.email || ''}</p>
+                <div>
+                  <button
+                    className="admin-approve-btn"
+                    onClick={() => handleDecision(sub.uid, 'grant')}
+                    disabled={busyUid === sub.uid}
+                  >
+                    {busyUid === sub.uid
+                      ? '...'
+                      : `✓ ${currentLang === 'en' ? 'Give access' : "Donner l'accès"}`}
+                  </button>
+                  <button
+                    style={denyButtonStyle}
+                    onClick={() => handleDecision(sub.uid, 'deny')}
+                    disabled={busyUid === sub.uid}
+                  >
+                    ✕ {currentLang === 'en' ? 'Deny' : 'Refuser'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>

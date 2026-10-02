@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { checkGuess } from '../../utils/gameLogic';
+import BackButton from '../BackButton';
 
 const pickRandomOrganism = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -126,9 +127,7 @@ const ParasiteGame = ({ organisms, selectedClass, selectedLessons, gameMode, onG
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={onBack}>
-          ← {currentLang === 'en' ? 'Back' : 'Retour'}
-        </button>
+        <BackButton onClick={onBack} />
         <h2 style={styles.gameTitle}>🦠 Parasitology Lab</h2>
         <div style={styles.modeIndicator}>
           {modeLabel}
@@ -206,11 +205,6 @@ const styles = {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid rgba(22, 124, 128, 0.2)',
     flexWrap: 'wrap', gap: '10px'
-  },
-  backButton: {
-    padding: '8px 16px', background: 'transparent', border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer',
-    fontFamily: 'inherit', fontSize: '12px', fontWeight: '600'
   },
   gameTitle: { color: '#B89A5A', fontSize: '24px', margin: '0', fontFamily: "'Playfair Display', serif" },
   modeIndicator: {

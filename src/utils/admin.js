@@ -15,11 +15,14 @@ export async function fetchFeatureRequests() {
 }
 
 export async function fetchPendingSubscriptions() {
+  // where + orderBy sur deux champs différents exigerait un index composite Firestore.
+  // On filtre donc côté serveur et on trie côté client (le volume est petit).
   const q = query(
     collection(db, 'subscriptions'),
-    where('status', '==', 'pending'),
-    orderBy('submittedAt', 'desc')
+    where('status', '==', 'pending')
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+  return snapshot.docs
+    .map(doc => ({ uid: doc.id, ...doc.data() }))
+    .sort((a, b) => (b.requestedAt || b.submittedAt || 0) - (a.requestedAt || a.submittedAt || 0));
 }

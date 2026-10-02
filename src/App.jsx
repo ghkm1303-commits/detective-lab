@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase-config';
 import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
-import SubscriptionPage from './components/SubscriptionPage';
 import PendingConfirmationPage from './components/PendingConfirmationPage';
 import SubjectSelector from './components/SubjectSelector';
 import StatsPanel from './components/StatsPanel';
@@ -24,11 +23,12 @@ import pharmaV2Data from './data/pharmacology_drugs_v2.json';
 import './App.css';
 import Logo from './components/Logo';
 import { isAdmin } from './utils/admin';
-import { getSubscriptionStatus, submitPaymentConfirmation } from './utils/subscription';
+import { getAccessStatus, requestAccess } from './utils/subscription';
 
-// Abonnement désactivé temporairement pour le test avec les amis (idée du jeu à valider d'abord).
-// Remettre à true pour réactiver la vérification subStatus / SubscriptionPage / PendingConfirmationPage.
-const SUBSCRIPTION_ENABLED = false;
+// Accès sur approbation : chaque nouveau compte envoie une demande d'accès, que l'admin
+// approuve ou refuse depuis le panneau d'administration.
+// Mettre à false pour désactiver complètement la vérification (accès direct après connexion).
+const SUBSCRIPTION_ENABLED = true;
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -46,9 +46,9 @@ export default function App() {
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
-  // subStatus: null (chargement) | 'none' | 'pending' | 'active'
+  // subStatus: null (chargement) | 'pending' | 'active' | 'denied' | 'error'
   const [subStatus, setSubStatus] = useState(null);
-  const [subPlan, setSubPlan] = useState(null);
+  const checkingUidRef = useRef(null);
 
   useEffect(() => {
     setTheme('dark');
@@ -79,9 +79,22 @@ export default function App() {
       setSubStatus('active');
       return;
     }
-    const result = await getSubscriptionStatus(user.uid);
-    setSubStatus(result.status);
-    setSubPlan(result.plan || null);
+    // Évite deux vérifications simultanées pour le même compte
+    if (checkingUidRef.current === user.uid) return;
+    checkingUidRef.current = user.uid;
+    try {
+      const name = user.displayName || (user.email ? user.email.split('@')[0] : '');
+      let result = await getAccessStatus(user.uid);
+      if (result.status === 'none') {
+        // Premier passage de ce compte : on crée automatiquement sa demande d'accès
+        await requestAccess(user.uid, name, user.email || '');
+        result = await getAccessStatus(user.uid);
+        if (result.status === 'none') result = { status: 'error' };
+      }
+      setSubStatus(result.status);
+    } finally {
+      checkingUidRef.current = null;
+    }
   }, [user]);
 
   useEffect(() => {
@@ -91,16 +104,6 @@ export default function App() {
       checkSubscription();
     }
   }, [user, checkSubscription]);
-
-  const handleSubmitPayment = async (plan) => {
-    const result = await submitPaymentConfirmation(user.uid, userName, plan);
-    if (result.success) {
-      setSubPlan(plan.id);
-      setSubStatus('pending');
-    } else {
-      alert(currentLang === 'en' ? 'Something went wrong. Please try again.' : "Une erreur s'est produite. Réessaie.");
-    }
-  };
 
   if (loading) {
     return (
@@ -133,33 +136,49 @@ export default function App() {
     );
   }
 
-  // ---- Vérification de l'abonnement (désactivée pour l'instant via SUBSCRIPTION_ENABLED) ----
+  // ---- Vérification de l'accès (désactivée si SUBSCRIPTION_ENABLED = false) ----
   if (SUBSCRIPTION_ENABLED) {
     if (subStatus === null) {
       return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px', color: 'var(--text-secondary)' }}>
           <Logo variant="stacked" theme={theme} />
-          {currentLang === 'en' ? 'Checking your subscription...' : 'Vérification de ton abonnement...'}
+          {currentLang === 'en' ? 'Checking your access...' : 'Vérification de ton accès...'}
         </div>
       );
     }
 
-    if (subStatus === 'none') {
+    if (subStatus === 'error') {
       return (
-        <SubscriptionPage
-          onSubmitPayment={handleSubmitPayment}
-          onLogout={() => setUser(null)}
-          currentLang={currentLang}
-          userName={userName}
-        />
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px', color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+          <Logo variant="stacked" theme={theme} />
+          <p style={{ margin: 0 }}>
+            {currentLang === 'en'
+              ? 'Could not reach the database. Please try again.'
+              : 'Impossible de joindre la base de données. Réessaie.'}
+          </p>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)', color: 'var(--bg-obsidian)', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit' }}
+              onClick={() => { setSubStatus(null); checkSubscription(); }}
+            >
+              🔄 {currentLang === 'en' ? 'Retry' : 'Réessayer'}
+            </button>
+            <button
+              style={{ padding: '12px 24px', background: 'rgba(230, 57, 70, 0.1)', border: '2px solid #E63946', color: '#FF6B7A', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}
+              onClick={() => setUser(null)}
+            >
+              🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
+            </button>
+          </div>
+        </div>
       );
     }
 
-    if (subStatus === 'pending') {
+    if (subStatus === 'pending' || subStatus === 'denied') {
       return (
         <PendingConfirmationPage
           userName={userName}
-          plan={subPlan}
+          status={subStatus}
           onCheckAgain={checkSubscription}
           onLogout={() => setUser(null)}
           currentLang={currentLang}
@@ -168,7 +187,7 @@ export default function App() {
     }
   }
 
-  // ---- Accès normal au jeu (abonnement actif, ou vérification désactivée) ----
+  // ---- Accès normal au jeu (accès approuvé, ou vérification désactivée) ----
 
   if (screen === 'dashboard') {
     return (
