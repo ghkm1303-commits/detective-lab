@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import Logo from './Logo';
 import BackButton from './BackButton';
 
-const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) => {
+ // TODO: replace with your real BaridiMob RIP / phone number / link
+  const BARIDIMOB_INFO = {
+    rip: '00799999004165443658',
+  };
+
+
+const SubscriptionPage = ({ onSubmitPayment, onCheckAgain, onLogout, currentLang, userName, reference, mode = 'new' }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [step, setStep] = useState('choose'); // 'choose' | 'instructions'
   const [submitting, setSubmitting] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const en = currentLang === 'en';
 
   const plans = [
     {
@@ -27,18 +35,11 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
       durationDays: 365,
       enDesc: 'Full access for 1 year — best value',
       frDesc: 'Accès complet pendant 1 an — meilleure offre',
-      badge: currentLang === 'en' ? 'BEST VALUE' : 'MEILLEURE OFFRE'
+      badge: en ? 'BEST VALUE' : 'MEILLEURE OFFRE'
     }
   ];
 
   const chosenPlan = plans.find(p => p.id === selectedPlan);
-
-  // TODO: replace with your real BaridiMob RIP / phone number / link
-  const BARIDIMOB_INFO = {
-    rip: '0079999900000000000',
-    phone: '05XX XX XX XX',
-    name: 'Ghada K.'
-  };
 
   const handleConfirmClick = async () => {
     if (!chosenPlan || submitting) return;
@@ -50,13 +51,22 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
     }
   };
 
+  const handleCheck = async () => {
+    setChecking(true);
+    try {
+      await onCheckAgain();
+    } finally {
+      setChecking(false);
+    }
+  };
+
   if (step === 'instructions' && chosenPlan) {
     return (
       <div style={styles.container}>
         <div style={styles.header}>
           <BackButton onClick={() => setStep('choose')} />
           <button style={styles.logoutBtn} onClick={onLogout}>
-            🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
+            🚪 {en ? 'Logout' : 'Déconnexion'}
           </button>
         </div>
 
@@ -64,43 +74,43 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
           <div style={styles.logoWrapper}>
             <Logo variant="stacked" theme="dark" />
           </div>
-          <h1 style={styles.title}>💳 {currentLang === 'en' ? 'Payment Instructions' : 'Instructions de Paiement'}</h1>
+          <h1 style={styles.title}>💳 {en ? 'Payment Instructions' : 'Instructions de Paiement'}</h1>
 
           <div style={styles.summaryCard}>
             <p style={styles.summaryLabel}>
-              {currentLang === 'en' ? 'Selected Plan' : 'Formule Choisie'}
+              {en ? 'Selected Plan' : 'Formule Choisie'}
             </p>
             <p style={styles.summaryValue}>
-              {currentLang === 'en' ? chosenPlan.enName : chosenPlan.frName} — {chosenPlan.price}
+              {en ? chosenPlan.enName : chosenPlan.frName} — {chosenPlan.price}
             </p>
           </div>
 
           <div style={styles.instructionsCard}>
             <h3 style={styles.instructionsTitle}>
-              {currentLang === 'en' ? 'Send payment via BaridiMob to:' : 'Envoyez le paiement via BaridiMob à :'}
+              {en ? 'Send payment via BaridiMob to:' : 'Envoyez le paiement via BaridiMob à :'}
             </h3>
             <div style={styles.infoRow}>
               <span style={styles.infoLabel}>RIP:</span>
               <span style={styles.infoValue}>{BARIDIMOB_INFO.rip}</span>
             </div>
             <div style={styles.infoRow}>
-              <span style={styles.infoLabel}>{currentLang === 'en' ? 'Phone' : 'Téléphone'}:</span>
+              <span style={styles.infoLabel}>{en ? 'Phone' : 'Téléphone'}:</span>
               <span style={styles.infoValue}>{BARIDIMOB_INFO.phone}</span>
             </div>
             <div style={styles.infoRow}>
-              <span style={styles.infoLabel}>{currentLang === 'en' ? 'Name' : 'Nom'}:</span>
+              <span style={styles.infoLabel}>{en ? 'Name' : 'Nom'}:</span>
               <span style={styles.infoValue}>{BARIDIMOB_INFO.name}</span>
             </div>
             <div style={styles.infoRow}>
-              <span style={styles.infoLabel}>{currentLang === 'en' ? 'Amount' : 'Montant'}:</span>
+              <span style={styles.infoLabel}>{en ? 'Amount' : 'Montant'}:</span>
               <span style={styles.infoValueBold}>{chosenPlan.price}</span>
             </div>
 
             <div style={styles.warningBox}>
-              ⚠️ {currentLang === 'en'
-                ? 'Important: include your account username in the transfer note so we can identify your payment.'
-                : "Important : indiquez votre nom d'utilisateur dans la note du virement pour qu'on puisse identifier votre paiement."}
-              <p style={styles.usernameHighlight}>{userName}</p>
+              ⚠️ {en
+                ? 'Important: write this code in the transfer note so we can identify your payment.'
+                : "Important : écrivez ce code dans la note du virement pour qu'on puisse identifier votre paiement."}
+              <p style={styles.usernameHighlight}>{reference}</p>
             </div>
           </div>
 
@@ -110,12 +120,12 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
             disabled={submitting}
           >
             {submitting
-              ? (currentLang === 'en' ? 'Sending...' : 'Envoi...')
-              : (currentLang === 'en' ? "✓ I've Sent the Payment" : "✓ J'ai Envoyé le Paiement")}
+              ? (en ? 'Sending...' : 'Envoi...')
+              : (en ? "✓ I've Sent the Payment" : "✓ J'ai Envoyé le Paiement")}
           </button>
 
           <p style={styles.note}>
-            {currentLang === 'en'
+            {en
               ? 'Your account will be activated within 24h after we verify the payment.'
               : 'Votre compte sera activé sous 24h après vérification du paiement.'}
           </p>
@@ -129,7 +139,7 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
       <div style={styles.header}>
         <div></div>
         <button style={styles.logoutBtn} onClick={onLogout}>
-          🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
+          🚪 {en ? 'Logout' : 'Déconnexion'}
         </button>
       </div>
 
@@ -138,10 +148,14 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
           <Logo variant="stacked" theme="dark" />
         </div>
         <p style={styles.welcome}>
-          {currentLang === 'en' ? `Welcome, ${userName}!` : `Bienvenue, ${userName}!`}
+          {mode === 'renew'
+            ? (en
+                ? `Welcome back, ${userName}! Your access has ended — your account and progress are safe.`
+                : `Content de te revoir, ${userName} ! Ton accès est terminé — ton compte et ta progression sont conservés.`)
+            : (en ? `Welcome, ${userName}!` : `Bienvenue, ${userName}!`)}
         </p>
         <h2 style={styles.subtitle}>
-          {currentLang === 'en' ? 'Choose Your Plan to Continue' : 'Choisissez votre formule pour continuer'}
+          {en ? 'Choose Your Plan to Continue' : 'Choisissez votre formule pour continuer'}
         </h2>
 
         <div style={styles.plansGrid}>
@@ -157,11 +171,11 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
               {plan.badge && <div style={styles.badge}>{plan.badge}</div>}
               <div style={styles.planIcon}>{plan.icon}</div>
               <h3 style={styles.planName}>
-                {currentLang === 'en' ? plan.enName : plan.frName}
+                {en ? plan.enName : plan.frName}
               </h3>
               <p style={styles.planPrice}>{plan.price}</p>
               <p style={styles.planDesc}>
-                {currentLang === 'en' ? plan.enDesc : plan.frDesc}
+                {en ? plan.enDesc : plan.frDesc}
               </p>
             </button>
           ))}
@@ -176,13 +190,22 @@ const SubscriptionPage = ({ onSubmitPayment, onLogout, currentLang, userName }) 
           disabled={!selectedPlan}
           onClick={() => selectedPlan && setStep('instructions')}
         >
-          {currentLang === 'en' ? 'Continue →' : 'Continuer →'}
+          {en ? 'Continue →' : 'Continuer →'}
         </button>
 
         <p style={styles.note}>
-          {currentLang === 'en'
-            ? 'Manual payment via BaridiMob'
-            : 'Paiement manuel via BaridiMob'}
+          {en ? 'Manual payment via BaridiMob' : 'Paiement manuel via BaridiMob'}
+        </p>
+
+        <button style={styles.secondaryButton} onClick={handleCheck} disabled={checking}>
+          {checking
+            ? (en ? 'Checking...' : 'Vérification...')
+            : (en ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
+        </button>
+        <p style={styles.note}>
+          {en
+            ? 'Already approved by the admin? Press Check Status.'
+            : "Déjà approuvé par l'admin ? Appuie sur Vérifier le Statut."}
         </p>
       </div>
     </div>
@@ -244,6 +267,18 @@ const styles = {
     color: 'var(--bg-obsidian)', border: 'none', borderRadius: '8px',
     fontSize: '16px', fontWeight: '700'
   },
+  secondaryButton: {
+    marginTop: '25px',
+    padding: '12px 28px',
+    background: 'transparent',
+    border: '2px solid var(--accent-gold)',
+    color: 'var(--accent-gold)',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    fontFamily: 'inherit'
+  },
   note: { color: 'var(--text-secondary)', fontSize: '12px', marginTop: '15px' },
   summaryCard: {
     background: 'rgba(184, 154, 90, 0.1)', border: '2px solid var(--accent-gold)',
@@ -269,7 +304,7 @@ const styles = {
     border: '1px solid #E63946', borderRadius: '6px', fontSize: '12px', color: 'var(--text-primary)', textAlign: 'center'
   },
   usernameHighlight: {
-    color: 'var(--accent-gold)', fontSize: '18px', fontWeight: '700', margin: '8px 0 0 0'
+    color: 'var(--accent-gold)', fontSize: '22px', fontWeight: '700', margin: '8px 0 0 0', letterSpacing: '3px'
   },
   confirmButton: {
     padding: '16px 40px', width: '100%',

@@ -14,9 +14,8 @@ export async function fetchFeatureRequests() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
+// Demandes d'accès en attente (tri côté client : évite un index composite Firestore)
 export async function fetchPendingSubscriptions() {
-  // where + orderBy sur deux champs différents exigerait un index composite Firestore.
-  // On filtre donc côté serveur et on trie côté client (le volume est petit).
   const q = query(
     collection(db, 'subscriptions'),
     where('status', '==', 'pending')
@@ -25,4 +24,16 @@ export async function fetchPendingSubscriptions() {
   return snapshot.docs
     .map(doc => ({ uid: doc.id, ...doc.data() }))
     .sort((a, b) => (b.requestedAt || b.submittedAt || 0) - (a.requestedAt || a.submittedAt || 0));
+}
+
+// Tous les membres déjà traités : actifs (ou expirés), suspendus, refusés
+export async function fetchMembers() {
+  const q = query(
+    collection(db, 'subscriptions'),
+    where('status', 'in', ['active', 'suspended', 'denied'])
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs
+    .map(doc => ({ uid: doc.id, ...doc.data() }))
+    .sort((a, b) => (b.activatedAt || b.reviewedAt || 0) - (a.activatedAt || a.reviewedAt || 0));
 }

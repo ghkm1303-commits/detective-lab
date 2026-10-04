@@ -26,7 +26,8 @@ import { isAdmin } from './utils/admin';
 import { getAccessStatus, requestAccess } from './utils/subscription';
 
 // Accès sur approbation : chaque nouveau compte envoie une demande d'accès, que l'admin
-// approuve ou refuse depuis le panneau d'administration.
+// approuve ou refuse depuis le panneau d'administration. L'admin choisit la formule
+// (1 mois, 1 an ou gratuit) et peut couper / redonner l'accès depuis l'onglet Membres.
 // Mettre à false pour désactiver complètement la vérification (accès direct après connexion).
 const SUBSCRIPTION_ENABLED = true;
 
@@ -46,7 +47,7 @@ export default function App() {
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
-  // subStatus: null (chargement) | 'pending' | 'active' | 'denied' | 'error'
+  // subStatus: null (chargement) | 'pending' | 'active' | 'expired' | 'suspended' | 'denied' | 'error'
   const [subStatus, setSubStatus] = useState(null);
   const checkingUidRef = useRef(null);
 
@@ -174,7 +175,7 @@ export default function App() {
       );
     }
 
-    if (subStatus === 'pending' || subStatus === 'denied') {
+    if (['pending', 'denied', 'expired', 'suspended'].includes(subStatus)) {
       return (
         <PendingConfirmationPage
           userName={userName}
@@ -187,7 +188,7 @@ export default function App() {
     }
   }
 
-  // ---- Accès normal au jeu (accès approuvé, ou vérification désactivée) ----
+  // ---- Accès normal au jeu (accès actif, ou vérification désactivée) ----
 
   if (screen === 'dashboard') {
     return (

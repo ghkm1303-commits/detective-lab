@@ -1,15 +1,64 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
 
-const PendingConfirmationPage = ({ userName, status, onCheckAgain, onLogout, currentLang }) => {
+const PendingConfirmationPage = ({ userName, status, plan, reference, onCheckAgain, onLogout, currentLang }) => {
   const [checking, setChecking] = useState(false);
-  const denied = status === 'denied';
+  const en = currentLang === 'en';
 
   const handleCheck = async () => {
     setChecking(true);
     await onCheckAgain();
     setChecking(false);
   };
+
+  const planNames = {
+    monthly: en ? '1 Month' : '1 Mois',
+    yearly: en ? '1 Year' : '1 An'
+  };
+  const planText = plan && planNames[plan]
+    ? (en ? ` for the ${planNames[plan]} plan` : ` pour la formule ${planNames[plan]}`)
+    : '';
+
+  const content = {
+    review: {
+      icon: '💳',
+      title: en ? 'Payment Under Review' : 'Paiement en Cours de Vérification',
+      texts: [
+        en
+          ? `Thanks, ${userName}! We've received your payment confirmation${planText}.`
+          : `Merci, ${userName} ! Nous avons bien reçu ta confirmation de paiement${planText}.`,
+        en
+          ? 'Your access will be activated within 24h after we verify your BaridiMob transfer.'
+          : 'Ton accès sera activé sous 24h après vérification de ton virement BaridiMob.'
+      ],
+      canCheck: true
+    },
+    pending: {
+      icon: '⏳',
+      title: en ? 'Waiting for Approval' : "En Attente d'Approbation",
+      texts: [
+        en
+          ? `Thanks for signing up, ${userName}! Your access request has been sent.`
+          : `Merci pour ton inscription, ${userName} ! Ta demande d'accès a bien été envoyée.`,
+        en
+          ? 'You will be able to play as soon as it is approved.'
+          : "Tu pourras jouer dès qu'elle sera approuvée."
+      ],
+      canCheck: true
+    },
+    denied: {
+      icon: '🚫',
+      title: en ? 'Access Denied' : 'Accès Refusé',
+      texts: [
+        en
+          ? `Sorry ${userName}, your access request was not approved.`
+          : `Désolé ${userName}, ta demande d'accès n'a pas été approuvée.`
+      ],
+      canCheck: false
+    }
+  };
+
+  const view = content[status] || content.pending;
 
   return (
     <div style={styles.container}>
@@ -18,42 +67,31 @@ const PendingConfirmationPage = ({ userName, status, onCheckAgain, onLogout, cur
         <div style={styles.headerRight}>
           <span style={styles.userBadge}>👤 {userName}</span>
           <button style={styles.logoutBtn} onClick={onLogout}>
-            🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
+            🚪 {en ? 'Logout' : 'Déconnexion'}
           </button>
         </div>
       </div>
 
       <div style={styles.content}>
-        <div style={styles.iconCircle}>{denied ? '🚫' : '⏳'}</div>
+        <div style={styles.iconCircle}>{view.icon}</div>
 
-        <h1 style={styles.title}>
-          {denied
-            ? (currentLang === 'en' ? 'Access Denied' : 'Accès Refusé')
-            : (currentLang === 'en' ? 'Waiting for Approval' : "En Attente d'Approbation")}
-        </h1>
+        <h1 style={styles.title}>{view.title}</h1>
 
-        <p style={styles.text}>
-          {denied
-            ? (currentLang === 'en'
-                ? `Sorry ${userName}, your access request was not approved.`
-                : `Désolé ${userName}, ta demande d'accès n'a pas été approuvée.`)
-            : (currentLang === 'en'
-                ? `Thanks for signing up, ${userName}! Your access request has been sent.`
-                : `Merci pour ton inscription, ${userName} ! Ta demande d'accès a bien été envoyée.`)}
-        </p>
-        {!denied && (
+        {view.texts.map((text, i) => (
+          <p key={i} style={styles.text}>{text}</p>
+        ))}
+
+        {status === 'review' && reference && (
           <p style={styles.text}>
-            {currentLang === 'en'
-              ? 'You will be able to play as soon as it is approved.'
-              : 'Tu pourras jouer dès qu\'elle sera approuvée.'}
+            {en ? 'Your reference code' : 'Ton code de référence'}: <strong style={{ color: 'var(--accent-gold)', letterSpacing: '2px' }}>{reference}</strong>
           </p>
         )}
 
-        {!denied && (
+        {view.canCheck && (
           <button style={styles.checkButton} onClick={handleCheck} disabled={checking}>
             {checking
-              ? (currentLang === 'en' ? 'Checking...' : 'Vérification...')
-              : (currentLang === 'en' ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
+              ? (en ? 'Checking...' : 'Vérification...')
+              : (en ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
           </button>
         )}
       </div>
