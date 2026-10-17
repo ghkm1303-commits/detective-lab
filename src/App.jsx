@@ -5,6 +5,7 @@ import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
+import SubscriptionPage from './components/SubscriptionPage';
 import PendingConfirmationPage from './components/PendingConfirmationPage';
 import SubjectSelector from './components/SubjectSelector';
 import StatsPanel from './components/StatsPanel';
@@ -23,11 +24,11 @@ import pharmaV2Data from './data/pharmacology_drugs_v2.json';
 import './App.css';
 import Logo from './components/Logo';
 import { isAdmin } from './utils/admin';
-import { getAccessStatus, requestAccess } from './utils/subscription';
+import { getAccessStatus, requestAccess, submitPaymentConfirmation, getReference } from './utils/subscription';
 
-// Accès sur approbation : chaque nouveau compte envoie une demande d'accès, que l'admin
-// approuve ou refuse depuis le panneau d'administration. L'admin choisit la formule
-// (1 mois, 1 an ou gratuit) et peut couper / redonner l'accès depuis l'onglet Membres.
+// Accès sur approbation + abonnement : chaque nouveau compte voit la page des tarifs et envoie une
+// demande d'accès que l'admin traite depuis le panneau d'administration (formule 1 mois, 1 an ou
+// gratuit ; onglet Membres pour couper / redonner l'accès).
 // Mettre à false pour désactiver complètement la vérification (accès direct après connexion).
 const SUBSCRIPTION_ENABLED = true;
 
@@ -49,6 +50,7 @@ export default function App() {
 
   // subStatus: null (chargement) | 'pending' | 'active' | 'expired' | 'suspended' | 'denied' | 'error'
   const [subStatus, setSubStatus] = useState(null);
+  const [subInfo, setSubInfo] = useState({ requestedPlan: null, paymentSent: false });
   const checkingUidRef = useRef(null);
 
   useEffect(() => {
@@ -92,6 +94,10 @@ export default function App() {
         result = await getAccessStatus(user.uid);
         if (result.status === 'none') result = { status: 'error' };
       }
+      setSubInfo({
+        requestedPlan: result.requestedPlan || null,
+        paymentSent: !!result.paymentSent
+      });
       setSubStatus(result.status);
     } finally {
       checkingUidRef.current = null;
@@ -105,6 +111,18 @@ export default function App() {
       checkSubscription();
     }
   }, [user, checkSubscription]);
+
+  // Clic sur "J'ai envoyé le paiement" : on signale la formule et la référence à l'admin
+  const handleSubmitPayment = async (plan) => {
+    const result = await submitPaymentConfirmation(user.uid, plan.id);
+    if (result.success) {
+      await checkSubscription();
+    } else {
+      alert(currentLang === 'en' ? 'Something went wrong. Please try again.' : "Une erreur s'est produite. Réessaie.");
+    }
+  };
+
+  const reference = user ? getReference(user.uid) : '';
 
   if (loading) {
     return (
@@ -175,14 +193,43 @@ export default function App() {
       );
     }
 
-    if (['pending', 'denied', 'expired', 'suspended'].includes(subStatus)) {
+    if (subStatus === 'denied') {
       return (
         <PendingConfirmationPage
           userName={userName}
-          status={subStatus}
+          status="denied"
           onCheckAgain={checkSubscription}
           onLogout={() => setUser(null)}
           currentLang={currentLang}
+        />
+      );
+    }
+
+    if (['pending', 'expired', 'suspended'].includes(subStatus)) {
+      // Le joueur a déjà signalé son paiement : écran d'attente de vérification
+      if (subInfo.paymentSent) {
+        return (
+          <PendingConfirmationPage
+            userName={userName}
+            status="review"
+            plan={subInfo.requestedPlan}
+            reference={reference}
+            onCheckAgain={checkSubscription}
+            onLogout={() => setUser(null)}
+            currentLang={currentLang}
+          />
+        );
+      }
+      // Sinon : page des tarifs et instructions de paiement
+      return (
+        <SubscriptionPage
+          onSubmitPayment={handleSubmitPayment}
+          onCheckAgain={checkSubscription}
+          onLogout={() => setUser(null)}
+          currentLang={currentLang}
+          userName={userName}
+          reference={reference}
+          mode={subStatus === 'pending' ? 'new' : 'renew'}
         />
       );
     }

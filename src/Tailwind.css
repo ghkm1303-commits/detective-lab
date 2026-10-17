@@ -1,0 +1,8 @@
+/*
+  Tailwind CSS pour la landing page uniquement.
+  On n'importe PAS "preflight" (le reset global de Tailwind), afin de ne pas
+  modifier l'apparence du reste de l'app (Dashboard, jeux, admin, etc.).
+  Seuls le thème (variables) et les classes utilitaires sont chargés.
+*/
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";

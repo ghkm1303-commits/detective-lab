@@ -103,6 +103,13 @@ const ParasiteGame = ({ organisms, selectedClass, selectedLessons, gameMode, onG
     }
   };
 
+  // Révèle l'indice suivant sans avoir besoin de répondre (coûte autant qu'une mauvaise réponse)
+  const handleNextClue = () => {
+    if (revealedCluesCount < allClues.length) {
+      setRevealedCluesCount(revealedCluesCount + 1);
+    }
+  };
+
   const handleChoiceClick = (choice) => {
     const isCorrect = checkGuess(choice, hiddenOrganism);
     finishGame(isCorrect, allClues.length);
@@ -117,6 +124,7 @@ const ParasiteGame = ({ organisms, selectedClass, selectedLessons, gameMode, onG
   }
 
   const revealedClues = allClues.slice(0, revealedCluesCount);
+  const canRevealNextClue = !choices && revealedCluesCount < allClues.length;
 
   const modeLabel = gameMode === 'blind'
     ? '🔍 Blind'
@@ -165,6 +173,18 @@ const ParasiteGame = ({ organisms, selectedClass, selectedLessons, gameMode, onG
               <button style={styles.submitButton} onClick={handleGuess}>
                 ✓ {currentLang === 'en' ? 'Submit' : 'Soumettre'}
               </button>
+              {canRevealNextClue && (
+                <>
+                  <button style={styles.nextClueButton} onClick={handleNextClue}>
+                    💡 {currentLang === 'en' ? 'Next clue' : 'Indice suivant'}
+                  </button>
+                  <p style={styles.nextClueHint}>
+                    {currentLang === 'en'
+                      ? 'Reveals a new clue without answering (-100 points).'
+                      : 'Révèle un nouvel indice sans répondre (-100 points).'}
+                  </p>
+                </>
+              )}
               {wrongGuesses > 0 && (
                 <p style={styles.errorMessage}>
                   {currentLang === 'en' ? `Wrong! (${wrongGuesses} incorrect)` : `Mauvaise réponse! (${wrongGuesses})`}
@@ -227,6 +247,12 @@ const styles = {
     color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer',
     fontFamily: 'inherit', fontSize: '14px', fontWeight: '700'
   },
+  nextClueButton: {
+    width: '100%', marginTop: '12px', padding: '12px', background: 'rgba(184, 154, 90, 0.1)',
+    border: '2px solid #B89A5A', color: '#B89A5A', borderRadius: '6px', cursor: 'pointer',
+    fontFamily: 'inherit', fontSize: '14px', fontWeight: '700'
+  },
+  nextClueHint: { color: 'var(--text-secondary)', fontSize: '11px', margin: '6px 0 0 0', textAlign: 'center' },
   errorMessage: { color: '#E63946', fontSize: '13px', marginTop: '10px' },
   choicesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' },
   choiceButton: {
