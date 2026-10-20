@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase-config';
 import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
@@ -7,9 +7,7 @@ import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 import SubscriptionPage from './components/SubscriptionPage';
 import PendingConfirmationPage from './components/PendingConfirmationPage';
-import SubjectSelector from './components/SubjectSelector';
 import StatsPanel from './components/StatsPanel';
-import ModeSelector from './components/ModeSelector';
 import PracticeMode from './components/PracticeMode';
 import ResultScreen from './components/ResultScreen';
 import ParasiteClassSelector from './components/parasitology/ParasiteClassSelector';
@@ -36,17 +34,28 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [currentLang, setCurrentLang] = useState('en');
+  // Langue choisie dans le menu du profil, mémorisée dans le navigateur
+  const [currentLang, setCurrentLang] = useState(() => {
+    try {
+      return localStorage.getItem('detective-lab-lang') === 'fr' ? 'fr' : 'en';
+    } catch (error) {
+      return 'en';
+    }
+  });
   const [theme, setTheme] = useState('dark');
   const [screen, setScreen] = useState('dashboard');
   const [authMode, setAuthMode] = useState(null);
   const [parasites] = useState(parasitesData.organisms);
   const [pharmaV2Drugs] = useState(pharmaV2Data.drugs);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState(null);
   const [selectedLessons, setSelectedLessons] = useState([]);
   const [gameMode, setGameMode] = useState(null);
   const [gameResult, setGameResult] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [archiveSearch, setArchiveSearch] = useState('');
+  const [archiveOpenId, setArchiveOpenId] = useState(null); // fiche à ouvrir directement dans les Archives
+  const [retryOrganismId, setRetryOrganismId] = useState(null); // "Retry Case" : rejouer le même organisme
 
   // subStatus: null (chargement) | 'pending' | 'active' | 'expired' | 'suspended' | 'denied' | 'error'
   const [subStatus, setSubStatus] = useState(null);
@@ -57,6 +66,16 @@ export default function App() {
     setTheme('dark');
     document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
+
+  const handleLanguageChange = (lang) => {
+    const next = lang === 'fr' ? 'fr' : 'en';
+    setCurrentLang(next);
+    try {
+      localStorage.setItem('detective-lab-lang', next);
+    } catch (error) {
+      console.error('Language save error:', error);
+    }
+  };
 
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
@@ -124,6 +143,141 @@ export default function App() {
 
   const reference = user ? getReference(user.uid) : '';
 
+  // Après une inscription ou une connexion : on met à jour le nom affiché tout de suite
+  // (sinon il resterait vide / égal au préfixe de l'e-mail jusqu'au rechargement de la page)
+  const handleAuthSuccess = (authUser) => {
+    setUser(authUser);
+    setUserName(authUser.displayName || (authUser.email ? authUser.email.split('@')[0] : ''));
+  };
+
+  // Vraie déconnexion : on ferme aussi la session Firebase, sinon un rechargement reconnecte le joueur
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+    checkingUidRef.current = null;
+    setUser(null);
+    setUserName('');
+    setSubStatus(null);
+    setSubInfo({ requestedPlan: null, paymentSent: false });
+    setScreen('dashboard');
+    setSelectedSubject(null);
+    setSelectedClass(null);
+    setSelectedFilters(null);
+    setSelectedLessons([]);
+    setGameMode(null);
+    setGameResult(null);
+    setArchiveSearch('');
+    setArchiveOpenId(null);
+    setRetryOrganismId(null);
+    setAuthMode(null);
+  };
+
+  const handleModeSelect = (mode, term) => {
+    if (mode === 'blind') {
+      setGameMode('blind');
+      setSelectedClass(null);
+      setSelectedFilters(null);
+      setScreen('mainGame');
+    } else if (mode === 'focused') {
+      setGameMode('focused');
+      setScreen('classSelector');
+    } else if (mode === 'studyMode') {
+      setArchiveSearch(typeof term === 'string' ? term : '');
+      setArchiveOpenId(null);
+      setScreen('drugDirectory');
+    } else if (mode === 'byLesson') {
+      setGameMode('byLesson');
+      setSelectedClass(null);
+      setSelectedFilters(null);
+      setScreen('lessonSelector');
+    }
+  };
+
+  // Reçoit soit une catégorie (texte), soit un objet de filtres de la Recherche Ciblée
+  const handleClassSelect = (selection) => {
+    if (selection && typeof selection === 'object') {
+      setSelectedClass(null);
+      setSelectedFilters(selection);
+    } else {
+      setSelectedClass(selection);
+      setSelectedFilters(null);
+    }
+    setScreen('mainGame');
+  };
+
+  const handleLessonsSelected = (lessonIds) => {
+    setSelectedLessons(lessonIds);
+    setScreen('mainGame');
+  };
+
+  const handleGameEnd = (result) => {
+    saveGameStats(user.uid, result, gameMode);
+    setGameResult(result);
+    setScreen('result');
+  };
+
+  // Retour au hub : on garde le module choisi, donc le joueur retombe sur le choix du mode de jeu
+  const handleBackToMode = () => {
+    setScreen('dashboard');
+    setSelectedClass(null);
+    setSelectedFilters(null);
+    setSelectedLessons([]);
+    setGameMode(null);
+    setGameResult(null);
+    setArchiveSearch('');
+    setArchiveOpenId(null);
+    setRetryOrganismId(null);
+  };
+
+  const handleBackFromClassSelector = () => {
+    setScreen('dashboard');
+    setGameMode(null);
+  };
+
+  const handleBackFromLessonSelector = () => {
+    setScreen('dashboard');
+    setGameMode(null);
+  };
+
+  // "Next Case File" : un nouveau cas au hasard avec les mêmes réglages (mode, catégorie, filtres, leçons)
+  const handleNextCase = () => {
+    setRetryOrganismId(null);
+    setGameResult(null);
+    setScreen('mainGame');
+  };
+
+  // "Retry Case" : on rejoue exactement le même organisme
+  const handleRetryCase = () => {
+    if (!gameResult || !gameResult.organismId) return;
+    setRetryOrganismId(gameResult.organismId);
+    setGameResult(null);
+    setScreen('mainGame');
+  };
+
+  // "View Full Archive Entry" : ouvre la fiche complète de l'organisme dans les Archives
+  const handleViewArchive = (organism) => {
+    if (!organism) return;
+    setRetryOrganismId(null);
+    setArchiveSearch(organism.names.en);
+    setArchiveOpenId(organism.id);
+    setGameResult(null);
+    setScreen('drugDirectory');
+  };
+
+  const handlePlayAgain = () => {
+    setGameResult(null);
+    if (gameMode === 'focused') {
+      setScreen('classSelector');
+    } else if (gameMode === 'byLesson') {
+      setScreen('lessonSelector');
+    } else {
+      setScreen('mainGame');
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px', color: 'var(--text-secondary)' }}>
@@ -148,7 +302,7 @@ export default function App() {
     }
     return (
       <AuthPage
-        onAuthSuccess={setUser}
+        onAuthSuccess={handleAuthSuccess}
         initialMode={authMode}
         onBack={() => setAuthMode(null)}
       />
@@ -184,7 +338,7 @@ export default function App() {
             </button>
             <button
               style={{ padding: '12px 24px', background: 'rgba(230, 57, 70, 0.1)', border: '2px solid #E63946', color: '#FF6B7A', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}
-              onClick={() => setUser(null)}
+              onClick={handleLogout}
             >
               🚪 {currentLang === 'en' ? 'Logout' : 'Déconnexion'}
             </button>
@@ -199,7 +353,7 @@ export default function App() {
           userName={userName}
           status="denied"
           onCheckAgain={checkSubscription}
-          onLogout={() => setUser(null)}
+          onLogout={handleLogout}
           currentLang={currentLang}
         />
       );
@@ -215,7 +369,7 @@ export default function App() {
             plan={subInfo.requestedPlan}
             reference={reference}
             onCheckAgain={checkSubscription}
-            onLogout={() => setUser(null)}
+            onLogout={handleLogout}
             currentLang={currentLang}
           />
         );
@@ -225,7 +379,7 @@ export default function App() {
         <SubscriptionPage
           onSubmitPayment={handleSubmitPayment}
           onCheckAgain={checkSubscription}
-          onLogout={() => setUser(null)}
+          onLogout={handleLogout}
           currentLang={currentLang}
           userName={userName}
           reference={reference}
@@ -237,14 +391,24 @@ export default function App() {
 
   // ---- Accès normal au jeu (accès actif, ou vérification désactivée) ----
 
+  // Hub : étape 1 (choix du module) si aucun module n'est choisi, sinon étape 2 (choix du mode de jeu)
   if (screen === 'dashboard') {
     return (
       <Dashboard
-        user={user} userName={userName} onLogout={() => setUser(null)}
-        onContinue={() => setScreen('subjectSelector')}
+        user={user}
+        userName={userName}
+        organisms={parasites}
+        isPro={SUBSCRIPTION_ENABLED && subStatus === 'active'}
+        selectedSubject={selectedSubject}
+        onSelectModule={setSelectedSubject}
+        onSwitchModule={() => setSelectedSubject(null)}
+        onSelectMode={handleModeSelect}
+        onStats={() => setScreen('stats')}
         onGoAdmin={() => setScreen('admin')}
+        onLogout={handleLogout}
+        onLanguageChange={handleLanguageChange}
         theme={theme}
-        onThemeChange={handleThemeChange} currentLang={currentLang}
+        currentLang={currentLang}
       />
     );
   }
@@ -252,6 +416,7 @@ export default function App() {
   if (screen === 'admin') {
     return (
       <AdminPanel
+        user={user}
         onBack={() => setScreen('dashboard')}
         currentLang={currentLang}
         theme={theme}
@@ -259,107 +424,18 @@ export default function App() {
     );
   }
 
-  if (screen === 'subjectSelector') {
-    return (
-      <SubjectSelector
-        onSelectSubject={(subject) => {
-          setSelectedSubject(subject);
-          setScreen('modeSelector');
-        }}
-        onBack={() => setScreen('dashboard')}
-        onGoHome={() => setScreen('dashboard')}
-        currentLang={currentLang} userName={userName}
-        onStats={() => setScreen('stats')} theme={theme}
-      />
-    );
-  }
-
   if (screen === 'stats') {
     return (
       <StatsPanel
-        user={user} userName={userName} onBack={() => setScreen('modeSelector')}
-        onLogout={() => setUser(null)} theme={theme} onThemeChange={handleThemeChange}
-        currentLang={currentLang} onLanguageChange={setCurrentLang}
+        user={user} userName={userName} organisms={parasites} onBack={() => setScreen('dashboard')}
+        onLogout={handleLogout} theme={theme} onThemeChange={handleThemeChange}
+        currentLang={currentLang}
       />
     );
   }
 
-  const handleModeSelect = (mode) => {
-    if (mode === 'blind') {
-      setGameMode('blind');
-      setSelectedClass(null);
-      setScreen('mainGame');
-    } else if (mode === 'focused') {
-      setGameMode('focused');
-      setScreen('classSelector');
-    } else if (mode === 'studyMode') {
-      setScreen('drugDirectory');
-    } else if (mode === 'byLesson') {
-      setGameMode('byLesson');
-      setSelectedClass(null);
-      setScreen('lessonSelector');
-    }
-  };
-
-  const handleClassSelect = (className) => {
-    setSelectedClass(className);
-    setScreen('mainGame');
-  };
-
-  const handleLessonsSelected = (lessonIds) => {
-    setSelectedLessons(lessonIds);
-    setScreen('mainGame');
-  };
-
-  const handleGameEnd = (result) => {
-    saveGameStats(user.uid, result, gameMode);
-    setGameResult(result);
-    setScreen('result');
-  };
-
-  const handleBackToMode = () => {
-    setScreen('modeSelector');
-    setSelectedClass(null);
-    setSelectedLessons([]);
-    setGameMode(null);
-    setGameResult(null);
-  };
-
-  const handleBackFromClassSelector = () => {
-    setScreen('modeSelector');
-    setGameMode(null);
-  };
-
-  const handleBackFromLessonSelector = () => {
-    setScreen('modeSelector');
-    setGameMode(null);
-  };
-
-  const handlePlayAgain = () => {
-    setGameResult(null);
-    if (gameMode === 'focused') {
-      setScreen('classSelector');
-    } else if (gameMode === 'byLesson') {
-      setScreen('lessonSelector');
-    } else {
-      setScreen('mainGame');
-    }
-  };
-
   return (
     <div className="app">
-      {screen === 'modeSelector' && (
-        <ModeSelector
-          onSelectMode={handleModeSelect}
-          onBack={() => setScreen('subjectSelector')}
-          onGoHome={() => setScreen('dashboard')}
-          onGoYear={() => setScreen('subjectSelector')}
-          currentLang={currentLang} userName={userName}
-          onStats={() => setScreen('stats')} theme={theme}
-          selectedSubject={selectedSubject}
-        />
-      )}
-
       {/* ---- Pharmacology (full domain-based curriculum) ---- */}
       {screen === 'classSelector' && selectedSubject === 'pharmacology_new' && (
         <PharmaClassSelector
@@ -384,6 +460,7 @@ export default function App() {
       {/* ---- Parasitology ---- */}
       {screen === 'classSelector' && selectedSubject === 'parasitology' && (
         <ParasiteClassSelector
+          organisms={parasites}
           onSelectClass={handleClassSelect} onBack={handleBackFromClassSelector}
           currentLang={currentLang} userName={userName} onStats={() => setScreen('stats')}
           theme={theme} onThemeChange={handleThemeChange}
@@ -399,7 +476,7 @@ export default function App() {
       )}
       {screen === 'mainGame' && selectedSubject === 'parasitology' && (
         <ParasiteGame
-          organisms={parasites} selectedClass={selectedClass} selectedLessons={selectedLessons} gameMode={gameMode}
+          organisms={parasites} selectedClass={selectedClass} selectedFilters={selectedFilters} selectedLessons={selectedLessons} retryOrganismId={retryOrganismId} gameMode={gameMode}
           onGameEnd={handleGameEnd} onBack={handleBackToMode} currentLang={currentLang}
         />
       )}
@@ -407,6 +484,7 @@ export default function App() {
         <ParasiteDirectory
           organisms={parasites} onBack={handleBackToMode} currentLang={currentLang}
           userName={userName} onStats={() => setScreen('stats')} theme={theme} onThemeChange={handleThemeChange}
+          initialSearch={archiveSearch} initialOpenId={archiveOpenId} userId={user.uid}
         />
       )}
 
@@ -420,6 +498,10 @@ export default function App() {
       {screen === 'result' && (
         <ResultScreen
           result={gameResult}
+          userId={user.uid}
+          onNextCase={handleNextCase}
+          onRetryCase={handleRetryCase}
+          onViewArchive={handleViewArchive}
           onPlayAgain={handlePlayAgain}
           onBackToMode={handleBackToMode}
           currentLang={currentLang} theme={theme}

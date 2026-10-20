@@ -1,5 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import BackButton from '../BackButton';
+import '../../tailwind.css';
+import '../../detective.css';
+
+// --- Outil : nom de la classe d'un organisme (objet {en, fr} ou simple texte) ---
+const getClassLabel = (organism, lang = 'en') => {
+  const c = organism && organism.class;
+  if (!c) return '';
+  if (typeof c === 'string') return c;
+  return c[lang] || c.en || '';
+};
 
 // Noms connus des leçons (confirmés par Ghada). Les leçons absentes de cette liste
 // (actuellement 16 à 26, Mycologie) auront un nom déduit automatiquement des données
@@ -21,21 +30,39 @@ const LESSON_NAMES = {
   15: { en: 'Medical Entomology', fr: 'Entomologie Médicale' }
 };
 
-const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang, userName, onStats }) => {
+const CATEGORY_LABELS = {
+  protozoa: { en: 'Protozoa', fr: 'Protozoaires', dot: 'bg-[#167C80]' },
+  helminth: { en: 'Helminths', fr: 'Helminthes', dot: 'bg-[#B89A5A]' },
+  fungal: { en: 'Mycology', fr: 'Mycologie', dot: 'bg-[#2F7D5B]' },
+  entomology: { en: 'Entomology', fr: 'Entomologie', dot: 'bg-[#3F628C]' },
+  overview: { en: 'Overview', fr: "Vue d'ensemble", dot: 'bg-[#F2EFE6]' },
+};
+
+const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang }) => {
   const lang = currentLang === 'fr' ? 'fr' : 'en';
+  const t = (en, fr) => (currentLang === 'en' ? en : fr);
 
   const lessons = useMemo(() => {
     const byLesson = {};
-    organisms.forEach(o => {
+    organisms.forEach((o) => {
       if (!byLesson[o.lessonId]) byLesson[o.lessonId] = [];
       byLesson[o.lessonId].push(o);
     });
 
     const getFallbackName = (lessonOrganisms) => {
       const counts = {};
-      lessonOrganisms.forEach(o => {
-        const label = o.class ? o.class[lang] : null;
+      lessonOrganisms.forEach((o) => {
+        const label = getClassLabel(o, lang);
         if (label) counts[label] = (counts[label] || 0) + 1;
+      });
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      return sorted.length > 0 ? sorted[0][0] : null;
+    };
+
+    const dominantCategory = (lessonOrganisms) => {
+      const counts = {};
+      lessonOrganisms.forEach((o) => {
+        counts[o.category] = (counts[o.category] || 0) + 1;
       });
       const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
       return sorted.length > 0 ? sorted[0][0] : null;
@@ -44,13 +71,13 @@ const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang, userN
     return Object.keys(byLesson)
       .map(Number)
       .sort((a, b) => a - b)
-      .map(id => {
+      .map((id) => {
         const lessonOrganisms = byLesson[id];
         const known = LESSON_NAMES[id];
         const name = known
           ? (currentLang === 'en' ? known.en : known.fr)
           : (getFallbackName(lessonOrganisms) || (currentLang === 'en' ? `Lesson ${id}` : `Leçon ${id}`));
-        return { id, name, count: lessonOrganisms.length };
+        return { id, name, count: lessonOrganisms.length, category: dominantCategory(lessonOrganisms) };
       });
   }, [organisms, currentLang, lang]);
 
@@ -59,17 +86,15 @@ const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang, userN
   const allSelected = selected.length === lessons.length && lessons.length > 0;
 
   const toggleLesson = (id) => {
-    setSelected(prev =>
-      prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id]
-    );
+    setSelected((prev) => (prev.includes(id) ? prev.filter((l) => l !== id) : [...prev, id]));
   };
 
   const toggleAll = () => {
-    setSelected(allSelected ? [] : lessons.map(l => l.id));
+    setSelected(allSelected ? [] : lessons.map((l) => l.id));
   };
 
   const totalOrganisms = lessons
-    .filter(l => selected.includes(l.id))
+    .filter((l) => selected.includes(l.id))
     .reduce((sum, l) => sum + l.count, 0);
 
   const handleStart = () => {
@@ -78,123 +103,134 @@ const ParasiteLessonSelector = ({ organisms, onStart, onBack, currentLang, userN
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <BackButton onClick={onBack} />
-        <div style={styles.rightGroup}>
-          <button onClick={onStats} className="user-button">
-            👤 {userName}
+    <div className="dl-app relative isolate overflow-x-clip">
+      <div className="dl-app-bg" aria-hidden="true" />
+
+      {/* ============ EN-TÊTE ============ */}
+      <header className="sticky top-0 z-40 border-b border-[#B89A5A]/25 bg-[#1D2A3A]/95 shadow-lg shadow-black/30 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-2 rounded-lg border border-[#F2EFE6]/25 bg-transparent px-3.5 py-2 text-sm font-medium text-[#F2EFE6] transition-colors hover:border-[#B89A5A] hover:text-[#B89A5A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B89A5A]"
+          >
+            <span aria-hidden="true">←</span> {t('Back to Game Modes', 'Retour aux modes de jeu')}
+          </button>
+          <span className="hidden text-sm font-semibold text-[#B89A5A] sm:block">
+            🦠 {t('Parasitology - Mycology', 'Parasitologie - Mycologie')}
+          </span>
+        </div>
+      </header>
+
+      <main className="relative z-10 mx-auto max-w-5xl px-4 pb-40 pt-6 sm:px-6 sm:pt-10">
+        <div className="dl-fade-in">
+          <p className="inline-block rounded-full border border-[#B89A5A] bg-[#B89A5A]/10 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-[#B89A5A]">
+            🗂️ {t('LESSON FILES', 'DOSSIERS PAR LEÇON')}
+          </p>
+          <h1 className="dl-display mt-4 text-[1.65rem] font-bold leading-tight text-[#F2EFE6] sm:text-4xl">
+            {t('Select Lessons', 'Sélectionnez les Leçons')}
+          </h1>
+          <p className="mt-2 max-w-xl text-base text-[#F2EFE6]/70">
+            {t(
+              'Pick one, several, or all lessons to be tested on.',
+              'Choisissez une, plusieurs, ou toutes les leçons sur lesquelles être testée.'
+            )}
+          </p>
+
+          <button
+            type="button"
+            onClick={toggleAll}
+            className="mt-5 rounded-lg border border-[#B89A5A] bg-transparent px-4 py-2.5 text-sm font-semibold text-[#B89A5A] transition-colors hover:bg-[#B89A5A]/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B89A5A]"
+          >
+            {allSelected ? t('Deselect all', 'Tout désélectionner') : t('Select all', 'Tout sélectionner')}
           </button>
         </div>
-      </div>
 
-      <div style={styles.content}>
-        <h1 style={styles.title}>
-          {currentLang === 'en' ? 'Select Lessons' : 'Sélectionnez les Leçons'}
-        </h1>
-        <p style={styles.subtitle}>
-          {currentLang === 'en'
-            ? 'Pick one, several, or all lessons to be tested on.'
-            : 'Choisissez une, plusieurs, ou toutes les leçons sur lesquelles être testée.'}
-        </p>
-
-        <button style={styles.selectAllButton} onClick={toggleAll}>
-          {allSelected
-            ? (currentLang === 'en' ? 'Deselect all' : 'Tout désélectionner')
-            : (currentLang === 'en' ? 'Select all' : 'Tout sélectionner')}
-        </button>
-
-        <div style={styles.lessonGrid}>
-          {lessons.map(lesson => {
+        <ul
+          className="m-0 mt-6 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+          aria-label={t('Lessons', 'Leçons')}
+        >
+          {lessons.map((lesson) => {
             const isSelected = selected.includes(lesson.id);
+            const cat = CATEGORY_LABELS[lesson.category];
             return (
-              <button
-                key={lesson.id}
-                style={{
-                  ...styles.lessonCard,
-                  ...(isSelected ? styles.lessonCardSelected : {})
-                }}
-                onClick={() => toggleLesson(lesson.id)}
-              >
-                <p style={styles.lessonTag}>
-                  {currentLang === 'en' ? 'Lesson' : 'Leçon'} {lesson.id}
-                </p>
-                <h3 style={styles.lessonName}>{lesson.name}</h3>
-                <p style={styles.lessonCount}>
-                  {lesson.count} {currentLang === 'en' ? 'organisms' : 'organismes'}
-                </p>
-              </button>
+              <li key={lesson.id}>
+                <button
+                  type="button"
+                  role="checkbox"
+                  aria-checked={isSelected}
+                  onClick={() => toggleLesson(lesson.id)}
+                  className={`dl-lift flex h-full w-full cursor-pointer items-start gap-4 rounded-xl border-2 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F2EFE6] ${
+                    isSelected
+                      ? 'border-[#B89A5A] bg-gradient-to-b from-[#3a4a45] to-[#1D2A3A]'
+                      : 'border-[#B89A5A]/30 bg-gradient-to-b from-[#24364b] to-[#1D2A3A]'
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 text-sm font-bold ${
+                      isSelected
+                        ? 'border-[#2F7D5B] bg-[#2F7D5B] text-[#F2EFE6]'
+                        : 'border-[#F2EFE6]/35 bg-transparent text-transparent'
+                    }`}
+                  >
+                    ✓
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[11px] font-semibold tracking-[0.14em] text-[#B89A5A]">
+                      {t('LESSON', 'LEÇON')} {lesson.id}
+                    </span>
+                    <span className="dl-display mt-1 block text-base font-bold leading-snug text-[#F2EFE6] sm:text-lg">
+                      {lesson.name}
+                    </span>
+                    <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#F2EFE6]/60">
+                      <span>
+                        {lesson.count} {t('organisms', 'organismes')}
+                      </span>
+                      {cat && (
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className={`h-2 w-2 rounded-full ${cat.dot}`} aria-hidden="true" />
+                          {cat[lang]}
+                        </span>
+                      )}
+                    </span>
+                  </span>
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
+      </main>
 
-        <div style={styles.footer}>
-          <p style={styles.summary}>
-            {selected.length > 0
-              ? (currentLang === 'en'
-                  ? `${selected.length} lesson(s) selected — ${totalOrganisms} organisms`
-                  : `${selected.length} leçon(s) sélectionnée(s) — ${totalOrganisms} organismes`)
-              : (currentLang === 'en' ? 'No lesson selected yet' : 'Aucune leçon sélectionnée')}
+      {/* ============ BARRE FLOTTANTE ============ */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#B89A5A]/40 bg-[#1D2A3A]/95 shadow-[0_-12px_40px_-12px_rgba(0,0,0,0.8)] backdrop-blur">
+        <div
+          className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        >
+          <p className="text-sm text-[#F2EFE6]/75" role="status" aria-live="polite">
+            {selected.length > 0 ? (
+              <>
+                <span className="dl-display text-xl font-bold text-[#B89A5A]">{selected.length}</span>{' '}
+                {selected.length === 1 ? t('Lesson Selected', 'leçon sélectionnée') : t('Lessons Selected', 'leçons sélectionnées')}
+                <span className="text-[#F2EFE6]/55"> · {totalOrganisms} {t('organisms', 'organismes')}</span>
+              </>
+            ) : (
+              t('No lesson selected yet', 'Aucune leçon sélectionnée')
+            )}
           </p>
           <button
-            style={{
-              ...styles.startButton,
-              ...(selected.length === 0 ? styles.startButtonDisabled : {})
-            }}
+            type="button"
             onClick={handleStart}
             disabled={selected.length === 0}
+            className="w-full rounded-lg border-0 bg-[#167C80] px-6 py-3 text-base font-semibold text-[#F2EFE6] shadow-lg shadow-[#167C80]/25 transition-colors hover:bg-[#1a9096] disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F2EFE6] sm:w-auto"
           >
-            ▶ {currentLang === 'en' ? 'Start' : 'Commencer'}
+            ▶ {t('Start Lesson Case Deck', 'Lancer le paquet de cas')}
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: { minHeight: '100vh', padding: '15px', position: 'relative', zIndex: 10 },
-  header: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid var(--border-teal)',
-    flexWrap: 'wrap', gap: '10px'
-  },
-  rightGroup: { display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' },
-  content: { maxWidth: '1000px', margin: '0 auto' },
-  title: { textAlign: 'center', marginBottom: '8px', color: 'var(--accent-gold)', fontFamily: "'Playfair Display', serif" },
-  subtitle: { textAlign: 'center', marginBottom: '25px', color: 'var(--text-secondary)', fontSize: '14px' },
-  selectAllButton: {
-    display: 'block', margin: '0 auto 20px auto', padding: '8px 18px',
-    background: 'transparent', border: '2px solid var(--accent-gold)',
-    color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer',
-    fontFamily: 'inherit', fontSize: '12px', fontWeight: '600'
-  },
-  lessonGrid: {
-    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-    gap: '12px', marginBottom: '30px'
-  },
-  lessonCard: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '2px solid rgba(184, 154, 90, 0.3)', borderRadius: '10px',
-    padding: '16px 12px', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center'
-  },
-  lessonCardSelected: {
-    border: '2px solid var(--accent-gold)', background: 'rgba(184, 154, 90, 0.15)'
-  },
-  lessonTag: { color: 'var(--text-secondary)', fontSize: '10px', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  lessonName: { color: 'var(--accent-gold)', fontSize: '14px', margin: '0 0 6px 0', fontFamily: "'Playfair Display', serif", lineHeight: '1.3' },
-  lessonCount: { color: 'var(--text-secondary)', fontSize: '12px', margin: '0' },
-  footer: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    flexWrap: 'wrap', gap: '15px', borderTop: '1px solid rgba(184, 154, 90, 0.2)', paddingTop: '20px'
-  },
-  summary: { color: 'var(--text-secondary)', fontSize: '13px', margin: '0' },
-  startButton: {
-    padding: '12px 30px', background: 'linear-gradient(135deg, #167C80, #2F7D5B)',
-    color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer',
-    fontFamily: 'inherit', fontSize: '14px', fontWeight: '700'
-  },
-  startButtonDisabled: { opacity: 0.4, cursor: 'not-allowed' }
 };
 
 export default ParasiteLessonSelector;

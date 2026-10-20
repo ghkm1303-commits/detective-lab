@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+/*
+  Thème partagé du Dashboard et de l'écran de jeu (Detective Labs).
+  Tout est limité à la classe .dl-app : le reste de l'app n'est pas modifié.
+*/
+
+.dl-app {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  background: #0B0D0D;
+  color: #F2EFE6;
+  -webkit-text-size-adjust: 100%;
+}
+@supports (min-height: 100dvh) {
+  .dl-app { min-height: 100dvh; }
+}
+.dl-app, .dl-app *, .dl-app *::before, .dl-app *::after { box-sizing: border-box; }
+:where(.dl-app) :where(h1, h2, h3, p, ul, ol) { margin: 0; }
+.dl-app .dl-display { font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; }
+
+/* ---- Fond : halo teal discret + lignes de grille ---- */
+.dl-app-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  background: radial-gradient(38rem 26rem at 100% 100%, rgba(184,154,90,.07), transparent 70%);
+}
+.dl-app-bg::before {
+  content: ''; position: absolute; width: 46rem; height: 46rem;
+  left: 50%; top: -20rem; margin-left: -23rem; border-radius: 9999px;
+  background: #167C80; opacity: .16; filter: blur(110px);
+}
+.dl-app-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(242,239,230,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242,239,230,.045) 1px, transparent 1px);
+  background-size: 52px 52px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 15%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 50% 20%, #000 15%, transparent 70%);
+}
+
+/* ---- Cartes ---- */
+.dl-app .dl-lift {
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  box-shadow: 0 10px 30px -14px rgba(0,0,0,.75), inset 0 1px 0 rgba(242,239,230,.05);
+}
+@media (hover: hover) {
+  .dl-app .dl-lift:not(:disabled):hover {
+    transform: translateY(-5px);
+    border-color: #B89A5A;
+    box-shadow: 0 22px 40px -16px rgba(0,0,0,.85), 0 0 0 1px rgba(184,154,90,.35);
+  }
+}
+
+/* ---- Champs (!important pour résister aux styles globaux de l'app) ---- */
+.dl-app .dl-input {
+  width: 100%;
+  padding: .85rem 1rem !important;
+  background: rgba(11,13,13,.55) !important;
+  border: 1.5px solid rgba(242,239,230,.2) !important;
+  border-radius: .6rem !important;
+  box-shadow: none !important;
+  color: #F2EFE6 !important;
+  font: inherit; font-size: 1rem; line-height: 1.4;
+  outline: none !important;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.dl-app .dl-input::placeholder { color: rgba(242,239,230,.42); opacity: 1; }
+.dl-app .dl-input:focus {
+  border-color: #B89A5A !important;
+  box-shadow: 0 0 0 3px rgba(184,154,90,.2) !important;
+}
+.dl-app .dl-input-bare {
+  flex: 1; min-width: 0; width: 100%;
+  padding: .6rem 0 !important; margin: 0 !important;
+  background: transparent !important; border: none !important;
+  box-shadow: none !important; border-radius: 0 !important;
+  color: #F2EFE6 !important; font: inherit; font-size: 1rem;
+  outline: none !important;
+}
+.dl-app .dl-input-bare::placeholder { color: rgba(242,239,230,.45); opacity: 1; }
+
+/* ---- Animations ---- */
+@keyframes dl-fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.dl-app .dl-fade-in { animation: dl-fade-up .5s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes dl-clue-pop { from { opacity: 0; transform: translateY(-10px) scale(.98); } to { opacity: 1; transform: none; } }
+.dl-app .dl-clue-in { animation: dl-clue-pop .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes dl-shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.dl-app .dl-shake { animation: dl-shake .35s ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dl-app .dl-fade-in, .dl-app .dl-clue-in, .dl-app .dl-shake { animation: none !important; }
+  .dl-app .dl-lift { transition: none; }
+}
+@media (max-width: 640px) {
+  .dl-app-bg::before { width: 28rem; height: 28rem; margin-left: -14rem; top: -12rem; filter: blur(80px); }
+  .dl-app-bg::after { background-size: 40px 40px; }
+}

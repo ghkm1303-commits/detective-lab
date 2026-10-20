@@ -1,390 +1,533 @@
-import React, { useState } from 'react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase-config';
-import LanguageToggle from './LanguageToggle';
+import React, { useMemo, useState } from 'react';
 import Logo from './Logo';
-import BackButton from './BackButton';
+import '../tailwind.css';
+import '../detective.css';
 
-const StatsPanel = ({ user, userName, onBack, onLogout, theme, currentLang = 'en', onLanguageChange }) => {
-  const [stats, setStats] = useState(() => {
-    try {
-      const saved = localStorage.getItem(`stats_${user.uid}`);
-      return saved ? JSON.parse(saved) : {
-        totalGamesPlayed: 0,
-        totalXP: 0,
-        gameHistory: [],
-        modeStats: {}
-      };
-    } catch {
-      return { totalGamesPlayed: 0, totalXP: 0, gameHistory: [], modeStats: {} };
+/* ------------------------------------------------------------------ */
+/*  Detective Labs — Student Stats & Progress                          */
+/*  Toutes les données viennent des stats déjà enregistrées dans le    */
+/*  navigateur (localStorage, clé stats_<uid>) : rien à migrer.        */
+/* ------------------------------------------------------------------ */
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Même formule de niveau qu'avant : 1 niveau tous les 100 XP
+const RANKS = [
+  { min: 1, en: 'ROOKIE DETECTIVE', fr: 'DÉTECTIVE NOVICE' },
+  { min: 2, en: 'JUNIOR DETECTIVE', fr: 'DÉTECTIVE JUNIOR' },
+  { min: 3, en: 'DETECTIVE', fr: 'DÉTECTIVE' },
+  { min: 4, en: 'SENIOR DETECTIVE', fr: 'DÉTECTIVE SENIOR' },
+  { min: 6, en: 'CHIEF INSPECTOR', fr: 'INSPECTEUR EN CHEF' },
+  { min: 9, en: 'MASTER DETECTIVE', fr: 'DÉTECTIVE MAÎTRE' },
+];
+
+const CATEGORY_LABELS = {
+  protozoa: { en: 'Protozoa', fr: 'Protozoaires' },
+  helminth: { en: 'Helminths', fr: 'Helminthes' },
+  fungal: { en: 'Fungi', fr: 'Champignons' },
+};
+
+const EMPTY_STATS = { totalGamesPlayed: 0, totalXP: 0, gameHistory: [], modeStats: {} };
+
+// Numéro de jour (calendrier local) pour comparer les dates sans souci d'heure d'été
+const dayIndex = (date) => Math.round(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS);
+
+const analyze = (stats, organisms) => {
+  const history = Array.isArray(stats.gameHistory) ? stats.gameHistory : [];
+  // Une partie gagnée a toujours un score >= 100 ; perdue ou abandonnée = 0
+  const solved = history.filter((g) => (g.score || 0) > 0);
+  const accuracy = history.length ? Math.round((solved.length / history.length) * 100) : 0;
+  const avgClues = solved.length
+    ? solved.reduce((sum, g) => sum + (g.cluesUsed || 0), 0) / solved.length
+    : 0;
+
+  // Par organisme
+  const perOrganism = {};
+  history.forEach((g) => {
+    const key = g.drugName || 'Unknown';
+    if (!perOrganism[key]) perOrganism[key] = { name: key, attempts: 0, solved: 0, cluesSum: 0 };
+    perOrganism[key].attempts += 1;
+    if ((g.score || 0) > 0) {
+      perOrganism[key].solved += 1;
+      perOrganism[key].cluesSum += g.cluesUsed || 0;
     }
   });
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      onLogout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  const byName = new Map(organisms.map((o) => [o.names && o.names.en, o]));
+  const pool = organisms.filter((o) => o.category !== 'entomology' && o.category !== 'overview');
+
+  // Maîtrise du module : organismes différents identifiés / organismes jouables
+  const solvedNames = new Set(Object.values(perOrganism).filter((p) => p.solved > 0).map((p) => p.name));
+  const masteredCount = pool.filter((o) => solvedNames.has(o.names.en)).length;
+
+  // Précision par catégorie
+  const categories = Object.keys(CATEGORY_LABELS)
+    .map((cat) => {
+      const total = pool.filter((o) => o.category === cat).length;
+      let attempts = 0;
+      let wins = 0;
+      history.forEach((g) => {
+        const o = byName.get(g.drugName);
+        if (o && o.category === cat) {
+          attempts += 1;
+          if ((g.score || 0) > 0) wins += 1;
+        }
+      });
+      return { cat, total, attempts, wins, accuracy: attempts ? Math.round((wins / attempts) * 100) : null };
+    })
+    .filter((c) => c.attempts > 0)
+    .sort((a, b) => a.accuracy - b.accuracy);
+
+  // Organismes à revoir : ratés au moins une fois, ou qui demandent beaucoup d'indices
+  const weak = Object.values(perOrganism)
+    .map((p) => {
+      const failures = p.attempts - p.solved;
+      const avg = p.solved ? p.cluesSum / p.solved : 0;
+      return { ...p, failures, avg };
+    })
+    .filter((p) => p.failures > 0 || p.avg >= 5)
+    .sort((a, b) => b.failures * 10 + b.avg - (a.failures * 10 + a.avg))
+    .slice(0, 5);
+
+  // Activité : 14 derniers jours + séries
+  const dayCounts = new Map();
+  history.forEach((g) => {
+    const d = new Date(g.timestamp);
+    if (Number.isNaN(d.getTime())) return;
+    const idx = dayIndex(d);
+    dayCounts.set(idx, (dayCounts.get(idx) || 0) + 1);
+  });
+  const today = dayIndex(new Date());
+  const last14 = [];
+  for (let i = 13; i >= 0; i -= 1) {
+    const idx = today - i;
+    last14.push({ idx, count: dayCounts.get(idx) || 0, date: new Date(idx * DAY_MS) });
+  }
+
+  let current = 0;
+  let cursor = dayCounts.has(today) ? today : today - 1;
+  while (dayCounts.has(cursor)) {
+    current += 1;
+    cursor -= 1;
+  }
+  const sortedDays = [...dayCounts.keys()].sort((a, b) => a - b);
+  let best = 0;
+  let run = 0;
+  sortedDays.forEach((d, i) => {
+    run = i > 0 && d === sortedDays[i - 1] + 1 ? run + 1 : 1;
+    if (run > best) best = run;
+  });
+
+  return {
+    history,
+    solvedCount: solved.length,
+    accuracy,
+    avgClues,
+    poolSize: pool.length,
+    masteredCount,
+    categories,
+    weak,
+    last14,
+    streak: { current, best, activeDays: sortedDays.length },
   };
-
-  const userLevel = Math.floor(stats.totalXP / 100) + 1;
-  const textContent = {
-    en: {
-      title: '📊 Your Profile & Progress',
-      level: 'Level',
-      gamesPlayed: 'Games Played',
-      totalXP: 'Total XP',
-      memberSince: 'Member Since',
-      accountStatus: 'Account Status',
-      modeStats: '📈 Mode Statistics',
-      blindMode: '🔍 Blind Mode',
-      focusedMode: '📚 Focused Mode',
-      games: 'games',
-      recentGames: '🎮 Recent Games',
-      logout: '🚪 Logout',
-      xpToNextLevel: 'XP to next level',
-      premium: 'Premium',
-      active: 'Active'
-    },
-    fr: {
-      title: '📊 Votre Profil et Progression',
-      level: 'Niveau',
-      gamesPlayed: 'Jeux Joués',
-      totalXP: 'XP Total',
-      memberSince: 'Membre Depuis',
-      accountStatus: 'État du Compte',
-      modeStats: '📈 Statistiques par Mode',
-      blindMode: '🔍 Mode Aveugle',
-      focusedMode: '📚 Mode Ciblé',
-      games: 'jeux',
-      recentGames: '🎮 Jeux Récents',
-      logout: '🚪 Déconnexion',
-      xpToNextLevel: 'XP jusqu\'au prochain niveau',
-      premium: 'Premium',
-      active: 'Actif'
-    }
-  };
-
-  const t = textContent[currentLang] || textContent.en;
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <div style={styles.leftGroup}>
-          <BackButton onClick={onBack} />
-          <Logo variant="horizontal" theme={theme} />
-        </div>
-        <div style={styles.rightGroup}>
-          <LanguageToggle currentLang={currentLang} onLanguageChange={onLanguageChange} />
-          <button style={styles.logoutButton} onClick={handleLogout}>
-            {t.logout}
-          </button>
-        </div>
-      </div>
-
-      <div style={styles.content}>
-        <h1 style={styles.pageTitle}>{t.title}</h1>
-
-        <div style={styles.topGrid}>
-          <div style={styles.card}>
-            <div style={styles.userAvatarSection}>
-              <div style={styles.userAvatar}>👤</div>
-              <div>
-                <h2 style={styles.userName}>{userName}</h2>
-                <p style={styles.userEmail}>{user.email}</p>
-              </div>
-            </div>
-            <div style={styles.statusBadge}>{t.active}</div>
-          </div>
-
-          <div style={styles.card}>
-            <h3 style={styles.levelTitle}>{t.level} {userLevel}</h3>
-            <div style={styles.progressBar}>
-              <div
-                style={{
-                  ...styles.progressFill,
-                  width: `${((stats.totalXP % 100) / 100) * 100}%`
-                }}
-              ></div>
-            </div>
-            <p style={styles.progressText}>{stats.totalXP % 100} / 100 {t.xpToNextLevel}</p>
-          </div>
-        </div>
-
-        <div style={styles.statsGrid}>
-          <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>{t.gamesPlayed}</h4>
-            <p style={styles.statValue}>{stats.totalGamesPlayed}</p>
-          </div>
-          <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>{t.totalXP}</h4>
-            <p style={styles.statValue}>{stats.totalXP}</p>
-          </div>
-          <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>{t.memberSince}</h4>
-            <p style={styles.statValue}>{new Date(user.metadata.creationTime).toLocaleDateString()}</p>
-          </div>
-          <div style={styles.statCard}>
-            <h4 style={styles.statLabel}>{t.accountStatus}</h4>
-            <p style={styles.statValue}>{t.premium}</p>
-          </div>
-        </div>
-
-        <div style={styles.card}>
-          <h3 style={styles.sectionTitle}>{t.modeStats}</h3>
-          <div style={styles.modeStatsGrid}>
-            <div style={styles.modeStatCard}>
-              <p style={styles.modeLabel}>{t.blindMode}</p>
-              <p style={styles.modeStat}>{stats.modeStats['blind']?.played || 0} {t.games}</p>
-              <p style={styles.modeXP}>{stats.modeStats['blind']?.totalXP || 0} XP</p>
-            </div>
-            <div style={styles.modeStatCard}>
-              <p style={styles.modeLabel}>{t.focusedMode}</p>
-              <p style={styles.modeStat}>{stats.modeStats['known']?.played || 0} {t.games}</p>
-              <p style={styles.modeXP}>{stats.modeStats['known']?.totalXP || 0} XP</p>
-            </div>
-          </div>
-        </div>
-
-        {stats.gameHistory.length > 0 && (
-          <div style={styles.card}>
-            <h3 style={styles.sectionTitle}>{t.recentGames}</h3>
-            <div style={styles.historyList}>
-              {stats.gameHistory.slice(-5).reverse().map((game, idx) => (
-                <div key={idx} style={styles.historyItem}>
-                  <div>
-                    <p style={styles.drugName}>{game.drugName}</p>
-                    <p style={styles.gameMode}>{game.mode === 'blind' ? '🔍 Blind' : '📚 Focused'} • {game.cluesUsed} clues</p>
-                  </div>
-                  <p style={styles.gameScore}>{game.score} pts</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
 };
 
-const styles = {
-  container: {
-    minHeight: '100vh',
-    padding: '15px',
-    position: 'relative',
-    zIndex: 10,
-    background: 'linear-gradient(135deg, var(--bg-obsidian) 0%, var(--bg-dark) 100%)'
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '30px',
-    paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)',
-    flexWrap: 'wrap',
-    gap: '10px'
-  },
-  leftGroup: { display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' },
-  rightGroup: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center',
-    flexWrap: 'wrap'
-  },
-  logoutButton: {
-    padding: '8px 16px',
-    background: 'rgba(230, 57, 70, 0.1)',
-    border: '2px solid #E63946',
-    color: '#FF6B7A',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
-  },
-  content: {
-    maxWidth: '1000px',
-    margin: '0 auto'
-  },
-  pageTitle: {
-    textAlign: 'center',
-    marginBottom: '30px',
-    color: '#B89A5A',
-    fontSize: '32px',
-    fontFamily: "'Ubuntu', sans-serif",
-    fontWeight: '700'
-  },
-  topGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '20px',
-    marginBottom: '30px'
-  },
-  card: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(184, 154, 90, 0.2)',
-    borderRadius: '10px',
-    padding: '20px',
-    transition: 'all 0.3s ease'
-  },
-  userAvatarSection: {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center',
-    marginBottom: '15px'
-  },
-  userAvatar: {
-    width: '60px',
-    height: '60px',
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, rgba(184, 154, 90, 0.3), rgba(22, 124, 128, 0.3))',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '32px',
-    border: '2px solid #B89A5A'
-  },
-  userName: {
-    color: '#B89A5A',
-    fontSize: '18px',
-    margin: '0 0 5px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  userEmail: {
-    color: 'var(--text-secondary)',
-    fontSize: '12px',
-    margin: '0'
-  },
-  statusBadge: {
-    display: 'inline-block',
-    background: 'rgba(47, 125, 91, 0.2)',
-    color: '#2F7D5B',
-    padding: '6px 12px',
-    borderRadius: '20px',
-    fontSize: '11px',
-    fontWeight: '700'
-  },
-  levelTitle: {
-    color: '#B89A5A',
-    fontSize: '24px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  progressBar: {
-    width: '100%',
-    height: '8px',
-    background: 'rgba(47, 125, 91, 0.1)',
-    borderRadius: '10px',
-    overflow: 'hidden',
-    marginBottom: '10px'
-  },
-  progressFill: {
-    height: '100%',
-    background: 'linear-gradient(90deg, #167C80, #2F7D5B)',
-    borderRadius: '10px',
-    transition: 'width 0.3s ease'
-  },
-  progressText: {
-    fontSize: '12px',
-    color: 'var(--text-secondary)',
-    margin: '0'
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '15px',
-    marginBottom: '30px'
-  },
-  statCard: {
-    background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
-    border: '1px solid rgba(47, 125, 91, 0.2)',
-    borderRadius: '8px',
-    padding: '15px',
-    textAlign: 'center'
-  },
-  statLabel: {
-    color: 'var(--text-secondary)',
-    fontSize: '11px',
-    fontWeight: '700',
-    margin: '0 0 10px 0',
-    textTransform: 'uppercase'
-  },
-  statValue: {
-    color: '#B89A5A',
-    fontSize: '24px',
-    fontWeight: '700',
-    margin: '0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  sectionTitle: {
-    color: '#B89A5A',
-    fontSize: '18px',
-    margin: '0 0 15px 0',
-    fontFamily: "'Playfair Display', serif"
-  },
-  modeStatsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '15px'
-  },
-  modeStatCard: {
-    background: 'rgba(47, 125, 91, 0.1)',
-    border: '1px solid rgba(47, 125, 91, 0.2)',
-    borderRadius: '8px',
-    padding: '15px',
-    textAlign: 'center'
-  },
-  modeLabel: {
-    fontSize: '12px',
-    fontWeight: '700',
-    margin: '0 0 8px 0',
-    color: 'var(--text-primary)'
-  },
-  modeStat: {
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#167C80',
-    margin: '0 0 5px 0'
-  },
-  modeXP: {
-    fontSize: '11px',
-    color: 'var(--text-secondary)',
-    margin: '0'
-  },
-  historyList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px'
-  },
-  historyItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '12px',
-    background: 'rgba(47, 125, 91, 0.05)',
-    borderRadius: '6px',
-    borderLeft: '3px solid #167C80'
-  },
-  drugName: {
-    color: '#B89A5A',
-    fontSize: '13px',
-    fontWeight: '700',
-    margin: '0 0 5px 0'
-  },
-  gameMode: {
-    fontSize: '11px',
-    color: 'var(--text-secondary)',
-    margin: '0'
-  },
-  gameScore: {
-    fontSize: '16px',
-    fontWeight: '700',
-    color: '#2F7D5B',
-    margin: '0'
-  }
+const Card = ({ title, children, className = '' }) => (
+  <section className={`rounded-2xl border border-[#B89A5A]/45 bg-[#1D2A3A] p-5 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.9)] sm:p-6 ${className}`}>
+    {title && <h2 className="dl-display mb-4 text-lg font-bold text-[#B89A5A] sm:text-xl">{title}</h2>}
+    {children}
+  </section>
+);
+
+const StatCard = ({ label, value, hint }) => (
+  <div className="rounded-xl border border-[#F2EFE6]/15 bg-[#1D2A3A] px-4 py-4">
+    <p className="text-xs font-semibold tracking-wide text-[#F2EFE6]/60">{label}</p>
+    <p className="dl-display mt-1 text-3xl font-bold text-[#B89A5A]">{value}</p>
+    {hint && <p className="mt-0.5 text-xs text-[#F2EFE6]/50">{hint}</p>}
+  </div>
+);
+
+const StatsPanel = ({
+  user,
+  userName,
+  organisms = [],
+  onBack,
+  onLogout,
+  theme,
+  currentLang = 'en',
+}) => {
+  const lang = currentLang === 'fr' ? 'fr' : 'en';
+  const t = (en, fr) => (lang === 'fr' ? fr : en);
+
+  const [stats] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`stats_${user.uid}`);
+      return saved ? { ...EMPTY_STATS, ...JSON.parse(saved) } : EMPTY_STATS;
+    } catch (err) {
+      return EMPTY_STATS;
+    }
+  });
+  const [photoFailed, setPhotoFailed] = useState(false);
+
+  const data = useMemo(() => analyze(stats, organisms), [stats, organisms]);
+
+  const level = Math.floor((stats.totalXP || 0) / 100) + 1;
+  const xpIntoLevel = (stats.totalXP || 0) % 100;
+  const rank = [...RANKS].reverse().find((r) => level >= r.min) || RANKS[0];
+  const initial = String(userName || user.email || 'A').trim().charAt(0).toUpperCase();
+  const memberSince =
+    user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : '—';
+  const masteryPct = data.poolSize ? Math.round((data.masteredCount / data.poolSize) * 100) : 0;
+  const maxDay = Math.max(1, ...data.last14.map((d) => d.count));
+
+  const modeLabel = (mode) =>
+    mode === 'blind'
+      ? `🔍 ${t('Open Investigation', 'Enquête Ouverte')}`
+      : `📚 ${t('Targeted / Lesson', 'Ciblée / Leçon')}`;
+
+  return (
+    <div className="dl-app relative isolate overflow-x-clip">
+      <div className="dl-app-bg" aria-hidden="true" />
+
+      {/* ============ EN-TÊTE ============ */}
+      <header className="sticky top-0 z-40 border-b border-[#B89A5A]/25 bg-[#1D2A3A]/95 shadow-lg shadow-black/30 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-2 rounded-lg border border-[#F2EFE6]/25 bg-transparent px-3.5 py-2 text-sm font-medium text-[#F2EFE6] transition-colors hover:border-[#B89A5A] hover:text-[#B89A5A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B89A5A]"
+            >
+              <span aria-hidden="true">←</span> {t('Back', 'Retour')}
+            </button>
+            <div className="hidden sm:block">
+              <Logo variant="horizontal" theme={theme} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={onLogout}
+              className="rounded-lg border border-[#E63946]/60 bg-transparent px-3.5 py-2 text-sm font-semibold text-[#ff8f9a] transition-colors hover:bg-[#E63946]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8f9a]"
+            >
+              🚪 {t('Logout', 'Déconnexion')}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="relative z-10 mx-auto flex max-w-5xl flex-col gap-5 px-4 pb-16 pt-6 sm:gap-6 sm:px-6 sm:pt-10">
+        {/* ============ CARTE AGENT + RANG ============ */}
+        <section className="dl-fade-in rounded-2xl border border-[#B89A5A]/60 bg-gradient-to-br from-[#24364b] to-[#1D2A3A] p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.9),0_0_70px_-30px_rgba(22,124,128,0.5)] sm:p-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#B89A5A] bg-[#0B0D0D] text-2xl font-bold text-[#B89A5A] sm:h-20 sm:w-20">
+                {user.photoURL && !photoFailed ? (
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    referrerPolicy="no-referrer"
+                    onError={() => setPhotoFailed(true)}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  initial
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="inline-block rounded-full border border-[#B89A5A] bg-[#B89A5A]/10 px-3 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#B89A5A]">
+                  LEVEL {level} {rank[lang]}
+                </p>
+                <h1 className="dl-display mt-2 truncate text-2xl font-bold text-[#F2EFE6] sm:text-3xl">{userName}</h1>
+                <p className="truncate text-sm text-[#F2EFE6]/60">{user.email}</p>
+              </div>
+            </div>
+
+            <div className="md:w-72">
+              <div className="flex items-center justify-between text-xs text-[#F2EFE6]/65">
+                <span>
+                  {t('Level', 'Niveau')} {level}
+                </span>
+                <span>
+                  {xpIntoLevel} / 100 {t('XP to next level', "XP jusqu'au prochain niveau")}
+                </span>
+              </div>
+              <div
+                className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#0B0D0D]/60"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={xpIntoLevel}
+                aria-label={t('Progress to next level', 'Progression vers le niveau suivant')}
+              >
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#167C80] to-[#2F7D5B] transition-all duration-700"
+                  style={{ width: `${xpIntoLevel}%` }}
+                />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                <span className="rounded-full border border-[#2F7D5B] bg-[#2F7D5B]/20 px-3 py-1 font-semibold tracking-wide text-[#7fd1a6]">
+                  PRO AGENT
+                </span>
+                <span className="text-[#F2EFE6]/55">
+                  {t('Member since', 'Membre depuis')} {memberSince}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ CHIFFRES CLÉS ============ */}
+        <section aria-label={t('Key numbers', 'Chiffres clés')} className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <StatCard label={t('Cases solved', 'Cas résolus')} value={data.solvedCount} hint={`${data.history.length} ${t('played', 'joués')}`} />
+          <StatCard label={t('Accuracy rate', 'Taux de réussite')} value={`${data.accuracy}%`} />
+          <StatCard
+            label={t('Avg clues used', 'Indices moyens')}
+            value={data.solvedCount ? data.avgClues.toFixed(1) : '—'}
+            hint={t('on solved cases', 'sur les cas résolus')}
+          />
+          <StatCard label={t('Total XP', 'XP total')} value={stats.totalXP || 0} />
+        </section>
+
+        {data.history.length === 0 && (
+          <Card>
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+              <span className="text-4xl" aria-hidden="true">
+                🕵️
+              </span>
+              <p className="dl-display text-xl font-bold text-[#F2EFE6]">
+                {t('Your case history is empty.', "Votre historique d'enquêtes est vide.")}
+              </p>
+              <p className="max-w-md text-sm text-[#F2EFE6]/65">
+                {t(
+                  'Solve your first case and your progress, weak spots and streak will appear here.',
+                  'Résolvez votre premier cas et votre progression, vos points faibles et votre série apparaîtront ici.'
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={onBack}
+                className="rounded-lg border-0 bg-[#167C80] px-6 py-3 text-sm font-semibold text-[#F2EFE6] shadow-lg shadow-[#167C80]/25 transition-colors hover:bg-[#1a9096] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F2EFE6]"
+              >
+                {t('Start Game', 'Commencer le jeu')}
+              </button>
+            </div>
+          </Card>
+        )}
+
+        {/* ============ MAÎTRISE DES MODULES ============ */}
+        <Card title={t('Module Mastery', 'Maîtrise des modules')}>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-[#B89A5A]/45 bg-[#0B0D0D]/35 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-[#B89A5A]">
+                    {t('4TH YEAR', '4ÈME ANNÉE')}
+                  </p>
+                  <h3 className="dl-display mt-1 text-lg font-bold text-[#F2EFE6]">
+                    🦠 {t('Parasitology - Mycology', 'Parasitologie - Mycologie')}
+                  </h3>
+                </div>
+                <span className="dl-display text-2xl font-bold text-[#7fd1a6]">{masteryPct}%</span>
+              </div>
+              <div
+                className="mt-3 h-3 overflow-hidden rounded-full bg-[#F2EFE6]/10"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={masteryPct}
+                aria-label={t('Parasitology mastery', 'Maîtrise de la parasitologie')}
+              >
+                <div className="h-full rounded-full bg-[#2F7D5B] transition-all duration-700" style={{ width: `${masteryPct}%` }} />
+              </div>
+              <p className="mt-2 text-sm text-[#F2EFE6]/65">
+                {organisms.length > 0
+                  ? t(
+                      `${data.masteredCount} of ${data.poolSize} organisms identified`,
+                      `${data.masteredCount} organismes sur ${data.poolSize} identifiés`
+                    )
+                  : t('Organism list unavailable.', "Liste d'organismes indisponible.")}
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[#F2EFE6]/20 p-4 text-center">
+              <span className="text-3xl opacity-60" aria-hidden="true">
+                🧫
+              </span>
+              <p className="mt-2 text-sm font-semibold text-[#F2EFE6]/70">
+                {t('More modules coming soon', 'D’autres modules arrivent bientôt')}
+              </p>
+              <p className="mt-1 text-xs text-[#F2EFE6]/50">
+                {t('Your progress will appear here as they open.', 'Votre progression apparaîtra ici à leur ouverture.')}
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* ============ ZONES À REVOIR ============ */}
+        <Card title={t('Focus Areas', 'Zones à revoir')}>
+          {data.history.length === 0 ? (
+            <p className="text-sm text-[#F2EFE6]/60">
+              {t('Weak topics will show up after a few cases.', 'Vos points faibles apparaîtront après quelques cas.')}
+            </p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-semibold text-[#F2EFE6]">{t('Organisms to review', 'Organismes à revoir')}</h3>
+                {data.weak.length === 0 ? (
+                  <p className="mt-3 rounded-lg border border-[#2F7D5B]/50 bg-[#2F7D5B]/10 px-3 py-3 text-sm text-[#7fd1a6]">
+                    {t('Nothing to flag. Keep going!', 'Rien à signaler. Continuez !')}
+                  </p>
+                ) : (
+                  <ul className="m-0 mt-3 flex list-none flex-col gap-2 p-0">
+                    {data.weak.map((w) => (
+                      <li
+                        key={w.name}
+                        className="flex items-center justify-between gap-3 rounded-lg border-l-4 border-[#B89A5A] bg-[#0B0D0D]/35 px-3 py-2.5"
+                      >
+                        <span className="min-w-0 truncate text-sm font-semibold text-[#F2EFE6]">{w.name}</span>
+                        <span className="shrink-0 text-xs text-[#B89A5A]">
+                          {w.failures > 0
+                            ? t(`Missed ${w.failures}×`, `Raté ${w.failures}×`)
+                            : t(`~${w.avg.toFixed(1)} clues needed`, `~${w.avg.toFixed(1)} indices`)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-[#F2EFE6]">{t('Accuracy by category', 'Réussite par catégorie')}</h3>
+                {data.categories.length === 0 ? (
+                  <p className="mt-3 text-sm text-[#F2EFE6]/60">
+                    {t('Not enough data yet.', 'Pas encore assez de données.')}
+                  </p>
+                ) : (
+                  <ul className="m-0 mt-3 flex list-none flex-col gap-3 p-0">
+                    {data.categories.map((c) => (
+                      <li key={c.cat}>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-[#F2EFE6]">{CATEGORY_LABELS[c.cat][lang]}</span>
+                          <span className={c.accuracy < 50 ? 'text-[#f0b5a6]' : 'text-[#7fd1a6]'}>
+                            {c.accuracy}% · {c.wins}/{c.attempts}
+                          </span>
+                        </div>
+                        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-[#F2EFE6]/10">
+                          <div
+                            className={`h-full rounded-full ${c.accuracy < 50 ? 'bg-[#B89A5A]' : 'bg-[#2F7D5B]'}`}
+                            style={{ width: `${c.accuracy}%` }}
+                          />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* ============ ACTIVITÉ & SÉRIE ============ */}
+        <Card title={t('Study Activity', "Activité d'étude")}>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-xl border border-[#B89A5A]/45 bg-[#0B0D0D]/35 px-3 py-3 text-center">
+              <p className="dl-display text-2xl font-bold text-[#B89A5A]">🔥 {data.streak.current}</p>
+              <p className="mt-0.5 text-xs text-[#F2EFE6]/60">{t('Current streak', 'Série actuelle')}</p>
+            </div>
+            <div className="rounded-xl border border-[#F2EFE6]/15 bg-[#0B0D0D]/35 px-3 py-3 text-center">
+              <p className="dl-display text-2xl font-bold text-[#F2EFE6]">{data.streak.best}</p>
+              <p className="mt-0.5 text-xs text-[#F2EFE6]/60">{t('Best streak', 'Meilleure série')}</p>
+            </div>
+            <div className="rounded-xl border border-[#F2EFE6]/15 bg-[#0B0D0D]/35 px-3 py-3 text-center">
+              <p className="dl-display text-2xl font-bold text-[#F2EFE6]">{data.streak.activeDays}</p>
+              <p className="mt-0.5 text-xs text-[#F2EFE6]/60">{t('Active days', 'Jours actifs')}</p>
+            </div>
+          </div>
+
+          <p className="mt-5 text-sm font-semibold text-[#F2EFE6]">{t('Last 14 days', '14 derniers jours')}</p>
+          <ul
+            className="m-0 mt-3 grid list-none grid-cols-[repeat(14,minmax(0,1fr))] items-end gap-1 p-0 sm:gap-2"
+            aria-label={t('Cases played per day, last 14 days', 'Cas joués par jour, 14 derniers jours')}
+          >
+            {data.last14.map((d) => (
+              <li
+                key={d.idx}
+                className="flex flex-col items-center gap-1"
+                title={`${d.date.toLocaleDateString(undefined, { timeZone: 'UTC' })}: ${d.count}`}
+              >
+                <div className="flex h-24 w-full items-end">
+                  <div
+                    className={`w-full rounded-t ${d.count > 0 ? 'bg-[#167C80]' : 'bg-[#F2EFE6]/10'}`}
+                    style={{ height: d.count > 0 ? `${Math.max(12, (d.count / maxDay) * 100)}%` : '4px' }}
+                  />
+                </div>
+                <span className="text-[10px] text-[#F2EFE6]/45">{d.date.getUTCDate()}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        {/* ============ MODES DE JEU ============ */}
+        <Card title={t('Mode Statistics', 'Statistiques par mode')}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              { key: 'blind', label: `🔍 ${t('Open Investigation', 'Enquête Ouverte')}` },
+              { key: 'known', label: `📚 ${t('Targeted / Lesson', 'Ciblée / Leçon')}` },
+            ].map((m) => {
+              const s = (stats.modeStats && stats.modeStats[m.key]) || {};
+              return (
+                <div key={m.key} className="rounded-xl border border-[#F2EFE6]/15 bg-[#0B0D0D]/35 px-4 py-4">
+                  <p className="text-sm font-semibold text-[#F2EFE6]">{m.label}</p>
+                  <p className="dl-display mt-1 text-2xl font-bold text-[#167C80] [text-shadow:0_0_20px_rgba(22,124,128,0.35)]">
+                    {s.played || 0} {t('games', 'jeux')}
+                  </p>
+                  <p className="text-xs text-[#F2EFE6]/55">{s.totalXP || 0} XP</p>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* ============ PARTIES RÉCENTES ============ */}
+        {data.history.length > 0 && (
+          <Card title={t('Recent Cases', 'Cas récents')}>
+            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+              {data.history
+                .slice(-6)
+                .reverse()
+                .map((game, idx) => {
+                  const won = (game.score || 0) > 0;
+                  return (
+                    <li
+                      key={idx}
+                      className={`flex items-center justify-between gap-3 rounded-lg border-l-4 bg-[#0B0D0D]/35 px-4 py-3 ${
+                        won ? 'border-[#2F7D5B]' : 'border-[#E63946]/70'
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-[#F2EFE6]">{game.drugName}</p>
+                        <p className="text-xs text-[#F2EFE6]/55">
+                          {modeLabel(game.mode)} · {game.cluesUsed} {t('clues', 'indices')}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className={`text-base font-bold ${won ? 'text-[#7fd1a6]' : 'text-[#f0b5a6]'}`}>
+                          {game.score} pts
+                        </p>
+                        <p className="text-[10px] font-semibold tracking-wide text-[#F2EFE6]/45">
+                          {won ? t('SOLVED', 'RÉSOLU') : t('MISSED', 'RATÉ')}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+            </ul>
+          </Card>
+        )}
+      </main>
+    </div>
+  );
 };
 
 export default StatsPanel;

@@ -1,185 +1,123 @@
 import React, { useState } from 'react';
 import Logo from './Logo';
+import '../tailwind.css';
+import '../detective.css';
 
-const PendingConfirmationPage = ({ userName, status, plan, reference, onCheckAgain, onLogout, currentLang }) => {
+const INSTAGRAM_URL = 'https://www.instagram.com/detective_labs/';
+
+const PLAN_LABELS = {
+  monthly: { en: 'Monthly Pass (150 DA)', fr: 'Pass Mensuel (150 DA)' },
+  yearly: { en: 'Annual Pass (1000 DA)', fr: 'Pass Annuel (1000 DA)' },
+};
+
+// status : 'review' (paiement signalé, en attente de vérification) ou 'denied' (demande refusée)
+const PendingConfirmationPage = ({ userName, status, plan, onCheckAgain, onLogout, currentLang }) => {
+  const t = (en, fr) => (currentLang === 'fr' ? fr : en);
+  const denied = status === 'denied';
+
   const [checking, setChecking] = useState(false);
-  const en = currentLang === 'en';
+  const [checkedAt, setCheckedAt] = useState(null);
+
+  const planLabel = PLAN_LABELS[plan] ? t(PLAN_LABELS[plan].en, PLAN_LABELS[plan].fr) : null;
 
   const handleCheck = async () => {
     setChecking(true);
-    await onCheckAgain();
-    setChecking(false);
-  };
-
-  const planNames = {
-    monthly: en ? '1 Month' : '1 Mois',
-    yearly: en ? '1 Year' : '1 An'
-  };
-  const planText = plan && planNames[plan]
-    ? (en ? ` for the ${planNames[plan]} plan` : ` pour la formule ${planNames[plan]}`)
-    : '';
-
-  const content = {
-    review: {
-      icon: '💳',
-      title: en ? 'Payment Under Review' : 'Paiement en Cours de Vérification',
-      texts: [
-        en
-          ? `Thanks, ${userName}! We've received your payment confirmation${planText}.`
-          : `Merci, ${userName} ! Nous avons bien reçu ta confirmation de paiement${planText}.`,
-        en
-          ? 'Your access will be activated within 24h after we verify your BaridiMob transfer.'
-          : 'Ton accès sera activé sous 24h après vérification de ton virement BaridiMob.'
-      ],
-      canCheck: true
-    },
-    pending: {
-      icon: '⏳',
-      title: en ? 'Waiting for Approval' : "En Attente d'Approbation",
-      texts: [
-        en
-          ? `Thanks for signing up, ${userName}! Your access request has been sent.`
-          : `Merci pour ton inscription, ${userName} ! Ta demande d'accès a bien été envoyée.`,
-        en
-          ? 'You will be able to play as soon as it is approved.'
-          : "Tu pourras jouer dès qu'elle sera approuvée."
-      ],
-      canCheck: true
-    },
-    denied: {
-      icon: '🚫',
-      title: en ? 'Access Denied' : 'Accès Refusé',
-      texts: [
-        en
-          ? `Sorry ${userName}, your access request was not approved.`
-          : `Désolé ${userName}, ta demande d'accès n'a pas été approuvée.`
-      ],
-      canCheck: false
+    try {
+      await onCheckAgain();
+      setCheckedAt(new Date());
+    } finally {
+      setChecking(false);
     }
   };
 
-  const view = content[status] || content.pending;
-
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <Logo variant="horizontal" theme="dark" />
-        <div style={styles.headerRight}>
-          <span style={styles.userBadge}>👤 {userName}</span>
-          <button style={styles.logoutBtn} onClick={onLogout}>
-            🚪 {en ? 'Logout' : 'Déconnexion'}
+    <div className="dl-app relative isolate flex flex-col overflow-x-clip">
+      <div className="dl-app-bg" aria-hidden="true" />
+
+      <header className="relative z-10 border-b border-[#B89A5A]/25 bg-[#1D2A3A]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <Logo variant="horizontal" theme="dark" />
+          <button
+            type="button"
+            onClick={onLogout}
+            className="rounded-lg border border-[#E63946]/60 bg-transparent px-3.5 py-2 text-sm font-semibold text-[#ff8f9a] transition-colors hover:bg-[#E63946]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8f9a]"
+          >
+            🚪 {t('Logout', 'Déconnexion')}
           </button>
         </div>
-      </div>
+      </header>
 
-      <div style={styles.content}>
-        <div style={styles.iconCircle}>{view.icon}</div>
-
-        <h1 style={styles.title}>{view.title}</h1>
-
-        {view.texts.map((text, i) => (
-          <p key={i} style={styles.text}>{text}</p>
-        ))}
-
-        {status === 'review' && reference && (
-          <p style={styles.text}>
-            {en ? 'Your reference code' : 'Ton code de référence'}: <strong style={{ color: 'var(--accent-gold)', letterSpacing: '2px' }}>{reference}</strong>
+      <main className="relative z-10 mx-auto flex w-full max-w-lg flex-1 items-center px-4 py-10 sm:px-6">
+        <section
+          aria-live="polite"
+          className={`dl-fade-in w-full rounded-2xl border-2 bg-[#1D2A3A] p-6 text-center shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] sm:p-8 ${
+            denied ? 'border-[#E63946]/70' : 'border-[#B89A5A]'
+          }`}
+        >
+          <p
+            className={`inline-block rounded-full border px-4 py-1.5 text-[11px] font-semibold tracking-[0.14em] ${
+              denied ? 'border-[#E63946]/70 bg-[#E63946]/10 text-[#ff8f9a]' : 'border-[#B89A5A] bg-[#B89A5A]/10 text-[#B89A5A]'
+            }`}
+          >
+            {denied ? t('REQUEST NOT APPROVED', 'DEMANDE NON APPROUVÉE') : t('UNDER REVIEW', 'EN COURS DE VÉRIFICATION')}
           </p>
-        )}
 
-        {view.canCheck && (
-          <button style={styles.checkButton} onClick={handleCheck} disabled={checking}>
-            {checking
-              ? (en ? 'Checking...' : 'Vérification...')
-              : (en ? '🔄 Check Status' : '🔄 Vérifier le Statut')}
-          </button>
-        )}
-      </div>
+          <div className="mt-5 text-5xl" aria-hidden="true">
+            {denied ? '🔒' : '🔎'}
+          </div>
+
+          <h1 className="dl-display mt-4 text-2xl font-bold leading-tight text-[#F2EFE6] sm:text-3xl">
+            {denied
+              ? t('Access request declined', "Demande d'accès refusée")
+              : t('Payment under verification', 'Paiement en cours de vérification')}
+          </h1>
+
+          <p className="mt-3 text-base leading-relaxed text-[#F2EFE6]/70">
+            {denied
+              ? t(
+                  `${userName ? `${userName}, your` : 'Your'} access request was not approved. If you think this is a mistake, contact us on Instagram.`,
+                  `${userName ? `${userName}, votre` : 'Votre'} demande d'accès n'a pas été approuvée. Si vous pensez qu'il s'agit d'une erreur, contactez-nous sur Instagram.`
+                )
+              : t(
+                  `${userName ? `Thanks ${userName}. ` : ''}We received your payment notice and we are checking it. Your access opens as soon as it is approved.`,
+                  `${userName ? `Merci ${userName}. ` : ''}Nous avons reçu votre signalement de paiement et nous le vérifions. Votre accès s'ouvre dès son approbation.`
+                )}
+          </p>
+
+          {!denied && planLabel && (
+            <dl className="mt-5 rounded-xl border border-[#F2EFE6]/15 bg-[#0B0D0D]/40 px-4 py-4 text-left">
+              <dt className="text-xs text-[#F2EFE6]/55">{t('Pass', 'Pass')}</dt>
+              <dd className="m-0 mt-0.5 text-sm font-semibold text-[#F2EFE6]">{planLabel}</dd>
+            </dl>
+          )}
+
+          <div className="mt-6 flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={handleCheck}
+              disabled={checking}
+              className="w-full rounded-lg border-0 bg-[#3F628C] px-5 py-3.5 text-base font-semibold text-[#F2EFE6] transition-colors hover:bg-[#4a73a3] disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F2EFE6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1D2A3A]"
+            >
+              🔄 {checking ? t('Checking...', 'Vérification...') : t('Check status', 'Vérifier le statut')}
+            </button>
+            {checkedAt && !checking && (
+              <p className="text-xs text-[#F2EFE6]/50" role="status">
+                {t('Last checked at', 'Dernière vérification à')} {checkedAt.toLocaleTimeString()}
+              </p>
+            )}
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-lg border border-[#B89A5A]/60 bg-transparent px-5 py-3 text-center text-sm font-semibold text-[#B89A5A] no-underline transition-colors hover:bg-[#B89A5A]/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B89A5A]"
+            >
+              {t('Message us on Instagram', 'Écrivez-nous sur Instagram')}
+            </a>
+          </div>
+        </section>
+      </main>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    padding: '15px',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '50px',
-    paddingBottom: '15px',
-    borderBottom: '1px solid var(--border-teal)',
-    flexWrap: 'wrap',
-    gap: '10px'
-  },
-  headerRight: {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'center',
-    flexWrap: 'wrap'
-  },
-  userBadge: {
-    fontSize: '13px',
-    fontWeight: '600',
-    color: 'var(--text-primary)',
-    fontFamily: "'Ubuntu', sans-serif"
-  },
-  logoutBtn: {
-    padding: '8px 16px',
-    background: 'rgba(230, 57, 70, 0.1)',
-    border: '2px solid #E63946',
-    color: '#FF6B7A',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontSize: '12px',
-    fontWeight: '600'
-  },
-  content: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    maxWidth: '440px',
-    margin: '0 auto',
-    width: '100%'
-  },
-  iconCircle: {
-    fontSize: '48px',
-    marginBottom: '20px'
-  },
-  title: {
-    color: '#FFFFFF',
-    fontFamily: "'Ubuntu', sans-serif",
-    fontWeight: '700',
-    fontSize: '24px',
-    marginBottom: '18px'
-  },
-  text: {
-    color: 'var(--text-secondary)',
-    fontSize: '14px',
-    lineHeight: '1.6',
-    marginBottom: '12px'
-  },
-  checkButton: {
-    marginTop: '20px',
-    width: '100%',
-    padding: '14px',
-    background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%)',
-    color: 'var(--bg-obsidian)',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: '700',
-    cursor: 'pointer',
-    fontFamily: "'Ubuntu', sans-serif"
-  }
 };
 
 export default PendingConfirmationPage;
