@@ -21,7 +21,7 @@ const INSTAGRAM_URL = 'https://www.instagram.com/detective_labs/';
 const PLANS = [
   {
     id: 'monthly',
-    price: 150,
+    price: 250,
     enName: 'Monthly Pass',
     frName: 'Pass Mensuel',
     enPeriod: 'per month',
@@ -31,13 +31,13 @@ const PLANS = [
   },
   {
     id: 'yearly',
-    price: 1000,
+    price: 2000,
     enName: 'Annual Pass',
     frName: 'Pass Annuel',
     enPeriod: 'per year',
     frPeriod: 'par an',
     enNote: 'Access for 1 year, save 800 DA',
-    frNote: 'Accès pendant 1 an, économisez 800 DA',
+    frNote: 'Accès pendant 1 an',
     best: true,
   },
 ];
