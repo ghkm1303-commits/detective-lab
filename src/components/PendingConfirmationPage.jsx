@@ -6,7 +6,7 @@ import '../detective.css';
 const INSTAGRAM_URL = 'https://www.instagram.com/detective_labs/';
 
 const PLAN_LABELS = {
-  monthly: { en: 'Monthly Pass (150 DA)', fr: 'Pass Mensuel (150 DA)' },
+  monthly: { en: 'Monthly Pass (250 DA)', fr: 'Pass Mensuel (250 DA)' },
   yearly: { en: 'Annual Pass (1000 DA)', fr: 'Pass Annuel (1000 DA)' },
 };
 

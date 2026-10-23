@@ -7,6 +7,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export const PLANS = {
   monthly: { days: 30 },
   yearly: { days: 365 },
+  trial: { days: 7 },
   free: { days: null }
 };
 
@@ -75,7 +76,7 @@ export async function submitPaymentConfirmation(uid, planId) {
   }
 }
 
-// Donne l'accès (ou le redonne / le renouvelle) pour une formule : 'monthly' | 'yearly' | 'free'.
+// Donne l'accès (ou le redonne / le renouvelle) pour une formule : 'monthly' | 'yearly' | 'trial' | 'free'.
 // Si l'abonnement est encore actif, la nouvelle durée s'ajoute à la date d'expiration actuelle.
 // Sinon, elle démarre à partir d'aujourd'hui. Le compte et la progression ne sont jamais touchés.
 export async function grantAccess(uid, planId = 'monthly') {

@@ -18,6 +18,8 @@ const BARIDIMOB_INFO = {
 const INSTAGRAM_URL = 'https://www.instagram.com/detective_labs/';
 
 // Les ids doivent rester 'monthly' et 'yearly' : ce sont ceux que comprend utils/subscription.js
+// Offre de lancement : le pass annuel est à 1000 DA (au lieu de 2000 DA) -> oldPrice + promo.
+// Pour la terminer, supprimer `oldPrice` et `promo` du pass annuel et remettre price: 2000.
 const PLANS = [
   {
     id: 'monthly',
@@ -31,12 +33,14 @@ const PLANS = [
   },
   {
     id: 'yearly',
-    price: 2000,
+    price: 1000,
+    oldPrice: 2000,
+    promo: true,
     enName: 'Annual Pass',
     frName: 'Pass Annuel',
     enPeriod: 'per year',
     frPeriod: 'par an',
-    enNote: 'Access for 1 year, save 800 DA',
+    enNote: 'Access for 1 year, save 2000 DA',
     frNote: 'Accès pendant 1 an',
     best: true,
   },
@@ -182,10 +186,16 @@ const SubscriptionPage = ({
                         : 'border-[#F2EFE6]/20 bg-gradient-to-b from-[#24364b] to-[#1D2A3A]'
                     }`}
                   >
-                    {p.best && (
-                      <span className="absolute -top-3 right-5 rounded-full bg-[#B89A5A] px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[#0B0D0D]">
-                        {t('BEST VALUE', 'MEILLEURE OFFRE')}
+                    {p.promo ? (
+                      <span className="absolute -top-3 right-5 rounded-full bg-[#B89A5A] px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[#0B0D0D] shadow-[0_0_24px_-4px_rgba(184,154,90,0.7)]">
+                        🔥 {t('LAUNCH OFFER -50%', 'OFFRE DE LANCEMENT -50%')}
                       </span>
+                    ) : (
+                      p.best && (
+                        <span className="absolute -top-3 right-5 rounded-full bg-[#B89A5A] px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[#0B0D0D]">
+                          {t('BEST VALUE', 'MEILLEURE OFFRE')}
+                        </span>
+                      )
                     )}
                     <span className="flex items-center justify-between gap-3">
                       <span className="dl-display text-xl font-bold text-[#F2EFE6]">{t(p.enName, p.frName)}</span>
@@ -198,7 +208,18 @@ const SubscriptionPage = ({
                         ✓
                       </span>
                     </span>
-                    <span className="mt-4 flex items-baseline gap-2">
+                    {p.oldPrice && (
+                      <span className="mt-4 flex items-center gap-2">
+                        <span className="sr-only">{t('Regular price', 'Prix habituel')}</span>
+                        <del className="text-xl font-semibold text-[#F2EFE6]/45 decoration-[#E63946] decoration-2">
+                          {p.oldPrice} DA
+                        </del>
+                        <span className="rounded-md border border-[#2F7D5B] bg-[#2F7D5B]/20 px-2 py-0.5 text-xs font-bold text-[#7fd1a6]">
+                          -50%
+                        </span>
+                      </span>
+                    )}
+                    <span className={`flex items-baseline gap-2 ${p.oldPrice ? 'mt-1' : 'mt-4'}`}>
                       <span className="dl-display text-5xl font-bold text-[#B89A5A]">{p.price}</span>
                       <span className="text-lg font-semibold text-[#F2EFE6]">DA</span>
                       <span className="text-sm text-[#F2EFE6]/55">{t(p.enPeriod, p.frPeriod)}</span>

@@ -17,6 +17,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const PLAN_OPTIONS = [
   { id: 'monthly', en: '1 month', fr: '1 mois' },
   { id: 'yearly', en: '1 year', fr: '1 an' },
+  { id: 'trial', en: '1 week free trial', fr: '1 semaine d\'essai gratuit' },
   { id: 'free', en: 'Free (no expiry)', fr: 'Gratuit (sans expiration)' },
 ];
 
@@ -114,8 +115,10 @@ const AdminPanel = ({ user, onBack, currentLang, theme }) => {
   const setChoice = (uid, planId) => setPlanChoice((prev) => ({ ...prev, [uid]: planId }));
 
   // Formule proposée par défaut : celle que le joueur dit avoir payée, sinon sa formule actuelle
+  // (un essai gratuit ou un accès gratuit ne se renouvelle pas par défaut : on propose 1 mois)
   const defaultPlanFor = (item) =>
-    item.requestedPlan || (item.plan && item.plan !== 'free' ? item.plan : 'monthly');
+    item.requestedPlan ||
+    (item.plan && item.plan !== 'free' && item.plan !== 'trial' ? item.plan : 'monthly');
 
   const runAction = async (uid, action) => {
     setBusyUid(uid);
